@@ -14,6 +14,7 @@ import {
   searchProductsByImage,
   type CartSaleResult,
 } from "@/lib/sales";
+import type { ReceiptLineItem } from "@/lib/receipt-print";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 
 // Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
@@ -56,6 +57,7 @@ export default function SellPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
+  const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
   const [visualSearching, setVisualSearching] = useState(false);
 
   async function handleBarcode(barcode: string) {
@@ -127,6 +129,15 @@ export default function SellPage() {
         // Savatdagi birinchi element usulini umumiy usul sifatida olamiz
         method: items[0]?.method ?? "manual",
       });
+      // Savat tozalanishidan OLDIN chek uchun snapshot olamiz (narxsiz/foydasiz).
+      setReceiptItems(
+        items.map((i) => ({
+          name: i.product.name,
+          quantity: i.quantity,
+          saleType: i.product.sale_type,
+          unitPrice: i.product.selling_price,
+        }))
+      );
       setConfirmOpen(false);
       clear();
       setReceipt(result);
@@ -222,7 +233,13 @@ export default function SellPage() {
       </Dialog>
 
       {/* Chek */}
-      <Receipt open={!!receipt} result={receipt} onNext={() => setReceipt(null)} />
+      <Receipt
+        open={!!receipt}
+        result={receipt}
+        items={receiptItems}
+        shopName={shop?.name ?? "Do'kon"}
+        onNext={() => setReceipt(null)}
+      />
     </div>
   );
 }

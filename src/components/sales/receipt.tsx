@@ -1,7 +1,15 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Bluetooth, CheckCircle2, Loader2, Printer } from "lucide-react";
+import { toast } from "sonner";
 import type { CartSaleResult } from "@/lib/sales";
+import {
+  printReceipt,
+  type ReceiptData,
+  type ReceiptLineItem,
+} from "@/lib/receipt-print";
+import { isWebBluetoothSupported, printViaBluetooth } from "@/lib/printer";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,13 +22,59 @@ import {
 interface ReceiptProps {
   open: boolean;
   result: CartSaleResult | null;
+  /** Sotuv paytida olingan savat snapshot'i (chek satrlari uchun). */
+  items: ReceiptLineItem[];
+  shopName: string;
   onNext: () => void;
 }
 
 /**
  * Sotuvdan keyingi chek. Xaridorga faqat tushum ko'rsatiladi (tan narxi/foyda emas).
+ * Ikki chop etish usuli: HTML (window.print, universal) va Bluetooth BLE (mos qurilmalar).
  */
-export function Receipt({ open, result, onNext }: ReceiptProps) {
+export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps) {
+  const [bleSupported, setBleSupported] = useState(false);
+  const [blePrinting, setBlePrinting] = useState(false);
+
+  // SSR/hidratsiya mosligi uchun qo'llab-quvvatlashni mount'dan keyin aniqlaymiz.
+  useEffect(() => {
+    setBleSupported(isWebBluetoothSupported());
+  }, []);
+
+  function buildData(): ReceiptData | null {
+    if (!result) return null;
+    return {
+      shopName,
+      items,
+      total: result.total_revenue,
+      itemCount: result.item_count,
+      soldAt: new Date(),
+    };
+  }
+
+  function handleHtmlPrint() {
+    const data = buildData();
+    if (data) printReceipt(data);
+  }
+
+  async function handleBluetoothPrint() {
+    const data = buildData();
+    if (!data) return;
+    setBlePrinting(true);
+    try {
+      await printViaBluetooth(data);
+      toast.success("Chek printerga yuborildi");
+    } catch (err) {
+      toast.error("Bluetooth print xatosi", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setBlePrinting(false);
+    }
+  }
+
+  const canPrint = !!result && items.length > 0;
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onNext()}>
       <DialogContent className="max-w-sm">
@@ -45,9 +99,41 @@ export function Receipt({ open, result, onNext }: ReceiptProps) {
             </div>
           )}
         </div>
-        <Button onClick={onNext} className="w-full" size="lg">
-          Keyingisi
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button
+            onClick={handleHtmlPrint}
+            variant="outline"
+            className="w-full"
+            size="lg"
+            disabled={!canPrint}
+          >
+            <Printer className="mr-2 h-5 w-5" /> Chek chop etish
+          </Button>
+
+          {bleSupported && (
+            <Button
+              onClick={handleBluetoothPrint}
+              variant="outline"
+              className="w-full"
+              size="lg"
+              disabled={!canPrint || blePrinting}
+            >
+              {blePrinting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Yuborilmoqda...
+                </>
+              ) : (
+                <>
+                  <Bluetooth className="mr-2 h-5 w-5" /> Bluetooth printer
+                </>
+              )}
+            </Button>
+          )}
+
+          <Button onClick={onNext} className="w-full" size="lg">
+            Keyingisi
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
