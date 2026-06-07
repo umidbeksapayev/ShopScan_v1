@@ -79,9 +79,10 @@ export default function SellPage() {
   }
 
   async function handleVisualSearch(imageDataUri: string) {
+    if (!shop) return;
     setVisualSearching(true);
     try {
-      const found = await searchProductsByImage(imageDataUri);
+      const found = await searchProductsByImage(shop.id, imageDataUri);
       if (found.length === 0) {
         toast.error("O'xshash mahsulot topilmadi", {
           description: "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",

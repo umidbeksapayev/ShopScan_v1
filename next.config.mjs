@@ -16,6 +16,15 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
+  // Transformers.js (brauzerda CLIP) — Node-only bog'liqliklarni brauzer build'idan chiqarish
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      sharp$: false,
+      "onnxruntime-node$": false,
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
