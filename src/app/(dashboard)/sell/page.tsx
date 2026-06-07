@@ -7,9 +7,22 @@ import type { Product, SearchMethod } from "@/types/database";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
 import { useCartStore } from "@/stores/cart-store";
+import dynamic from "next/dynamic";
 import { findProductsByBarcode, searchProductsByName, type CartSaleResult } from "@/lib/sales";
-import { BarcodeScanner } from "@/components/sales/barcode-scanner";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
+
+// Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
+const BarcodeScanner = dynamic(
+  () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-400">
+        Kamera yuklanmoqda...
+      </div>
+    ),
+  }
+);
 import { CartPanel } from "@/components/sales/cart-panel";
 import { Receipt } from "@/components/sales/receipt";
 import { Input } from "@/components/ui/input";
