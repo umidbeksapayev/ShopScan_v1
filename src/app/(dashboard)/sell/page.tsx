@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, ScanLine, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
 import { useShop } from "@/hooks/use-shop";
@@ -146,14 +146,14 @@ export default function SellPage() {
         <div>
           <Tabs defaultValue="barcode">
             <TabsList className="w-full">
-              <TabsTrigger value="barcode" className="flex-1">
-                📷 Barcode
+              <TabsTrigger value="barcode" className="flex-1 gap-1.5">
+                <ScanLine className="h-4 w-4" /> Barcode
               </TabsTrigger>
-              <TabsTrigger value="visual" className="flex-1">
-                ✨ Vizual
+              <TabsTrigger value="visual" className="flex-1 gap-1.5">
+                <Sparkles className="h-4 w-4" /> Vizual
               </TabsTrigger>
-              <TabsTrigger value="manual" className="flex-1">
-                🔍 Qidirish
+              <TabsTrigger value="manual" className="flex-1 gap-1.5">
+                <Search className="h-4 w-4" /> Qidirish
               </TabsTrigger>
             </TabsList>
 

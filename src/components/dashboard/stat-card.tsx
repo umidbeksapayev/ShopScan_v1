@@ -6,36 +6,44 @@ interface StatCardProps {
   value: string;
   icon: LucideIcon;
   /** rang varianti — semantik (tushum/foyda/soni/ogohlantirish) */
-  variant?: "blue" | "green" | "purple" | "orange";
+  variant?: "violet" | "blue" | "green" | "amber";
   loading?: boolean;
 }
 
 const variants = {
-  blue: { wrap: "bg-blue-50", icon: "bg-blue-100 text-blue-700", value: "text-blue-900" },
-  green: { wrap: "bg-green-50", icon: "bg-green-100 text-green-700", value: "text-green-900" },
-  purple: { wrap: "bg-purple-50", icon: "bg-purple-100 text-purple-700", value: "text-purple-900" },
-  orange: { wrap: "bg-orange-50", icon: "bg-orange-100 text-orange-700", value: "text-orange-900" },
+  violet: "bg-violet-100 text-violet-600",
+  blue: "bg-sky-100 text-sky-600",
+  green: "bg-emerald-100 text-emerald-600",
+  amber: "bg-amber-100 text-amber-600",
 };
 
-export function StatCard({ label, value, icon: Icon, variant = "blue", loading }: StatCardProps) {
-  const v = variants[variant];
+export function StatCard({
+  label,
+  value,
+  icon: Icon,
+  variant = "violet",
+  loading,
+}: StatCardProps) {
   return (
-    <div className={cn("rounded-xl p-4", v.wrap)}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-600">{label}</p>
-          {loading ? (
-            <div className="mt-2 h-7 w-20 animate-pulse rounded bg-gray-200" />
-          ) : (
-            <p className={cn("mt-1 text-xl font-bold tabular-nums sm:text-2xl", v.value)}>
-              {value}
-            </p>
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-soft transition-shadow hover:shadow-card sm:p-5">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <div
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+            variants[variant]
           )}
-        </div>
-        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", v.icon)}>
+        >
           <Icon className="h-5 w-5" />
         </div>
       </div>
+      {loading ? (
+        <div className="mt-3 h-7 w-24 animate-pulse rounded bg-muted" />
+      ) : (
+        <p className="mt-2 text-xl font-bold tabular-nums text-foreground sm:text-2xl">
+          {value}
+        </p>
+      )}
     </div>
   );
 }

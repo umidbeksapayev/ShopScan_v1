@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Hash, Scale } from "lucide-react";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
 import { calculateProfit, cn, formatCurrency } from "@/lib/utils";
@@ -136,25 +137,25 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
             type="button"
             onClick={() => switchType("unit")}
             className={cn(
-              "rounded-md border py-2.5 text-sm font-medium transition-colors",
+              "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
               !isWeight
-                ? "border-blue-600 bg-blue-50 text-blue-700"
-                : "border-input bg-background text-gray-600"
+                ? "border-primary bg-accent text-primary"
+                : "border-input bg-background text-muted-foreground"
             )}
           >
-            🔢 DONALI (dona)
+            <Hash className="h-4 w-4" /> DONALI (dona)
           </button>
           <button
             type="button"
             onClick={() => switchType("weight")}
             className={cn(
-              "rounded-md border py-2.5 text-sm font-medium transition-colors",
+              "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
               isWeight
-                ? "border-blue-600 bg-blue-50 text-blue-700"
-                : "border-input bg-background text-gray-600"
+                ? "border-primary bg-accent text-primary"
+                : "border-input bg-background text-muted-foreground"
             )}
           >
-            ⚖️ VAZN (kg)
+            <Scale className="h-4 w-4" /> VAZN (kg)
           </button>
         </div>
       </div>

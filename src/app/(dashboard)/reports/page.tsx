@@ -56,8 +56,8 @@ export default function ReportsPage() {
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                 days === p.days
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? "bg-primary text-primary-foreground shadow-pop"
+                  : "text-muted-foreground hover:bg-accent"
               )}
             >
               {p.label}
@@ -72,7 +72,7 @@ export default function ReportsPage() {
           label={`Tushum (${days} kun)`}
           value={formatCurrency(totals.revenue)}
           icon={Wallet}
-          variant="blue"
+          variant="violet"
           loading={trendLoading}
         />
         <StatCard
@@ -86,7 +86,7 @@ export default function ReportsPage() {
           label={`Sotuvlar (${days} kun)`}
           value={`${totals.count} ta`}
           icon={ShoppingCart}
-          variant="purple"
+          variant="blue"
           loading={trendLoading}
         />
       </div>

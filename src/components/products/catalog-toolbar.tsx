@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, LayoutGrid, List } from "lucide-react";
+import { Search, LayoutGrid, List, Hash, Scale } from "lucide-react";
 import { useCatalogStore, type SortField, type SortDir } from "@/stores/catalog-store";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -46,8 +46,16 @@ export function CatalogToolbar() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Barcha turlar</SelectItem>
-            <SelectItem value="unit">🔢 Donali</SelectItem>
-            <SelectItem value="weight">⚖️ Vazn</SelectItem>
+            <SelectItem value="unit">
+              <span className="flex items-center gap-2">
+                <Hash className="h-3.5 w-3.5" /> Donali
+              </span>
+            </SelectItem>
+            <SelectItem value="weight">
+              <span className="flex items-center gap-2">
+                <Scale className="h-3.5 w-3.5" /> Vazn
+              </span>
+            </SelectItem>
           </SelectContent>
         </Select>
 

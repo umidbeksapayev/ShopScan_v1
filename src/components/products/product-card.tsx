@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { MoreVertical, Pencil, Archive } from "lucide-react";
+import { MoreVertical, Pencil, Archive, Hash, Scale } from "lucide-react";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -44,9 +44,10 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
         />
         <Badge
           variant={isWeight ? "secondary" : "outline"}
-          className="absolute left-2 top-2 bg-white/90"
+          className="absolute left-2 top-2 gap-1 bg-white/90"
         >
-          {isWeight ? "⚖️ kg" : "🔢 dona"}
+          {isWeight ? <Scale className="h-3 w-3" /> : <Hash className="h-3 w-3" />}
+          {isWeight ? "kg" : "dona"}
         </Badge>
 
         <DropdownMenu>

@@ -70,7 +70,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         type="button"
         onClick={handleScan}
         disabled={!cameraReady || scanning}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-3 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
       >
         {scanning ? (
           <>
