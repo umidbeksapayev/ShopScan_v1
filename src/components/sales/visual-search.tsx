@@ -57,7 +57,7 @@ export function VisualSearch({ onCapture, searching = false }: VisualSearchProps
         </div>
       </div>
 
-      <p className="text-center text-xs text-gray-500">
+      <p className="text-center text-xs text-muted-foreground">
         Mahsulotni ramka ichiga joylang va suratga oling
       </p>
 

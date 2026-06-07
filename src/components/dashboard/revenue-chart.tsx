@@ -48,14 +48,14 @@ function ChartTooltip({
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg border bg-white px-3 py-2 text-sm shadow-md">
-      <p className="mb-1 font-medium text-gray-900">{label}</p>
+      <p className="mb-1 font-medium text-foreground">{label}</p>
       {payload.map((item) => (
         <p key={item.dataKey} className="flex items-center gap-2 tabular-nums">
           <span
             className="inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: item.color }}
           />
-          <span className="text-gray-600">{item.name}:</span>
+          <span className="text-muted-foreground">{item.name}:</span>
           <span className="font-semibold">{formatCurrency(item.value ?? 0)}</span>
         </p>
       ))}

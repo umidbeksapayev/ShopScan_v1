@@ -16,7 +16,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-gray-400">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-muted-foreground">
         <ShoppingCart className="mb-2 h-10 w-10" />
         <p className="text-sm">Savat bo&apos;sh</p>
         <p className="text-xs">Skanerlab yoki qidirib mahsulot qo&apos;shing</p>
@@ -40,7 +40,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
 
           return (
             <div key={item.product.id} className="flex items-center gap-3 p-3">
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-gray-100">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
                 <Image
                   src={item.product.image_url}
                   alt={item.product.name}
@@ -51,7 +51,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-sm font-medium">{item.product.name}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {qtyText} × {formatCurrency(item.product.selling_price)}
                 </p>
               </div>
@@ -73,7 +73,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
 
       <div className="border-t p-4">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-gray-600">Jami:</span>
+          <span className="text-muted-foreground">Jami:</span>
           <span className="text-xl font-bold">{formatCurrency(totalRevenue())}</span>
         </div>
         <Button onClick={onCheckout} disabled={loading} className="w-full" size="lg">

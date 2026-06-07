@@ -53,7 +53,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Sozlamalar</h1>
+      <h1 className="text-2xl font-bold text-foreground">Sozlamalar</h1>
 
       <Card>
         <CardHeader>
@@ -94,14 +94,14 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             Eslatma: bu funksiya uchun <code>REPLICATE_API_TOKEN</code> sozlangan
             bo&apos;lishi kerak.
           </p>
         </CardContent>
       </Card>
 
-      <p className="py-4 text-center text-sm text-gray-400">
+      <p className="py-4 text-center text-sm text-muted-foreground">
         Qolgan do&apos;kon sozlamalari Sprint 6 da tayyor bo&apos;ladi
       </p>
     </div>

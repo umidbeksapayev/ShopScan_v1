@@ -221,7 +221,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="low">Kam qoldi ({unitLabel})</Label>
+          <Label htmlFor="low">Kam qoldi ogohlantirishi ({unitLabel})</Label>
           <Input
             id="low"
             type="number"
@@ -233,6 +233,10 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           />
         </div>
       </div>
+      <p className="-mt-2 text-xs text-muted-foreground">
+        Mahsulot shu miqdor yoki undan kam qolganda &laquo;kam qoldi&raquo; deb belgilanadi
+        va Dashboard&apos;da ogohlantiriladi.
+      </p>
 
       <div className="space-y-2">
         <Label htmlFor="barcode">Barcode (ixtiyoriy)</Label>

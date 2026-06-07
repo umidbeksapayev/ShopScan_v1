@@ -35,3 +35,7 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Playwright QA artifacts
+.playwright-mcp/
+*-mobile.png

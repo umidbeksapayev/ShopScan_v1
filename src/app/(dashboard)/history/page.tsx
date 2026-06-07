@@ -14,11 +14,11 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <h1 className="text-2xl font-bold text-gray-900">Sotuv tarixi</h1>
+        <h1 className="text-2xl font-bold text-foreground">Sotuv tarixi</h1>
         {sales && sales.length > 0 && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Oxirgi {sales.length} ta sotuv •{" "}
-            <span className="font-semibold tabular-nums text-gray-900">
+            <span className="font-semibold tabular-nums text-foreground">
               {formatCurrency(total)}
             </span>
           </p>

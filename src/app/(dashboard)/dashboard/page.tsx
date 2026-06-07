@@ -18,7 +18,7 @@ const RevenueChart = dynamic(
   () => import("@/components/dashboard/revenue-chart").then((m) => m.RevenueChart),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] animate-pulse rounded-lg bg-gray-100" />,
+    loading: () => <div className="h-[260px] animate-pulse rounded-lg bg-muted" />,
   }
 );
 
@@ -31,8 +31,8 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        {shop && <p className="text-sm text-gray-500">{shop.name}</p>}
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        {shop && <p className="text-sm text-muted-foreground">{shop.name}</p>}
       </div>
 
       {/* Statistika kartlari */}
@@ -75,7 +75,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             {trendLoading ? (
-              <div className="h-[260px] animate-pulse rounded-lg bg-gray-100" />
+              <div className="h-[260px] animate-pulse rounded-lg bg-muted" />
             ) : (
               <RevenueChart data={trend ?? []} />
             )}

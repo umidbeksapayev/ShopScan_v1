@@ -18,7 +18,7 @@ import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 
 // Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
 const cameraLoading = () => (
-  <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-400">
+  <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
     Kamera yuklanmoqda...
   </div>
 );
@@ -139,7 +139,7 @@ export default function SellPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Sotuv</h1>
+      <h1 className="text-2xl font-bold text-foreground">Sotuv</h1>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Chap: topish */}
@@ -168,7 +168,7 @@ export default function SellPage() {
             <TabsContent value="manual">
               <form onSubmit={handleManualSearch} className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -204,7 +204,7 @@ export default function SellPage() {
           <DialogHeader>
             <DialogTitle>Sotuvni tasdiqlang</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {items.length} ta mahsulot, jami{" "}
             <span className="font-semibold">{totalRevenue().toLocaleString("uz-UZ")} so&apos;m</span>.
             Davom etamizmi?

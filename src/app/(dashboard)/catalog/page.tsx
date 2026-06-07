@@ -55,7 +55,7 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Mahsulotlar</h1>
+        <h1 className="text-2xl font-bold text-foreground">Mahsulotlar</h1>
         <Button onClick={openAdd} disabled={!shop}>
           <Plus className="mr-1 h-4 w-4" /> Qo&apos;shish
         </Button>
@@ -71,7 +71,7 @@ export default function CatalogPage() {
         </div>
       ) : !products || products.length === 0 ? (
         <div className="rounded-xl border border-dashed py-16 text-center">
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             {search ? "Hech narsa topilmadi" : "Hali mahsulot yo'q"}
           </p>
           {!search && (

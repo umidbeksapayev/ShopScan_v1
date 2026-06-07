@@ -24,7 +24,9 @@ function stockState(p: Product): { label: string; variant: "success" | "warning"
   const qtyText = isWeight ? formatWeight(p.quantity) : `${p.quantity} dona`;
 
   if (p.quantity <= 0) return { label: "Tugadi", variant: "destructive" };
-  if (p.quantity < p.low_stock_alert) return { label: `${qtyText} (kam!)`, variant: "warning" };
+  // Ogohlantirish chegarasi: miqdor chegaraga yetganda yoki undan kam bo'lganda (<=)
+  // — Dashboard va kam-qoldiq ro'yxati bilan bir xil mantiq.
+  if (p.quantity <= p.low_stock_alert) return { label: `${qtyText} (kam!)`, variant: "warning" };
   return { label: qtyText, variant: "success" };
 }
 
@@ -34,7 +36,7 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
 
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-white shadow-sm transition-shadow hover:shadow-md">
-      <div className="relative aspect-square w-full bg-gray-100">
+      <div className="relative aspect-square w-full bg-muted">
         <Image
           src={product.image_url}
           alt={product.name}
@@ -53,7 +55,7 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 text-gray-700 shadow hover:bg-white"
+              className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 text-foreground shadow hover:bg-white"
               aria-label="Amallar"
             >
               <MoreVertical className="h-4 w-4" />
@@ -74,10 +76,10 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
       </div>
 
       <div className="space-y-1.5 p-3">
-        <h3 className="line-clamp-1 font-medium text-gray-900">{product.name}</h3>
-        <p className="text-lg font-bold text-gray-900">
+        <h3 className="line-clamp-1 font-medium text-foreground">{product.name}</h3>
+        <p className="text-lg font-bold text-foreground">
           {formatCurrency(product.selling_price)}
-          <span className="text-xs font-normal text-gray-500">
+          <span className="text-xs font-normal text-muted-foreground">
             {" "}
             / {isWeight ? "kg" : "dona"}
           </span>

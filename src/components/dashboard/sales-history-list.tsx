@@ -13,7 +13,7 @@ interface SalesHistoryListProps {
 const methodMeta: Record<SearchMethod, { label: string; icon: typeof Barcode; cls: string }> = {
   barcode: { label: "Barcode", icon: Barcode, cls: "bg-blue-100 text-blue-700" },
   visual: { label: "Vizual", icon: Sparkles, cls: "bg-purple-100 text-purple-700" },
-  manual: { label: "Qo'lda", icon: Search, cls: "bg-gray-100 text-gray-600" },
+  manual: { label: "Qo'lda", icon: Search, cls: "bg-muted text-muted-foreground" },
 };
 
 /** "2026-06-07T09:18:33Z" → "07.06 14:18" (Asia/Tashkent) */
@@ -33,7 +33,7 @@ export function SalesHistoryList({ sales, loading }: SalesHistoryListProps) {
     return (
       <div className="space-y-2">
         {[0, 1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-16 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     );
@@ -43,8 +43,8 @@ export function SalesHistoryList({ sales, loading }: SalesHistoryListProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
         <Receipt className="h-10 w-10 text-gray-300" />
-        <p className="text-sm text-gray-500">Hali sotuvlar yo&apos;q</p>
-        <p className="text-xs text-gray-400">Sotuv ekranidan birinchi sotuvni amalga oshiring</p>
+        <p className="text-sm text-muted-foreground">Hali sotuvlar yo&apos;q</p>
+        <p className="text-xs text-muted-foreground">Sotuv ekranidan birinchi sotuvni amalga oshiring</p>
       </div>
     );
   }
@@ -63,7 +63,7 @@ export function SalesHistoryList({ sales, loading }: SalesHistoryListProps) {
             key={s.id}
             className="flex items-center gap-3 rounded-lg border p-2.5"
           >
-            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-gray-100">
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md bg-muted">
               {s.product?.image_url ? (
                 <Image
                   src={s.product.image_url}
@@ -78,7 +78,7 @@ export function SalesHistoryList({ sales, loading }: SalesHistoryListProps) {
               <p className="line-clamp-1 text-sm font-medium">
                 {s.product?.name ?? "Mahsulot"}
               </p>
-              <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+              <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="tabular-nums">{qtyLabel}</span>
                 <span>•</span>
                 <span className="tabular-nums">{formatTime(s.sold_at)}</span>
