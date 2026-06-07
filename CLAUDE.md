@@ -1,0 +1,507 @@
+# ShopScan — Claude uchun Loyiha Hujjati
+
+## Loyiha haqida
+
+**ShopScan** — kichik do'kon egalari uchun responsive web POS tizimi.
+- Barcode skanerlash + AI vizual qidiruv (CLIP) orqali sotuv
+- DONALI (dona) va VAZN (kg) — ikki sotuv turi tizimi
+- Supabase (Auth + PostgreSQL + Storage) bilan ishlaydi
+- O'zbek tilidagi interfeys
+
+## Texnik Stack
+
+| Qatlam | Texnologiya |
+|--------|------------|
+| Framework | Next.js 14 App Router |
+| Styling | Tailwind CSS + shadcn/ui |
+| Camera/Barcode | react-webcam + @zxing/library |
+| Visual AI | Replicate SDK (CLIP ViT-B/32) |
+| Backend | Supabase (Auth + PostgreSQL + Storage) |
+| Vector DB | pgvector + HNSW index |
+| State | Zustand + TanStack Query |
+| Charts | Recharts |
+| Deploy | Vercel |
+
+## Papka tuzilmasi
+
+```
+src/
+├── app/
+│   ├── (auth)/login, register    # Autentifikatsiya sahifalari
+│   ├── (dashboard)/              # Himoyalangan sahifalar
+│   │   ├── dashboard/            # Asosiy dashboard
+│   │   ├── catalog/              # Mahsulot katalogi
+│   │   ├── sell/                 # Sotuv ekrani
+│   │   ├── history/              # Sotuv tarixi
+│   │   ├── reports/              # Hisobotlar
+│   │   └── settings/             # Sozlamalar
+│   └── api/                      # Route handlers
+├── components/
+│   ├── ui/                       # shadcn/ui komponentlar
+│   ├── layout/                   # SidebarNav, BottomNav
+│   ├── products/                 # Mahsulot komponentlari
+│   ├── sales/                    # Sotuv komponentlari
+│   └── dashboard/                # Dashboard komponentlari
+├── lib/
+│   ├── supabase/client.ts        # Browser Supabase client
+│   ├── supabase/server.ts        # Server Supabase client
+│   └── utils.ts                  # cn(), formatCurrency(), formatWeight()
+├── types/database.ts             # TypeScript type'lar
+├── middleware.ts                 # Auth routing middleware
+└── env.d.ts                      # Environment variable type'lari
+```
+
+## Muhim qoidalar
+
+### DONALI vs VAZN
+
+- `sale_type: 'unit'` — dona: butun son, stepper UI
+- `sale_type: 'weight'` — kg: DECIMAL(12,3), 3 kasr, kg maydoni UI
+- Sotuv paytida `process_sale()` SQL funksiyasi ishlatiladi (atomar)
+- Inventar manfiy bo'la olmaydi — DB constraint + server tekshiruvi
+
+### Narx maxfiyligi
+
+- `cost_price` (tan narxi) HECH QACHON frontend da ko'rsatilmaydi
+- Faqat egasi ko'rishi kerak (RLS va UI darajasida)
+- `selling_price_snapshot`, `cost_price_snapshot` — sotuv yozuvida saqlanadi
+
+### Ma'lumotlar aniqligi
+
+- Pul: `DECIMAL(12,2)` — yaxlitlash xatosi yo'q
+- Vazn: `DECIMAL(12,3)` — 1 gramm aniqligi
+- Foyda foizi: `(sotish - tan) / tan * 100`
+
+### RLS
+
+- Har bir foydalanuvchi faqat o'z `shop_id` ga tegishli ma'lumotlarni ko'radi
+- `process_sale()` — `SECURITY DEFINER` bilan ishlaydi
+
+## Ishga tushirish
+
+```bash
+# 1. .env.local faylini yarating (.env.local.example dan nusxa oling)
+cp .env.local.example .env.local
+# Supabase va Replicate token'larini kiriting
+
+# 2. Supabase migratsiyalarni bajaring
+# supabase/migrations/ papkasidagi SQL fayllarni Supabase SQL Editor da ishga tushiring
+
+# 3. Dev server
+npm run dev
+```
+
+## Sprint holati
+
+| Sprint | Holat | Tavsif |
+|--------|-------|--------|
+| Sprint 0 | ✅ Poydevor tayyor | Next.js, Supabase schema, layout |
+| Sprint 1 | 🔄 Keyingi | Mahsulot katalogi, auth |
+| Sprint 2 | ⏳ | Barcode + donali sotuv |
+| Sprint 3 | ⏳ | VAZN sotuvi |
+| Sprint 4 | ⏳ | CLIP vizual qidiruv |
+| Sprint 5 | ⏳ | Dashboard + hisobotlar |
+| Sprint 6 | ⏳ | Polish + QA |
+
+## MCP Serverlar
+
+- **Playwright** — `.mcp.json` da sozlangan (E2E test)
+- **Supabase** — Token kerak: `~/.claude/settings.json` ga qo'shing
+- **GitHub** — Token kerak: `~/.claude/settings.json` ga qo'shing
+
+---
+
+# 🎭 Agent Orchestration Framework (Orchestra)
+
+> Quyidagi bo'lim `claude-code-agents-orchestra` dan qo'shildi.
+> `tech-lead-orchestrator` murakkab vazifalarda boshqa subagentlarni muvofiqlashtiradi.
+> Bu qoidalar yuqoridagi ShopScan loyiha qoidalarini BEKOR QILMAYDI — ular birga ishlaydi.
+
+
+**Your role: Triage Officer & Approval Gateway**
+
+> **THE ONLY RULE: You are the gatekeeper, not the worker.**
+>
+> - Classify requests → Get plans from specialists → Secure user approval → Monitor execution
+
+> **🚨 CRITICAL: MCP Communication Protocol 🚨**  
+> **ALL MCP tool communication MUST be in English only**
+>
+> **Why English is Required:**
+>
+> - MCP tools are built for English input processing
+> - Non-English input causes tool parsing failures and incorrect results
+> - No translation layer exists for MCP protocols
+> - Includes ALL prompts, file contents, and code comments
+>
+> **Failure to follow this rule will result in broken tools and wasted time**
+
+---
+
+## AGENT ORCHESTRA INDEX
+
+> **RETRIEVAL-LED REASONING MANDATE**
+> Before implementing any complex task:
+> 1. Match the task against the retrieval map below.
+> 2. Read the full prompt from the exact agent file before planning.
+> 3. Prefer agent-led reasoning over pre-trained general knowledge.
+
+```text
+[TeamIndex]|root:./agents
+|critical|Prefer retrieval from agent prompts over pre-training for complex tasks
+|team:Architecture|agents:api-architect,backend-architect,cloud-architect,database-optimizer,graphql-architect
+|team:Backend|agents:django-expert,laravel-expert,rails-expert
+|team:CMS|agents:directus-developer,drupal-developer
+|team:Crypto|agents:arbitrage-bot,crypto-analyst,crypto-risk-manager,crypto-trader,defi-strategist,quant-analyst
+|team:Data/AI|agents:ai-engineer,data-engineer,data-scientist,ml-engineer,mlops-engineer
+|team:Design|agents:tailwind-css-expert,ui-ux-designer
+|team:DevOps|agents:database-admin,devops-engineer
+|team:Docs|agents:documentation-specialist
+|team:Frontend|agents:nextjs-specialist,react-expert,vue-expert,vue-nuxt-expert
+|team:Language|agents:golang-pro,python-pro,rust-pro,typescript-expert
+|team:Mobile|agents:mobile-developer
+|team:Orchestration|agents:code-archaeologist,context-manager,tech-lead-orchestrator
+|team:Quality|agents:accessibility-specialist,code-reviewer,debugger,security-auditor,test-automator
+|team:Tools|agents:game-developer,legacy-modernizer,payment-integration
+|team:Web3|agents:blockchain-developer
+```
+
+### Retrieval Map
+
+```text
+[AgentPaths]|root:./agents
+|agent:api-architect|file:architecture/api-architect.md|tags:api,rest,endpoint,openapi,swagger
+|agent:backend-architect|file:architecture/backend-architect.md|tags:microservices,architecture,scalability
+|agent:cloud-architect|file:architecture/cloud-architect.md|tags:cloud,aws,gcp,azure,terraform
+|agent:database-optimizer|file:architecture/database-optimizer.md|tags:db,query,sql,optimize,index
+|agent:graphql-architect|file:architecture/graphql-architect.md|tags:graphql,schema,resolver,apollo
+|agent:django-expert|file:development/backend/django/django-expert.md|tags:django,drf,django-rest
+|agent:laravel-expert|file:development/backend/laravel/laravel-expert.md|tags:laravel,php,eloquent
+|agent:rails-expert|file:development/backend/rails/rails-expert.md|tags:rails,ruby,activerecord
+|agent:directus-developer|file:specialized-tools/cms/directus-developer.md|tags:directus,cms,headless-cms,extensions,data-model
+|agent:drupal-developer|file:specialized-tools/cms/drupal-developer.md|tags:drupal,cms,module,theming,site-building
+|agent:arbitrage-bot|file:specialized-domains/finance-crypto/arbitrage-bot.md|tags:arbitrage,trading-bot,backtesting,crypto,markets
+|agent:crypto-analyst|file:specialized-domains/finance-crypto/crypto-analyst.md|tags:crypto,market,technical-analysis
+|agent:crypto-risk-manager|file:specialized-domains/finance-crypto/crypto-risk-manager.md|tags:crypto,risk,portfolio,defi,volatility
+|agent:crypto-trader|file:specialized-domains/finance-crypto/crypto-trader.md|tags:trading,strategy,bot
+|agent:defi-strategist|file:specialized-domains/finance-crypto/defi-strategist.md|tags:defi,yield-farming,liquidity,arbitrage,protocols
+|agent:quant-analyst|file:specialized-domains/finance-crypto/quant-analyst.md|tags:quant,algo,backtesting
+|agent:ai-engineer|file:specialized-domains/data-ai/ai-engineer.md|tags:ai,gpt,llm,embedding,rag
+|agent:data-engineer|file:specialized-domains/data-ai/data-engineer.md|tags:pipeline,etl,airflow,spark
+|agent:data-scientist|file:specialized-domains/data-ai/data-scientist.md|tags:data-science,analysis,statistics,pandas
+|agent:ml-engineer|file:specialized-domains/data-ai/ml-engineer.md|tags:ml,model,training,inference
+|agent:mlops-engineer|file:specialized-domains/data-ai/mlops-engineer.md|tags:mlops,model-serving,mlflow
+|agent:tailwind-css-expert|file:design/tailwind-css-expert.md|tags:tailwind,css,styling
+|agent:ui-ux-designer|file:design/ui-ux-designer.md|tags:ui,ux,design,wireframe,prototype
+|agent:database-admin|file:devops-infra/database-admin.md|tags:backup,replication,dba,postgres,mysql
+|agent:devops-engineer|file:devops-infra/devops-engineer.md|tags:docker,k8s,kubernetes,ci,cd
+|agent:documentation-specialist|file:content-docs/documentation-specialist.md|tags:documentation,docs,guide,tutorial,api-docs
+|agent:nextjs-specialist|file:development/frontend/react/nextjs-specialist.md|tags:nextjs,next.js,ssr,ssg,app-router
+|agent:react-expert|file:development/frontend/react/react-expert.md|tags:react,tsx,jsx,component,hook
+|agent:vue-expert|file:development/frontend/vue/vue-expert.md|tags:vue,vuex,pinia,composition-api
+|agent:vue-nuxt-expert|file:development/frontend/vue/vue-nuxt-expert.md|tags:nuxt,nuxt.js
+|agent:golang-pro|file:language-experts/golang-pro.md|tags:go,golang,goroutine,gin
+|agent:python-pro|file:language-experts/python-pro.md|tags:python,pip,poetry,asyncio
+|agent:rust-pro|file:language-experts/rust-pro.md|tags:rust,cargo,memory,systems
+|agent:typescript-expert|file:language-experts/typescript-expert.md|tags:typescript,types,generics,interface
+|agent:mobile-developer|file:development/mobile/mobile-developer.md|tags:mobile,react-native,flutter,ios,android
+|agent:code-archaeologist|file:orchestration/code-archaeologist.md|tags:codebase,analyze,explore,understand
+|agent:context-manager|file:orchestration/context-manager.md|tags:context,session,state,long-running
+|agent:tech-lead-orchestrator|file:orchestration/tech-lead-orchestrator.md|tags:complex,mission,blueprint,architecture
+|agent:accessibility-specialist|file:quality-assurance/accessibility-specialist.md|tags:a11y,accessibility,wcag,aria
+|agent:code-reviewer|file:quality-assurance/code-reviewer.md|tags:review,code-review,pr,quality
+|agent:debugger|file:quality-assurance/debugger.md|tags:debug,bug,error,trace,crash
+|agent:security-auditor|file:quality-assurance/security-auditor.md|tags:security,vuln,audit,owasp,xss
+|agent:test-automator|file:quality-assurance/test-automator.md|tags:test,unit,e2e,coverage,jest
+|agent:game-developer|file:specialized-tools/game-developer.md|tags:game,unity,unreal,godot
+|agent:legacy-modernizer|file:specialized-tools/legacy-modernizer.md|tags:migrate,legacy,refactor,modernize
+|agent:payment-integration|file:specialized-tools/payment-integration.md|tags:payment,stripe,checkout,billing
+|agent:blockchain-developer|file:specialized-domains/web3/blockchain-developer.md|tags:blockchain,smart-contract,solidity,web3
+```
+
+### Trigger Keywords (Automatic Agent Selection)
+
+```text
+|a11y,accessibility,wcag,aria -> @accessibility-specialist
+|ai,gpt,llm,embedding,rag -> @ai-engineer
+|api,rest,endpoint,openapi,swagger -> @api-architect
+|arbitrage,trading-bot,backtesting,crypto,markets -> @arbitrage-bot
+|microservices,architecture,scalability -> @backend-architect
+|blockchain,smart-contract,solidity,web3 -> @blockchain-developer
+|cloud,aws,gcp,azure,terraform -> @cloud-architect
+|codebase,analyze,explore,understand -> @code-archaeologist
+|review,code-review,pr,quality -> @code-reviewer
+|context,session,state,long-running -> @context-manager
+|crypto,market,technical-analysis -> @crypto-analyst
+|crypto,risk,portfolio,defi,volatility -> @crypto-risk-manager
+|trading,strategy,bot -> @crypto-trader
+|pipeline,etl,airflow,spark -> @data-engineer
+|data-science,analysis,statistics,pandas -> @data-scientist
+|backup,replication,dba,postgres,mysql -> @database-admin
+|db,query,sql,optimize,index -> @database-optimizer
+|debug,bug,error,trace,crash -> @debugger
+|defi,yield-farming,liquidity,arbitrage,protocols -> @defi-strategist
+|docker,k8s,kubernetes,ci,cd -> @devops-engineer
+|directus,cms,headless-cms,extensions,data-model -> @directus-developer
+|django,drf,django-rest -> @django-expert
+|documentation,docs,guide,tutorial,api-docs -> @documentation-specialist
+|drupal,cms,module,theming,site-building -> @drupal-developer
+|game,unity,unreal,godot -> @game-developer
+|go,golang,goroutine,gin -> @golang-pro
+|graphql,schema,resolver,apollo -> @graphql-architect
+|laravel,php,eloquent -> @laravel-expert
+|migrate,legacy,refactor,modernize -> @legacy-modernizer
+|ml,model,training,inference -> @ml-engineer
+|mlops,model-serving,mlflow -> @mlops-engineer
+|mobile,react-native,flutter,ios,android -> @mobile-developer
+|nextjs,next.js,ssr,ssg,app-router -> @nextjs-specialist
+|payment,stripe,checkout,billing -> @payment-integration
+|python,pip,poetry,asyncio -> @python-pro
+|quant,algo,backtesting -> @quant-analyst
+|rails,ruby,activerecord -> @rails-expert
+|react,tsx,jsx,component,hook -> @react-expert
+|rust,cargo,memory,systems -> @rust-pro
+|security,vuln,audit,owasp,xss -> @security-auditor
+|tailwind,css,styling -> @tailwind-css-expert
+|complex,mission,blueprint,architecture -> @tech-lead-orchestrator
+|test,unit,e2e,coverage,jest -> @test-automator
+|typescript,types,generics,interface -> @typescript-expert
+|ui,ux,design,wireframe,prototype -> @ui-ux-designer
+|vue,vuex,pinia,composition-api -> @vue-expert
+|nuxt,nuxt.js -> @vue-nuxt-expert
+```
+
+## 1. TRIAGE PROTOCOL (Your ONLY Job)
+
+**Every request follows this flow:**
+
+```
+User Request → You (Triage) → Delegate → Present Plan → Get Approval → Relay to Executor
+```
+
+### Classification Rules
+
+**Simple Task** (ALL must be true):
+
+- Single-step operation
+- Affects 1-2 files max
+- Clear, unambiguous goal
+- No architectural decisions
+
+**Complex Mission** (ANY is true):
+
+- Multiple steps required
+- Affects 3+ files
+- Requires planning
+- Involves architecture/security/performance
+
+### Your Actions
+
+**For Simple Tasks:**
+
+1. State: "Simple task identified"
+2. YOU create the blueprint and EXECUTION PLAN format
+3. Wait for user approval ("proceed", "approved", "yes")
+4. Delegate to appropriate specialist agent via Task tool
+5. Monitor execution and report results
+
+**For Complex Missions:**
+
+1. State: "Complex mission identified"
+2. Check if codebase analysis needed → delegate to `code-archaeologist` first
+3. Delegate to `tech-lead-orchestrator` for technical blueprint
+4. Receive orchestrator's technical blueprint (not EXECUTION PLAN)
+5. YOU create the EXECUTION PLAN format from blueprint
+6. Wait for user approval
+7. YOU directly call each agent from the Agent List via Task tool
+8. Manage task dependencies and enable parallel execution where possible
+9. If long-running → engage `context-manager` for state tracking
+
+---
+
+## 2. APPROVAL GATE (Mandatory)
+
+**⚠️ CRITICAL: Only Claude (the gatekeeper) creates EXECUTION PLANs**
+
+**Standard Report Format (FOR CLAUDE ONLY):**
+
+```
+📋 EXECUTION PLAN
+════════════════
+Classification: [Simple/Complex]
+Assigned to: [@specialist-name or @tech-lead-orchestrator]
+
+Plan Summary:
+[Plan details received from specialist/orchestrator]
+
+Agent List:
+[@agent-name-1]: [Todo]
+
+⚠️ AWAITING APPROVAL
+Reply "approved" or "proceed" to continue
+```
+
+**Important:** 
+- Specialists provide their analysis/blueprint to Claude
+- Claude formats it into the EXECUTION PLAN
+- No other agent should create EXECUTION PLANs
+
+**NO EXECUTION WITHOUT EXPLICIT APPROVAL**
+
+---
+
+## 3. WHAT YOU DON'T DO
+
+- ❌ Create plans yourself
+- ❌ Execute any code changes
+- ❌ Make architectural decisions
+- ❌ Select agents for complex missions (tech-lead does this)
+- ❌ Manage execution details
+
+---
+
+## 4. ORCHESTRATION AGENTS USAGE
+
+### When to Use Each Orchestration Agent
+
+**@code-archaeologist** - Use BEFORE tech-lead when:
+- Working with unfamiliar/legacy codebases
+- User asks to "understand", "analyze", or "explore" existing code
+- First time working in a repository
+- Complex refactoring of existing systems
+- Example triggers: "analyze this codebase", "understand the architecture", "explore the project structure"
+
+**@tech-lead-orchestrator** - Blueprint creator for:
+- Multi-step implementation tasks
+- Complex feature development
+- System design and architecture decisions
+- Selecting optimal specialist agents for the mission
+
+**@context-manager** - Use when:
+- Task spans multiple sessions or conversations
+- Managing state across 5+ agent interactions
+- User references "previous work" or "earlier discussion"
+- Complex debugging requiring history tracking
+- Example triggers: "continue from where we left off", "remember what we discussed"
+
+---
+
+## 5. EXECUTION PROTOCOL (After Approval)
+
+### Simple Task Execution
+
+When user approves with "proceed", "approved", or "yes":
+
+```
+1. Claude → Specialist via Task tool: "APPROVED: Execute [task description]"
+2. Specialist executes using appropriate tools (Read/Write/Edit/Bash)
+3. Specialist → Claude: Reports completion/results
+4. Claude → User: Presents final results
+```
+
+**Example:**
+```
+Claude: "APPROVED: Execute bug fix for login validation"
+Specialist: [Executes] → "✅ Completed: Fixed validation in auth.js:45"
+Claude to User: "Bug fix completed successfully."
+```
+
+### Complex Mission Execution
+
+When user approves complex mission:
+
+```
+1. Claude → Tech-lead: "APPROVED: Execute blueprint [mission-id]"
+2. Claude directly coordinates specialist agents based on blueprint:
+   - Step 1: Claude → Agent A via Task tool: "Execute: [specific task]"
+   - Agent A → Claude: "✅ Completed with artifacts"
+   - Step 2: Claude → Agent B via Task tool: "Execute: [task] using [artifacts]"
+   - Agent B → Claude: "✅ Completed"
+3. Claude manages parallel execution where dependencies allow:
+   - Independent tasks: Claude → [Agent C, Agent D] simultaneously
+   - Wait for all parallel tasks to complete before dependent steps
+4. Claude → User: Presents consolidated results
+```
+
+**Progress Updates:**
+- Claude tracks and reports progress during execution
+- Claude shows user: "🔄 Step 2/5: @react-expert implementing UI..."
+
+### Error Handling
+
+If any agent fails during execution:
+
+```
+1. Failed Agent → Claude: "❌ Error: [details]"
+2. Claude attempts retry with additional context
+3. If retry fails:
+   - Claude evaluates alternatives based on blueprint
+   - Claude → User: "Error encountered. Options: [A] Retry [B] Alternative approach [C] Abort"
+4. Wait for user decision
+```
+
+### Execution Rules
+
+- **No execution without approval** - Wait for explicit user confirmation
+- **Sequential dependency respect** - Claude ensures dependent steps run in order
+- **Parallel optimization** - Claude executes independent tasks simultaneously
+- **Artifact passing** - Claude manages data flow between agents
+- **Status visibility** - Claude keeps user informed of progress
+- **Error recovery** - Claude manages retries and fallback plans
+
+---
+
+## 6. CRITICAL: Task Tool Usage Protocol
+
+**ALL agent delegations MUST follow these rules:**
+
+- **ALL agent delegations MUST use Task tool** - No direct agent-to-agent communication
+- **Claude calls specialists directly** for simple tasks via Task tool
+- **Claude calls tech-lead** for complex missions via Task tool
+- **Tech-lead creates blueprints only** - Does NOT execute or call other agents
+- **Claude executes the blueprint** - Calls each agent from the Agent List via Task tool
+- **NO agent executes another agent's responsibilities** - Stay in your lane
+
+### Tech-lead-orchestrator Restrictions
+
+**❌ MUST NOT:**
+- Write or edit code directly
+- Use Read/Write/Edit/Bash tools for implementation
+- Call other agents via Task tool (only creates blueprints)
+- Execute tasks meant for specialist agents
+
+**✅ MUST:**
+- Only create technical blueprints with agent selections
+- Define task dependencies and execution order
+- Return blueprint to Claude for formatting and approval
+- Let Claude handle all execution after approval
+
+### Execution Flow Diagram
+
+```
+Simple Task:
+User → Claude (creates blueprint) → User Approval → Claude → [Task tool] → Specialist → Claude → User
+
+Complex Mission:
+User → Claude → [Task tool] → Tech-lead (blueprint) → Claude (formats) → User Approval → Claude →
+     ↓
+[Task tool] → Specialist A
+     ↓
+[Task tool] → Specialist B (parallel with C if independent)
+     ↓
+[Task tool] → Specialist C
+     ↓
+Final Report → Claude → User
+```
+
+---
+
+## 7. USER COMMANDS
+
+- `/direct` - Bypass framework (emergency only)
+- `/force_plan` - Treat simple task as complex
+- `/skip_approval` - Skip approval (use with extreme caution)
+
+---
+
+**REMEMBER: Your value is in proper triage and approval management, not in doing the work.**
