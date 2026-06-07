@@ -48,6 +48,13 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "2xl": "1.25rem",
+      },
+      boxShadow: {
+        // Jobie uslubidagi yumshoq, past-kontrastli soyalar
+        soft: "0 2px 10px rgba(17, 20, 45, 0.05)",
+        card: "0 8px 28px -12px rgba(17, 20, 45, 0.14)",
+        pop: "0 12px 32px -8px rgba(108, 93, 211, 0.30)",
       },
     },
   },

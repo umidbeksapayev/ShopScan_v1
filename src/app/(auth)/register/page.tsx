@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ScanLine } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -56,11 +57,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-card">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">ShopScan</h1>
-          <p className="mt-2 text-sm text-gray-600">Yangi do&apos;kon hisobini yarating</p>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-pop">
+            <ScanLine className="h-7 w-7" />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">ShopScan</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Yangi do&apos;kon hisobini yarating</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -107,9 +111,9 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-muted-foreground">
           Hisobingiz bormi?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:underline">
+          <Link href="/login" className="font-medium text-primary hover:underline">
             Kirish
           </Link>
         </p>

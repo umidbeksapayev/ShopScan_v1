@@ -49,7 +49,7 @@ export function TopProducts({ products, loading }: TopProductsProps) {
               <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
               <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
                 <div
-                  className="h-full rounded-full bg-blue-500"
+                  className="h-full rounded-full bg-primary"
                   style={{ width: `${(p.revenue / max) * 100}%` }}
                 />
               </div>

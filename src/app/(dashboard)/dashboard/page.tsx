@@ -41,7 +41,7 @@ export default function DashboardPage() {
           label="Bugungi tushum"
           value={formatCurrency(stats?.today_revenue ?? 0)}
           icon={Wallet}
-          variant="blue"
+          variant="violet"
           loading={statsLoading}
         />
         <StatCard
@@ -55,14 +55,14 @@ export default function DashboardPage() {
           label="Sotuvlar soni"
           value={`${stats?.today_sales_count ?? 0}`}
           icon={ShoppingCart}
-          variant="purple"
+          variant="blue"
           loading={statsLoading}
         />
         <StatCard
           label="Kam qoldi"
           value={`${stats?.low_stock_count ?? 0} ta`}
           icon={AlertTriangle}
-          variant="orange"
+          variant="amber"
           loading={statsLoading}
         />
       </div>

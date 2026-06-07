@@ -71,12 +71,12 @@ export function RevenueChart({ data }: RevenueChartProps) {
       <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
         <defs>
           <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.25} />
-            <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+            <stop offset="5%" stopColor="#6C5DD3" stopOpacity={0.28} />
+            <stop offset="95%" stopColor="#6C5DD3" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="profitGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#16a34a" stopOpacity={0.25} />
-            <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
+            <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
@@ -98,16 +98,16 @@ export function RevenueChart({ data }: RevenueChartProps) {
           type="monotone"
           dataKey="revenue"
           name="Tushum"
-          stroke="#2563eb"
-          strokeWidth={2}
+          stroke="#6C5DD3"
+          strokeWidth={2.5}
           fill="url(#revGrad)"
         />
         <Area
           type="monotone"
           dataKey="profit"
           name="Foyda"
-          stroke="#16a34a"
-          strokeWidth={2}
+          stroke="#10b981"
+          strokeWidth={2.5}
           fill="url(#profitGrad)"
         />
       </AreaChart>
