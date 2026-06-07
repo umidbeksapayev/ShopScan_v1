@@ -117,6 +117,23 @@ export function AddToCartDialog({
                 max={selected.quantity}
                 onChange={setQty}
               />
+
+              {/* VAZN uchun tezkor preset tugmalari */}
+              {selected.sale_type === "weight" && (
+                <div className="grid grid-cols-4 gap-2">
+                  {[0.25, 0.5, 1, 2].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      disabled={preset > selected.quantity}
+                      onClick={() => setQty(preset)}
+                      className="rounded-md border py-1.5 text-sm font-medium hover:bg-accent disabled:opacity-40"
+                    >
+                      {preset} kg
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
