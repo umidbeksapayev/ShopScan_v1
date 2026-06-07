@@ -1,10 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Hash, Scale } from "lucide-react";
+import { Hash, Scale, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
-import { calculateProfit, cn, formatCurrency } from "@/lib/utils";
+import {
+  calculateProfit,
+  cn,
+  formatCurrency,
+  formatWeight,
+  computeLowStockThreshold,
+  LOW_STOCK_RATIO,
+} from "@/lib/utils";
 import { uploadProductImage } from "@/lib/storage";
 import { useCreateProduct, useUpdateProduct } from "@/hooks/use-products";
 import { ImageUploader } from "@/components/products/image-uploader";
@@ -31,9 +38,6 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
     product?.selling_price?.toString() ?? ""
   );
   const [quantity, setQuantity] = useState(product?.quantity?.toString() ?? "");
-  const [lowStock, setLowStock] = useState(
-    product?.low_stock_alert?.toString() ?? (product?.sale_type === "weight" ? "1" : "5")
-  );
   const [barcode, setBarcode] = useState(product?.barcode ?? "");
   const [submitting, setSubmitting] = useState(false);
 
@@ -43,10 +47,15 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const selling = parseFloat(sellingPrice) || 0;
   const { profit, profitPercent } = calculateProfit(selling, cost);
 
+  // Ogohlantirish chegarasi kiritilgan miqdordan avtomatik (20%) hisoblanadi
+  const qtyNum = parseFloat(quantity) || 0;
+  const lowStockAlert = computeLowStockThreshold(qtyNum, saleType);
+  const thresholdLabel = isWeight
+    ? formatWeight(lowStockAlert)
+    : `${lowStockAlert} dona`;
+
   function switchType(t: SaleType) {
     setSaleType(t);
-    // ogohlantirish chegarasini turga moslab default qo'yish
-    setLowStock(t === "weight" ? "1" : "5");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -73,7 +82,8 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         cost_price: cost,
         selling_price: selling,
         quantity: qty,
-        low_stock_alert: parseFloat(lowStock) || 0,
+        // Avtomatik: kiritilgan miqdorning 20% (sotuv jarayoni buni o'zgartirmaydi)
+        low_stock_alert: computeLowStockThreshold(qty, saleType),
         barcode: barcode.trim() || null,
         image_url: imageUrl,
       };
@@ -205,33 +215,34 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         </div>
       )}
 
-      {/* Miqdor + ogohlantirish */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="qty">Miqdor ({unitLabel})</Label>
-          <Input
-            id="qty"
-            type="number"
-            inputMode="decimal"
-            min="0"
-            step={isWeight ? "0.001" : "1"}
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            placeholder={isWeight ? "0.000" : "0"}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="low">Kam qoldi ({unitLabel})</Label>
-          <Input
-            id="low"
-            type="number"
-            inputMode="decimal"
-            min="0"
-            step={isWeight ? "0.001" : "1"}
-            value={lowStock}
-            onChange={(e) => setLowStock(e.target.value)}
-          />
-        </div>
+      {/* Miqdor — ogohlantirish chegarasi avtomatik (20%) */}
+      <div className="space-y-2">
+        <Label htmlFor="qty">Miqdor ({unitLabel})</Label>
+        <Input
+          id="qty"
+          type="number"
+          inputMode="decimal"
+          min="0"
+          step={isWeight ? "0.001" : "1"}
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          placeholder={isWeight ? "0.000" : "0"}
+        />
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+          {qtyNum > 0 ? (
+            <span>
+              Avtomatik ogohlantirish:{" "}
+              <span className="font-medium text-foreground">{thresholdLabel}</span>{" "}
+              qolganda ({LOW_STOCK_RATIO * 100}%)
+            </span>
+          ) : (
+            <span>
+              Mahsulot kiritilgan miqdorning {LOW_STOCK_RATIO * 100}% qolganda
+              avtomatik ogohlantiriladi
+            </span>
+          )}
+        </p>
       </div>
 
       <div className="space-y-2">

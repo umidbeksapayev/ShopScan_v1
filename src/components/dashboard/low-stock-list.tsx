@@ -16,7 +16,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
     return (
       <div className="space-y-2">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-14 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     );
@@ -26,7 +26,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
         <CheckCircle2 className="h-8 w-8 text-green-500" />
-        <p className="text-sm text-gray-500">Barcha mahsulotlar yetarli miqdorda</p>
+        <p className="text-sm text-muted-foreground">Barcha mahsulotlar yetarli miqdorda</p>
       </div>
     );
   }
@@ -43,12 +43,12 @@ export function LowStockList({ products, loading }: LowStockListProps) {
               href="/catalog"
               className="flex items-center gap-3 rounded-lg border p-2 transition-colors hover:bg-accent"
             >
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-gray-100">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
                 <Image src={p.image_url} alt={p.name} fill sizes="40px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
-                <p className="text-xs text-gray-500 tabular-nums">Qoldiq: {qtyLabel}</p>
+                <p className="text-xs text-muted-foreground tabular-nums">Qoldiq: {qtyLabel}</p>
               </div>
               <span
                 className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${

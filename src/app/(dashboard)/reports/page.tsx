@@ -14,7 +14,7 @@ const RevenueChart = dynamic(
   () => import("@/components/dashboard/revenue-chart").then((m) => m.RevenueChart),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] animate-pulse rounded-lg bg-gray-100" />,
+    loading: () => <div className="h-[260px] animate-pulse rounded-lg bg-muted" />,
   }
 );
 
@@ -44,7 +44,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-gray-900">Hisobotlar</h1>
+        <h1 className="text-2xl font-bold text-foreground">Hisobotlar</h1>
 
         {/* Davr tanlash */}
         <div className="inline-flex rounded-lg border bg-white p-0.5">
@@ -98,7 +98,7 @@ export default function ReportsPage() {
         </CardHeader>
         <CardContent>
           {trendLoading ? (
-            <div className="h-[260px] animate-pulse rounded-lg bg-gray-100" />
+            <div className="h-[260px] animate-pulse rounded-lg bg-muted" />
           ) : (
             <RevenueChart data={trend ?? []} />
           )}

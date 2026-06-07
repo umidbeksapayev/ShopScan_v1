@@ -79,7 +79,7 @@ export function ImageUploader({ value, previewUrl, onChange }: ImageUploaderProp
       <div
         className={cn(
           "relative aspect-square w-full overflow-hidden rounded-lg border-2 border-dashed",
-          shown ? "border-transparent" : "border-gray-300 bg-gray-50"
+          shown ? "border-transparent" : "border-gray-300 bg-muted"
         )}
       >
         {shown ? (
@@ -102,7 +102,7 @@ export function ImageUploader({ value, previewUrl, onChange }: ImageUploaderProp
             </button>
           </>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-1 text-gray-400">
+          <div className="flex h-full flex-col items-center justify-center gap-1 text-muted-foreground">
             <ImagePlus className="h-10 w-10" />
             <span className="text-sm">Rasm tanlang</span>
           </div>

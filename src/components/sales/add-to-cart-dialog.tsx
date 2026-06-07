@@ -71,12 +71,12 @@ export function AddToCartDialog({
                 }}
                 className="flex w-full items-center gap-3 rounded-lg border p-2 text-left hover:bg-accent"
               >
-                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-gray-100">
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
                   <Image src={p.image_url} alt={p.name} fill sizes="48px" className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
-                  <p className="text-xs text-gray-500">{formatCurrency(p.selling_price)}</p>
+                  <p className="text-xs text-muted-foreground">{formatCurrency(p.selling_price)}</p>
                 </div>
               </button>
             ))}
@@ -87,18 +87,18 @@ export function AddToCartDialog({
         {selected && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
                 <Image src={selected.image_url} alt={selected.name} fill sizes="64px" className="object-cover" />
               </div>
               <div>
                 <p className="font-medium">{selected.name}</p>
                 <p className="text-lg font-bold">
                   {formatCurrency(selected.selling_price)}
-                  <span className="text-xs font-normal text-gray-500">
+                  <span className="text-xs font-normal text-muted-foreground">
                     {" "}/ {selected.sale_type === "weight" ? "kg" : "dona"}
                   </span>
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Qoldiq:{" "}
                   {selected.sale_type === "weight"
                     ? formatWeight(selected.quantity)
@@ -136,8 +136,8 @@ export function AddToCartDialog({
               )}
             </div>
 
-            <div className="flex items-center justify-between rounded-md bg-gray-50 px-3 py-2">
-              <span className="text-sm text-gray-600">Jami:</span>
+            <div className="flex items-center justify-between rounded-md bg-muted px-3 py-2">
+              <span className="text-sm text-muted-foreground">Jami:</span>
               <span className="font-semibold">
                 {formatCurrency(selected.selling_price * qty)}
               </span>

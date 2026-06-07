@@ -29,7 +29,7 @@ export function CatalogToolbar() {
     <div className="space-y-3">
       {/* Qidiruv */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -86,7 +86,7 @@ export function CatalogToolbar() {
             onClick={() => setViewMode("grid")}
             className={cn(
               "rounded-l-md p-2",
-              viewMode === "grid" ? "bg-accent text-accent-foreground" : "text-gray-500"
+              viewMode === "grid" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
             )}
             aria-label="Grid ko'rinish"
           >
@@ -97,7 +97,7 @@ export function CatalogToolbar() {
             onClick={() => setViewMode("list")}
             className={cn(
               "rounded-r-md p-2",
-              viewMode === "list" ? "bg-accent text-accent-foreground" : "text-gray-500"
+              viewMode === "list" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
             )}
             aria-label="Ro'yxat ko'rinish"
           >

@@ -25,3 +25,26 @@ export function calculateProfit(sellingPrice: number, costPrice: number) {
   const profitPercent = costPrice > 0 ? (profit / costPrice) * 100 : 0;
   return { profit, profitPercent };
 }
+
+/** Kam qoldiq ogohlantirishi: kiritilgan miqdorning ulushi (20%). */
+export const LOW_STOCK_RATIO = 0.2;
+
+/**
+ * Mahsulot zaxirasi (stocking miqdori) asosida ogohlantirish chegarasini hisoblaydi.
+ * Bu chegara FAQAT forma orqali miqdor kiritilganda hisoblanadi — sotuv jarayoni
+ * uni o'zgartirmaydi (aks holda chegara doim kichrayib, hech qachon ishlamaydi).
+ *
+ * @param quantity - kiritilgan zaxira miqdori
+ * @param saleType - 'unit' (butun son, ceil) yoki 'weight' (kg, 3 kasr)
+ */
+export function computeLowStockThreshold(
+  quantity: number,
+  saleType: "unit" | "weight"
+): number {
+  if (!quantity || quantity <= 0) return 0;
+  const raw = quantity * LOW_STOCK_RATIO;
+  if (saleType === "weight") {
+    return Math.round(raw * 1000) / 1000; // 1 gramm aniqlik
+  }
+  return Math.ceil(raw); // donali: kamida 1
+}
