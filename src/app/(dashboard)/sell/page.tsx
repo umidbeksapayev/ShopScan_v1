@@ -8,20 +8,29 @@ import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
 import { useCartStore } from "@/stores/cart-store";
 import dynamic from "next/dynamic";
-import { findProductsByBarcode, searchProductsByName, type CartSaleResult } from "@/lib/sales";
+import {
+  findProductsByBarcode,
+  searchProductsByName,
+  searchProductsByImage,
+  type CartSaleResult,
+} from "@/lib/sales";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 
 // Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
+const cameraLoading = () => (
+  <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-400">
+    Kamera yuklanmoqda...
+  </div>
+);
+
 const BarcodeScanner = dynamic(
   () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-gray-100 text-sm text-gray-400">
-        Kamera yuklanmoqda...
-      </div>
-    ),
-  }
+  { ssr: false, loading: cameraLoading }
+);
+
+const VisualSearch = dynamic(
+  () => import("@/components/sales/visual-search").then((m) => m.VisualSearch),
+  { ssr: false, loading: cameraLoading }
 );
 import { CartPanel } from "@/components/sales/cart-panel";
 import { Receipt } from "@/components/sales/receipt";
@@ -47,6 +56,7 @@ export default function SellPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
+  const [visualSearching, setVisualSearching] = useState(false);
 
   async function handleBarcode(barcode: string) {
     try {
@@ -65,6 +75,28 @@ export default function SellPage() {
       setAddOpen(true);
     } catch {
       toast.error("Qidiruvda xato");
+    }
+  }
+
+  async function handleVisualSearch(imageDataUri: string) {
+    setVisualSearching(true);
+    try {
+      const found = await searchProductsByImage(imageDataUri);
+      if (found.length === 0) {
+        toast.error("O'xshash mahsulot topilmadi", {
+          description: "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",
+        });
+        return;
+      }
+      setMethod("visual");
+      setCandidates(found);
+      setAddOpen(true);
+    } catch (err) {
+      toast.error("Vizual qidiruv xatosi", {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setVisualSearching(false);
     }
   }
 
@@ -117,13 +149,20 @@ export default function SellPage() {
               <TabsTrigger value="barcode" className="flex-1">
                 📷 Barcode
               </TabsTrigger>
+              <TabsTrigger value="visual" className="flex-1">
+                ✨ Vizual
+              </TabsTrigger>
               <TabsTrigger value="manual" className="flex-1">
-                🔍 Qo&apos;lda qidirish
+                🔍 Qidirish
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="barcode">
               <BarcodeScanner onDetected={handleBarcode} />
+            </TabsContent>
+
+            <TabsContent value="visual">
+              <VisualSearch onCapture={handleVisualSearch} searching={visualSearching} />
             </TabsContent>
 
             <TabsContent value="manual">

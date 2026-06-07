@@ -77,13 +77,29 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         image_url: imageUrl,
       };
 
+      let savedId: string;
       if (isEdit && product) {
-        await updateMut.mutateAsync({ id: product.id, ...payload });
+        const updated = await updateMut.mutateAsync({ id: product.id, ...payload });
+        savedId = updated.id;
         toast.success("Mahsulot yangilandi");
       } else {
-        await createMut.mutateAsync({ shop_id: shopId, ...payload });
+        const created = await createMut.mutateAsync({ shop_id: shopId, ...payload });
+        savedId = created.id;
         toast.success("Mahsulot qo'shildi");
       }
+
+      // Vizual qidiruv uchun CLIP embedding — rasm o'zgargan bo'lsa fonda indekslanadi
+      // (UI bloklanmaydi; token yo'q bo'lsa jimgina o'tib ketadi).
+      if (imageBlob) {
+        void fetch("/api/embed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: savedId }),
+        }).catch(() => {
+          /* embed xatosi sotuvni to'smaydi */
+        });
+      }
+
       onSuccess();
     } catch (err) {
       toast.error("Saqlashda xato", {

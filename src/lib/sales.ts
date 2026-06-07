@@ -38,6 +38,25 @@ export async function searchProductsByName(term: string): Promise<Product[]> {
   return (data ?? []) as Product[];
 }
 
+/**
+ * Vizual qidiruv (FR — CLIP): kameradan olingan rasmga eng o'xshash
+ * mahsulotlarni topadi. Server-side /api/visual-search → match_products RPC.
+ * @param imageDataUri - "data:image/...;base64,..." formatida
+ */
+export async function searchProductsByImage(imageDataUri: string): Promise<Product[]> {
+  const res = await fetch("/api/visual-search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image: imageDataUri }),
+  });
+
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error ?? "Vizual qidiruv xatosi");
+  }
+  return (json.products ?? []) as Product[];
+}
+
 export interface CartSaleItem {
   product_id: string;
   quantity: number;
