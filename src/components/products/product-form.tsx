@@ -99,16 +99,15 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         toast.success("Mahsulot qo'shildi");
       }
 
-      // Vizual qidiruv uchun CLIP embedding — rasm o'zgargan bo'lsa fonda indekslanadi
-      // (UI bloklanmaydi; token yo'q bo'lsa jimgina o'tib ketadi).
+      // Vizual qidiruv uchun CLIP embedding — rasm o'zgargan bo'lsa BRAUZERDA fonda
+      // indekslanadi (UI bloklanmaydi; model birinchi marta yuklanadi va keshlanadi).
       if (imageBlob) {
-        void fetch("/api/embed", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: savedId }),
-        }).catch(() => {
-          /* embed xatosi sotuvni to'smaydi */
-        });
+        const blob = imageBlob;
+        void import("@/lib/products").then(({ indexProductImage }) =>
+          indexProductImage(savedId, blob).catch(() => {
+            /* embed xatosi mahsulot saqlashni to'smaydi */
+          })
+        );
       }
 
       onSuccess();

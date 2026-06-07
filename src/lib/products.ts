@@ -95,3 +95,38 @@ export async function archiveProduct(id: string): Promise<void> {
     .eq("id", id);
   if (error) throw new Error(error.message);
 }
+
+/**
+ * Mahsulot rasmini brauzerda CLIP bilan indekslaydi va image_embedding'ni yangilaydi.
+ * RLS faqat egasiga ruxsat beradi. CLIP lib lazy-load qilinadi.
+ * @param productId - mahsulot id'si
+ * @param source - Blob (yangi yuklangan) yoki image_url (string, backfill uchun)
+ */
+export async function indexProductImage(
+  productId: string,
+  source: Blob | string
+): Promise<void> {
+  const { embedImage } = await import("@/lib/clip-browser");
+  const embedding = await embedImage(source);
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("products")
+    .update({ image_embedding: JSON.stringify(embedding) })
+    .eq("id", productId);
+  if (error) throw new Error(error.message);
+}
+
+/** Hali indekslanmagan (image_embedding NULL) faol mahsulotlar. RLS faqat o'z do'koni. */
+export async function getUnindexedProducts(): Promise<
+  Pick<Product, "id" | "image_url">[]
+> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, image_url")
+    .is("image_embedding", null)
+    .eq("is_active", true);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Pick<Product, "id" | "image_url">[];
+}

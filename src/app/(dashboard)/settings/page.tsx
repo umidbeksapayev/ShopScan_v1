@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sparkles, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { getUnindexedProducts, indexProductImage } from "@/lib/products";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,32 +23,50 @@ interface BackfillResult {
 export default function SettingsPage() {
   const queryClient = useQueryClient();
   const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [result, setResult] = useState<BackfillResult | null>(null);
 
   async function handleBackfill() {
     setRunning(true);
     setResult(null);
+    setProgress(null);
     try {
-      const res = await fetch("/api/embed/backfill", { method: "POST" });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Indekslash xatosi");
+      const products = await getUnindexedProducts();
+      const total = products.length;
 
-      setResult(json as BackfillResult);
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-
-      if (json.total === 0) {
+      if (total === 0) {
+        setResult({ indexed: 0, failed: 0, total: 0 });
         toast.success("Barcha mahsulotlar allaqachon indekslangan");
-      } else {
-        toast.success(`${json.indexed} ta mahsulot indekslandi`, {
-          description: json.failed > 0 ? `${json.failed} ta muvaffaqiyatsiz` : undefined,
-        });
+        return;
       }
+
+      setProgress({ done: 0, total });
+      let indexed = 0;
+      let failed = 0;
+
+      // Brauzerda ketma-ket indekslaymiz (model bir marta yuklanadi, keyin tez)
+      for (const p of products) {
+        try {
+          await indexProductImage(p.id, p.image_url);
+          indexed++;
+        } catch {
+          failed++;
+        }
+        setProgress({ done: indexed + failed, total });
+      }
+
+      setResult({ indexed, failed, total });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success(`${indexed} ta mahsulot indekslandi`, {
+        description: failed > 0 ? `${failed} ta muvaffaqiyatsiz` : undefined,
+      });
     } catch (err) {
       toast.error("Indekslash xatosi", {
         description: err instanceof Error ? err.message : undefined,
       });
     } finally {
       setRunning(false);
+      setProgress(null);
     }
   }
 
@@ -58,13 +77,14 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-600" />
+            <Sparkles className="h-5 w-5 text-primary" />
             Vizual qidiruv indeksi
           </CardTitle>
           <CardDescription>
-            Mahsulot rasmlarini CLIP bilan indekslaydi — shundan keyin sotuvda
-            kamera orqali rasmga qarab mahsulot topish mumkin bo&apos;ladi. Yangi
-            mahsulotlar avtomatik indekslanadi; bu tugma eski mahsulotlar uchun.
+            Mahsulot rasmlarini CLIP bilan indekslaydi — shundan keyin sotuvda kamera
+            orqali rasmga qarab mahsulot topish mumkin. Indekslash{" "}
+            <strong>brauzeringizda</strong> bajariladi (bepul, server kerak emas).
+            Yangi mahsulotlar avtomatik indekslanadi; bu tugma eski mahsulotlar uchun.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -72,7 +92,9 @@ export default function SettingsPage() {
             {running ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Indekslanmoqda...
+                {progress
+                  ? `Indekslanmoqda... ${progress.done}/${progress.total}`
+                  : "Tayyorlanmoqda..."}
               </>
             ) : (
               <>
@@ -95,14 +117,14 @@ export default function SettingsPage() {
           )}
 
           <p className="text-xs text-muted-foreground">
-            Eslatma: bu funksiya uchun <code>REPLICATE_API_TOKEN</code> sozlangan
-            bo&apos;lishi kerak.
+            Eslatma: birinchi marta CLIP modeli yuklanadi (~25MB), keyin brauzerda
+            keshlanadi. Internet aloqasi kerak.
           </p>
         </CardContent>
       </Card>
 
       <p className="py-4 text-center text-sm text-muted-foreground">
-        Qolgan do&apos;kon sozlamalari Sprint 6 da tayyor bo&apos;ladi
+        Qolgan do&apos;kon sozlamalari keyingi yangilanishlarda tayyor bo&apos;ladi
       </p>
     </div>
   );

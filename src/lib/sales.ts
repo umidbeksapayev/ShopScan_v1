@@ -39,22 +39,29 @@ export async function searchProductsByName(term: string): Promise<Product[]> {
 }
 
 /**
- * Vizual qidiruv (FR — CLIP): kameradan olingan rasmga eng o'xshash
- * mahsulotlarni topadi. Server-side /api/visual-search → match_products RPC.
+ * Vizual qidiruv (CLIP): kameradan olingan rasmga eng o'xshash mahsulotlarni topadi.
+ * Embedding BRAUZERDA hisoblanadi (Transformers.js), keyin match_products RPC chaqiriladi.
+ * Bepul — API/token/to'lov kerak emas.
+ * @param shopId - joriy do'kon id'si
  * @param imageDataUri - "data:image/...;base64,..." formatida
  */
-export async function searchProductsByImage(imageDataUri: string): Promise<Product[]> {
-  const res = await fetch("/api/visual-search", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageDataUri }),
+export async function searchProductsByImage(
+  shopId: string,
+  imageDataUri: string
+): Promise<Product[]> {
+  const { embedImage } = await import("@/lib/clip-browser");
+  const embedding = await embedImage(imageDataUri);
+
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("match_products", {
+    p_shop_id: shopId,
+    p_embedding: JSON.stringify(embedding),
+    p_match_count: 3,
+    p_threshold: 0.0,
   });
 
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.error ?? "Vizual qidiruv xatosi");
-  }
-  return (json.products ?? []) as Product[];
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Product[];
 }
 
 export interface CartSaleItem {

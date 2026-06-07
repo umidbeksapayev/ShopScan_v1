@@ -23,7 +23,7 @@ qidiruv (CLIP) va DONALI/VAZN sotuv turlarini qo'llab-quvvatlaydi.
 | Styling | Tailwind CSS + shadcn/ui (Radix) |
 | Ikonlar | Lucide |
 | Kamera/Barcode | react-webcam + @zxing/library |
-| Vizual AI | Replicate (CLIP ViT-B/32) |
+| Vizual AI | Transformers.js (CLIP ViT-B/32, **brauzerda** — bepul) |
 | Backend | Supabase (Auth + PostgreSQL + Storage) |
 | Vektor qidiruv | pgvector + HNSW index |
 | State | Zustand + TanStack Query |
@@ -48,10 +48,12 @@ cp .env.local.example .env.local
 
 | O'zgaruvchi | Qayerdan | Eslatma |
 |-------------|----------|---------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API | — |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → API → anon public | — |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API → service_role | ⚠️ **server-only**, hech qachon `NEXT_PUBLIC` emas |
-| `REPLICATE_API_TOKEN` | https://replicate.com/account/api-tokens | Vizual qidiruv uchun (ixtiyoriy) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API | majburiy |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → API → anon / publishable | majburiy |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase → API → service_role | ixtiyoriy (ilova ishlatmaydi) |
+
+> 🔑 **Vizual qidiruv (CLIP) endi brauzerda ishlaydi** (Transformers.js) — hech qanday
+> API token (Replicate va h.k.) kerak emas. Bepul.
 
 ### 3. Ma'lumotlar bazasi (migratsiya)
 
@@ -93,9 +95,13 @@ npm run lint     # ESLint
 ## Vercel'ga deploy
 
 1. Repozitoriyani Vercel'ga import qiling
-2. **Environment Variables** bo'limiga `.env.local` dagi 4 ta o'zgaruvchini qo'shing
-   (`SUPABASE_SERVICE_ROLE_KEY` ni **server-only** sifatida — `NEXT_PUBLIC` emas)
+2. **Environment Variables** bo'limiga **2 ta** o'zgaruvchini qo'shing:
+   `NEXT_PUBLIC_SUPABASE_URL` va `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   (oxirida bo'sh joy/yangi qator qolmasin)
 3. Deploy — Next.js avtomatik aniqlanadi
+
+> ℹ️ `NEXT_PUBLIC_*` o'zgaruvchilar **build paytida** muhrlanadi — qo'shgandan keyin
+> **Redeploy** qiling. Vizual qidiruv brauzerda ishlagani uchun API token kerak emas.
 
 ## Loyiha tuzilmasi
 
@@ -103,15 +109,14 @@ npm run lint     # ESLint
 src/
 ├── app/
 │   ├── (auth)/            # login, register
-│   ├── (dashboard)/       # himoyalangan sahifalar (dashboard, catalog, sell, history, reports, settings)
-│   └── api/               # embed, embed/backfill, visual-search route handler'lari
+│   └── (dashboard)/       # himoyalangan sahifalar (dashboard, catalog, sell, history, reports, settings)
 ├── components/
 │   ├── ui/                # shadcn/ui komponentlar
 │   ├── layout/            # SidebarNav, BottomNav, Topbar
 │   ├── products/          # katalog komponentlari
 │   ├── sales/             # sotuv komponentlari
 │   └── dashboard/         # statistika, grafik, ro'yxatlar
-├── lib/                   # supabase, products, sales, dashboard, replicate, storage
+├── lib/                   # supabase, products, sales, dashboard, clip-browser, storage
 ├── hooks/                 # TanStack Query hook'lari
 ├── stores/                # Zustand store'lar (cart, catalog)
 └── types/database.ts
@@ -123,7 +128,7 @@ supabase/
 ## Xavfsizlik tamoyillari
 
 - `cost_price` — faqat egasiga (RLS), UI'da hech qachon render qilinmaydi
-- `SUPABASE_SERVICE_ROLE_KEY` va `REPLICATE_API_TOKEN` — faqat server-side
+- `SUPABASE_SERVICE_ROLE_KEY` (agar ishlatilsa) — faqat server-side, hech qachon `NEXT_PUBLIC` emas
 - Pul: `DECIMAL(12,2)`, vazn: `DECIMAL(12,3)` — yaxlitlash xatosi yo'q
 - Inventar manfiy bo'la olmaydi (DB constraint + atomar funksiyalar)
 
