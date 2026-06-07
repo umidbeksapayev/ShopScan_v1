@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Hash, Scale, AlertTriangle } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Hash, Scale, AlertTriangle, ScanLine, X } from "lucide-react";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
 import {
@@ -18,6 +19,19 @@ import { ImageUploader } from "@/components/products/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+// Kamera kutubxonalari (react-webcam/@zxing) faqat skaner ochilganda yuklanadi.
+const BarcodeScanner = dynamic(
+  () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
+        Kamera yuklanmoqda...
+      </div>
+    ),
+  }
+);
 
 interface ProductFormProps {
   shopId: string;
@@ -39,6 +53,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   );
   const [quantity, setQuantity] = useState(product?.quantity?.toString() ?? "");
   const [barcode, setBarcode] = useState(product?.barcode ?? "");
+  const [scanning, setScanning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const isWeight = saleType === "weight";
@@ -246,12 +261,36 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="barcode">Barcode (ixtiyoriy)</Label>
-        <Input
-          id="barcode"
-          value={barcode}
-          onChange={(e) => setBarcode(e.target.value)}
-          placeholder="EAN-13 / QR"
-        />
+        <div className="flex gap-2">
+          <Input
+            id="barcode"
+            value={barcode}
+            onChange={(e) => setBarcode(e.target.value)}
+            placeholder="EAN-13 / QR"
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => setScanning((s) => !s)}
+            aria-label={scanning ? "Skanerni yopish" : "Kamera bilan skanerlash"}
+            title={scanning ? "Skanerni yopish" : "Kamera bilan skanerlash"}
+          >
+            {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
+          </Button>
+        </div>
+        {scanning && (
+          <div className="rounded-xl border p-2">
+            <BarcodeScanner
+              onDetected={(code) => {
+                setBarcode(code);
+                setScanning(false);
+                toast.success("Barcode o'qildi");
+              }}
+            />
+          </div>
+        )}
       </div>
 
       <Button type="submit" className="w-full" disabled={submitting}>
