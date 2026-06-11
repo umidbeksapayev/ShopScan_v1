@@ -47,7 +47,7 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border bg-white px-3 py-2 text-sm shadow-md">
+    <div className="rounded-lg border bg-card px-3 py-2 text-sm shadow-md">
       <p className="mb-1 font-medium text-foreground">{label}</p>
       {payload.map((item) => (
         <p key={item.dataKey} className="flex items-center gap-2 tabular-nums">
@@ -79,16 +79,20 @@ export function RevenueChart({ data }: RevenueChartProps) {
             <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="hsl(var(--border))"
+          vertical={false}
+        />
         <XAxis
           dataKey="label"
-          tick={{ fontSize: 12, fill: "#6b7280" }}
+          tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
           tickLine={false}
           axisLine={false}
         />
         <YAxis
           tickFormatter={compactSom}
-          tick={{ fontSize: 12, fill: "#6b7280" }}
+          tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
           tickLine={false}
           axisLine={false}
           width={44}

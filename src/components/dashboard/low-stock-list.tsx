@@ -52,7 +52,9 @@ export function LowStockList({ products, loading }: LowStockListProps) {
               </div>
               <span
                 className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                  isOut ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700"
+                  isOut
+                    ? "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-300"
+                    : "bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
                 }`}
               >
                 <AlertTriangle className="h-3 w-3" />

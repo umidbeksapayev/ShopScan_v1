@@ -108,7 +108,7 @@ export default function SettingsPage() {
           </Button>
 
           {result && (
-            <div className="flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+            <div className="flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-500/15 dark:text-green-400">
               <CheckCircle2 className="h-4 w-4" />
               <span>
                 {result.total === 0

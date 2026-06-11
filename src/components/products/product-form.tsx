@@ -236,7 +236,9 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         <div
           className={cn(
             "flex items-center justify-between rounded-md px-3 py-2 text-sm",
-            profit >= 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+            profit >= 0
+              ? "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400"
+              : "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400"
           )}
         >
           <span>Sof foyda ({isWeight ? "1 kg" : "1 dona"}):</span>

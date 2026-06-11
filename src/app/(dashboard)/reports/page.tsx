@@ -47,7 +47,7 @@ export default function ReportsPage() {
         <h1 className="text-2xl font-bold text-foreground">Hisobotlar</h1>
 
         {/* Davr tanlash */}
-        <div className="inline-flex rounded-lg border bg-white p-0.5">
+        <div className="inline-flex rounded-lg border bg-card p-0.5">
           {PERIODS.map((p) => (
             <button
               key={p.days}
