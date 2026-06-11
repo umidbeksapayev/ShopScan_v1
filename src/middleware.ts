@@ -27,16 +27,21 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const isAuthPage = request.nextUrl.pathname.startsWith("/login") ||
-    request.nextUrl.pathname.startsWith("/register");
+  const path = request.nextUrl.pathname;
+  const isAuthPage = path.startsWith("/login") || path.startsWith("/register");
+  const isLanding = path === "/";
+  // Landing va auth sahifalari ochiq (login talab qilinmaydi)
+  const isPublic = isAuthPage || isLanding;
 
-  if (!user && !isAuthPage) {
+  // Login qilmagan foydalanuvchi himoyalangan sahifaga kirsa → login
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthPage) {
+  // Login qilgan foydalanuvchi landing yoki auth sahifaga kirsa → dashboard
+  if (user && (isAuthPage || isLanding)) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
