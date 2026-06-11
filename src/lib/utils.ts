@@ -48,3 +48,12 @@ export function computeLowStockThreshold(
   }
   return Math.ceil(raw); // donali: kamida 1
 }
+
+/**
+ * Barcode normalizatsiyasi — saqlashda HAM qidirishda HAM bir xil ishlatiladi.
+ * Bo'sh joy/ko'rinmas belgilarni olib tashlaydi, faqat harf-raqamni qoldiradi.
+ * EAN-13 boshlovchi nollari string sifatida saqlangani uchun yo'qolmaydi.
+ */
+export function normalizeBarcode(raw: string): string {
+  return raw.replace(/[^0-9A-Za-z]/g, "").trim();
+}

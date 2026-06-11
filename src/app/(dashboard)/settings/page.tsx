@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Sparkles, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { getUnindexedProducts, indexProductImage } from "@/lib/products";
+import { useShop } from "@/hooks/use-shop";
+import { getUnindexedProducts, addProductEmbedding } from "@/lib/products";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,11 +23,13 @@ interface BackfillResult {
 
 export default function SettingsPage() {
   const queryClient = useQueryClient();
+  const { data: shop } = useShop();
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [result, setResult] = useState<BackfillResult | null>(null);
 
   async function handleBackfill() {
+    if (!shop) return;
     setRunning(true);
     setResult(null);
     setProgress(null);
@@ -47,7 +50,7 @@ export default function SettingsPage() {
       // Brauzerda ketma-ket indekslaymiz (model bir marta yuklanadi, keyin tez)
       for (const p of products) {
         try {
-          await indexProductImage(p.id, p.image_url);
+          await addProductEmbedding(p.id, shop.id, p.image_url, p.image_url);
           indexed++;
         } catch {
           failed++;
@@ -105,7 +108,7 @@ export default function SettingsPage() {
           </Button>
 
           {result && (
-            <div className="flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+            <div className="flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700 dark:bg-green-500/15 dark:text-green-400">
               <CheckCircle2 className="h-4 w-4" />
               <span>
                 {result.total === 0

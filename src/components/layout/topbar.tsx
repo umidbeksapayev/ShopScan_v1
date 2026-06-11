@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ScanLine, Settings, LogOut, Store } from "lucide-react";
 import { useShop } from "@/hooks/use-shop";
 import { createClient } from "@/lib/supabase/client";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,8 +38,10 @@ export function Topbar() {
         </div>
       </div>
 
-      {/* O'ng: avatar menyu */}
-      <DropdownMenu>
+      {/* O'ng: tema + avatar menyu */}
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-accent"
@@ -66,7 +69,8 @@ export function Topbar() {
             <LogOut className="mr-2 h-4 w-4" /> Chiqish
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

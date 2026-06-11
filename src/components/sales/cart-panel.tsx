@@ -25,7 +25,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
   }
 
   return (
-    <div className="flex flex-col rounded-xl border bg-white">
+    <div className="flex flex-col rounded-xl border bg-card">
       <div className="border-b px-4 py-3 font-semibold">
         Savat ({items.length})
       </div>

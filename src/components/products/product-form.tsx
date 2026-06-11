@@ -15,7 +15,10 @@ import {
 } from "@/lib/utils";
 import { uploadProductImage } from "@/lib/storage";
 import { useCreateProduct, useUpdateProduct } from "@/hooks/use-products";
-import { ImageUploader } from "@/components/products/image-uploader";
+import {
+  MultiImageUploader,
+  type UploaderImage,
+} from "@/components/products/multi-image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,7 +47,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const createMut = useCreateProduct();
   const updateMut = useUpdateProduct();
 
-  const [imageBlob, setImageBlob] = useState<Blob | null>(null);
+  const [images, setImages] = useState<UploaderImage[]>([]);
   const [name, setName] = useState(product?.name ?? "");
   const [saleType, setSaleType] = useState<SaleType>(product?.sale_type ?? "unit");
   const [costPrice, setCostPrice] = useState(product?.cost_price?.toString() ?? "");
@@ -77,7 +80,8 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
     e.preventDefault();
 
     if (!name.trim()) return toast.error("Mahsulot nomini kiriting");
-    if (!isEdit && !imageBlob) return toast.error("Mahsulot rasmini tanlang");
+    if (!isEdit && images.length === 0)
+      return toast.error("Kamida bitta mahsulot rasmini tanlang");
     if (cost <= 0 || selling <= 0) return toast.error("Narxlarni to'g'ri kiriting");
     const qty = parseFloat(quantity);
     if (isNaN(qty) || qty < 0) return toast.error("Miqdorni to'g'ri kiriting");
@@ -87,8 +91,12 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
     setSubmitting(true);
     try {
       let imageUrl = product?.image_url ?? "";
-      if (imageBlob) {
-        imageUrl = await uploadProductImage(imageBlob, shopId);
+      let uploadedUrls: string[] = [];
+      if (images.length > 0) {
+        uploadedUrls = await Promise.all(
+          images.map((img) => uploadProductImage(img.blob, shopId))
+        );
+        imageUrl = uploadedUrls[0];
       }
 
       const payload = {
@@ -114,14 +122,23 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         toast.success("Mahsulot qo'shildi");
       }
 
-      // Vizual qidiruv uchun CLIP embedding — rasm o'zgargan bo'lsa BRAUZERDA fonda
-      // indekslanadi (UI bloklanmaydi; model birinchi marta yuklanadi va keshlanadi).
-      if (imageBlob) {
-        const blob = imageBlob;
-        void import("@/lib/products").then(({ indexProductImage }) =>
-          indexProductImage(savedId, blob).catch(() => {
-            /* embed xatosi mahsulot saqlashni to'smaydi */
-          })
+      // Vizual qidiruv uchun CLIP embeddinglar — barcha rasmlar BRAUZERDA fonda
+      // indekslanadi (multi-image; UI bloklanmaydi). Tahrirlashda eski embeddinglar
+      // tozalanib qaytadan hisoblanadi.
+      if (images.length > 0) {
+        const imgs = images.map((img, i) => ({
+          source: img.blob,
+          imageUrl: uploadedUrls[i] ?? null,
+        }));
+        void import("@/lib/products").then(
+          async ({ clearProductEmbeddings, indexProductImages }) => {
+            try {
+              if (isEdit) await clearProductEmbeddings(savedId);
+              await indexProductImages(savedId, shopId, imgs);
+            } catch {
+              /* embed xatosi mahsulot saqlashni to'smaydi */
+            }
+          }
         );
       }
 
@@ -137,10 +154,10 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <ImageUploader
-        value={imageBlob}
-        previewUrl={product?.image_url ?? null}
-        onChange={setImageBlob}
+      <MultiImageUploader
+        value={images}
+        existingUrl={product?.image_url ?? null}
+        onChange={setImages}
       />
 
       <div className="space-y-2">
@@ -219,7 +236,9 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         <div
           className={cn(
             "flex items-center justify-between rounded-md px-3 py-2 text-sm",
-            profit >= 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+            profit >= 0
+              ? "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400"
+              : "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400"
           )}
         >
           <span>Sof foyda ({isWeight ? "1 kg" : "1 dona"}):</span>

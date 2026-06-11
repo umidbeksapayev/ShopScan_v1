@@ -24,7 +24,7 @@ export function TopProducts({ products, loading }: TopProductsProps) {
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
-        <Package className="h-8 w-8 text-gray-300" />
+        <Package className="h-8 w-8 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground">Bu davrda sotuvlar yo&apos;q</p>
       </div>
     );

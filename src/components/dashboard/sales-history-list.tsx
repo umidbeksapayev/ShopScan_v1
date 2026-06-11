@@ -11,8 +11,8 @@ interface SalesHistoryListProps {
 }
 
 const methodMeta: Record<SearchMethod, { label: string; icon: typeof Barcode; cls: string }> = {
-  barcode: { label: "Barcode", icon: Barcode, cls: "bg-blue-100 text-blue-700" },
-  visual: { label: "Vizual", icon: Sparkles, cls: "bg-purple-100 text-purple-700" },
+  barcode: { label: "Barcode", icon: Barcode, cls: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300" },
+  visual: { label: "Vizual", icon: Sparkles, cls: "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300" },
   manual: { label: "Qo'lda", icon: Search, cls: "bg-muted text-muted-foreground" },
 };
 
@@ -42,7 +42,7 @@ export function SalesHistoryList({ sales, loading }: SalesHistoryListProps) {
   if (sales.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-        <Receipt className="h-10 w-10 text-gray-300" />
+        <Receipt className="h-10 w-10 text-muted-foreground/40" />
         <p className="text-sm text-muted-foreground">Hali sotuvlar yo&apos;q</p>
         <p className="text-xs text-muted-foreground">Sotuv ekranidan birinchi sotuvni amalga oshiring</p>
       </div>

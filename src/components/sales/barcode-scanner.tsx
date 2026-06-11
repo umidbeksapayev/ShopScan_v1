@@ -15,6 +15,29 @@ type ScanMode = "auto" | "manual";
 /** Bir xil barcode'ning ketma-ket qayta o'qilishini cheklash (Flutter cooldown mantig'i). */
 const COOLDOWN_MS = 2000;
 
+/** Muvaffaqiyatli skan uchun qisqa "beep" ovozi (Web Audio — qo'shimcha fayl shart emas). */
+function playBeep(): void {
+  try {
+    const Ctx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+    osc.onended = () => ctx.close();
+  } catch {
+    /* ovoz qo'llab-quvvatlanmasa jim o'tadi */
+  }
+}
+
 /**
  * Uzluksiz (avto) yoki qo'lda barcode skaneri.
  * - Avto: kameradan uzluksiz dekod, cooldown bilan dublikat oldini oladi.
@@ -54,7 +77,8 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
       armedRef.current = false;
     }
 
-    // Haptik feedback (Android Chrome'da ishlaydi; qo'llab-quvvatlamasa jim o'tadi).
+    // Ovozli + haptik feedback (muvaffaqiyatli skan).
+    playBeep();
     if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
       navigator.vibrate(80);
     }

@@ -10,12 +10,13 @@ import { useCartStore } from "@/stores/cart-store";
 import dynamic from "next/dynamic";
 import {
   findProductsByBarcode,
-  searchProductsByName,
   searchProductsByImage,
   type CartSaleResult,
 } from "@/lib/sales";
 import type { ReceiptLineItem } from "@/lib/receipt-print";
+import { useProducts } from "@/hooks/use-products";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
+import { LiveProductSearch } from "@/components/sales/live-product-search";
 
 // Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
 const cameraLoading = () => (
@@ -35,7 +36,6 @@ const VisualSearch = dynamic(
 );
 import { CartPanel } from "@/components/sales/cart-panel";
 import { Receipt } from "@/components/sales/receipt";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -48,13 +48,13 @@ import {
 
 export default function SellPage() {
   const { data: shop } = useShop();
+  const { data: allProducts } = useProducts({});
   const { items, addItem, clear, totalRevenue } = useCartStore();
   const saleMut = useProcessCartSale();
 
   const [candidates, setCandidates] = useState<Product[]>([]);
   const [method, setMethod] = useState<SearchMethod>("manual");
   const [addOpen, setAddOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
@@ -69,6 +69,13 @@ export default function SellPage() {
         });
         return;
       }
+      // Bitta DONALI mahsulot → darhol savatga (qo'shimcha klik yo'q)
+      if (found.length === 1 && found[0].sale_type === "unit") {
+        addItem(found[0], 1, "barcode");
+        toast.success(`${found[0].name} — savatga qo'shildi`);
+        return;
+      }
+      // Vazn (kg kiritish kerak) yoki bir nechta moslik → dialog
       if (found.length > 1) {
         toast.info("Bir nechta mahsulot topildi — birini tanlang");
       }
@@ -103,21 +110,16 @@ export default function SellPage() {
     }
   }
 
-  async function handleManualSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!searchTerm.trim()) return;
-    try {
-      const found = await searchProductsByName(searchTerm);
-      if (found.length === 0) {
-        toast.error("Hech narsa topilmadi");
-        return;
-      }
-      setMethod("manual");
-      setCandidates(found);
-      setAddOpen(true);
-    } catch {
-      toast.error("Qidiruvda xato");
+  function handleManualSelect(p: Product) {
+    // Donali → darhol savatga; vazn → kg dialogi
+    if (p.sale_type === "unit") {
+      addItem(p, 1, "manual");
+      toast.success(`${p.name} — savatga qo'shildi`);
+      return;
     }
+    setMethod("manual");
+    setCandidates([p]);
+    setAddOpen(true);
   }
 
   async function handleConfirmSale() {
@@ -178,18 +180,10 @@ export default function SellPage() {
             </TabsContent>
 
             <TabsContent value="manual">
-              <form onSubmit={handleManualSearch} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Mahsulot nomi..."
-                    className="pl-9"
-                  />
-                </div>
-                <Button type="submit">Qidirish</Button>
-              </form>
+              <LiveProductSearch
+                products={allProducts ?? []}
+                onSelect={handleManualSelect}
+              />
             </TabsContent>
           </Tabs>
         </div>
