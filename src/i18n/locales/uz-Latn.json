@@ -132,7 +132,14 @@
     "unitInteger": "Donali mahsulot miqdori butun son bo'lishi kerak",
     "added": "Mahsulot qo'shildi",
     "updated": "Mahsulot yangilandi",
-    "saveError": "Saqlashda xato"
+    "saveError": "Saqlashda xato",
+    "imagesRequired": "Kamida bitta mahsulot rasmini tanlang",
+    "barcodeRead": "Barcode o'qildi",
+    "scanOpen": "Kamera bilan skanerlash",
+    "scanClose": "Skanerni yopish",
+    "autoWarnPrefix": "Avtomatik ogohlantirish:",
+    "autoWarnSuffix": "qolganda ({{pct}}%)",
+    "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi"
   },
   "sell": {
     "title": "Sotuv",
@@ -149,6 +156,7 @@
     "noMatchDesc": "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",
     "visualError": "Vizual qidiruv xatosi",
     "addedToCart": "Savatga qo'shildi",
+    "addedNamed": "{{name}} — savatga qo'shildi",
     "confirmTitle": "Sotuvni tasdiqlang",
     "confirmText": "{{count}} ta mahsulot, jami {{total}}. Davom etamizmi?",
     "sellBtn": "Sotish",

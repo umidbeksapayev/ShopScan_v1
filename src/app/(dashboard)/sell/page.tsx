@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Search, ScanLine, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
+import { formatCurrency } from "@/lib/utils";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
 import { useCartStore } from "@/stores/cart-store";
@@ -47,6 +49,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function SellPage() {
+  const { t } = useTranslation();
   const { data: shop } = useShop();
   const { data: allProducts } = useProducts({});
   const { items, addItem, clear, totalRevenue } = useCartStore();
@@ -64,26 +67,26 @@ export default function SellPage() {
     try {
       const found = await findProductsByBarcode(barcode);
       if (found.length === 0) {
-        toast.error("Mahsulot topilmadi", {
-          description: `Barcode: ${barcode}. Qo'lda qidirib ko'ring.`,
+        toast.error(t("sell.notFound"), {
+          description: t("sell.notFoundDesc", { code: barcode }),
         });
         return;
       }
       // Bitta DONALI mahsulot → darhol savatga (qo'shimcha klik yo'q)
       if (found.length === 1 && found[0].sale_type === "unit") {
         addItem(found[0], 1, "barcode");
-        toast.success(`${found[0].name} — savatga qo'shildi`);
+        toast.success(t("sell.addedNamed", { name: found[0].name }));
         return;
       }
       // Vazn (kg kiritish kerak) yoki bir nechta moslik → dialog
       if (found.length > 1) {
-        toast.info("Bir nechta mahsulot topildi — birini tanlang");
+        toast.info(t("sell.multipleFound"));
       }
       setMethod("barcode");
       setCandidates(found);
       setAddOpen(true);
     } catch {
-      toast.error("Qidiruvda xato");
+      toast.error(t("sell.searchError"));
     }
   }
 
@@ -93,8 +96,8 @@ export default function SellPage() {
     try {
       const found = await searchProductsByImage(shop.id, imageDataUri);
       if (found.length === 0) {
-        toast.error("O'xshash mahsulot topilmadi", {
-          description: "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",
+        toast.error(t("sell.noMatch"), {
+          description: t("sell.noMatchDesc"),
         });
         return;
       }
@@ -102,7 +105,7 @@ export default function SellPage() {
       setCandidates(found);
       setAddOpen(true);
     } catch (err) {
-      toast.error("Vizual qidiruv xatosi", {
+      toast.error(t("sell.visualError"), {
         description: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -114,7 +117,7 @@ export default function SellPage() {
     // Donali → darhol savatga; vazn → kg dialogi
     if (p.sale_type === "unit") {
       addItem(p, 1, "manual");
-      toast.success(`${p.name} — savatga qo'shildi`);
+      toast.success(t("sell.addedNamed", { name: p.name }));
       return;
     }
     setMethod("manual");
@@ -145,7 +148,7 @@ export default function SellPage() {
       setReceipt(result);
     } catch (err) {
       setConfirmOpen(false);
-      toast.error("Sotuv amalga oshmadi", {
+      toast.error(t("sell.saleFailed"), {
         description: err instanceof Error ? err.message : undefined,
       });
     }
@@ -153,7 +156,7 @@ export default function SellPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Sotuv</h1>
+      <h1 className="text-2xl font-bold text-foreground">{t("sell.title")}</h1>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Chap: topish */}
@@ -161,13 +164,13 @@ export default function SellPage() {
           <Tabs defaultValue="barcode">
             <TabsList className="w-full">
               <TabsTrigger value="barcode" className="flex-1 gap-1.5">
-                <ScanLine className="h-4 w-4" /> Barcode
+                <ScanLine className="h-4 w-4" /> {t("sell.tabBarcode")}
               </TabsTrigger>
               <TabsTrigger value="visual" className="flex-1 gap-1.5">
-                <Sparkles className="h-4 w-4" /> Vizual
+                <Sparkles className="h-4 w-4" /> {t("sell.tabVisual")}
               </TabsTrigger>
               <TabsTrigger value="manual" className="flex-1 gap-1.5">
-                <Search className="h-4 w-4" /> Qidirish
+                <Search className="h-4 w-4" /> {t("sell.tabManual")}
               </TabsTrigger>
             </TabsList>
 
@@ -199,7 +202,7 @@ export default function SellPage() {
         method={method}
         onAdd={(p, q, m) => {
           addItem(p, q, m);
-          toast.success("Savatga qo'shildi");
+          toast.success(t("sell.addedToCart"));
         }}
         onClose={() => setAddOpen(false)}
       />
@@ -208,19 +211,20 @@ export default function SellPage() {
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Sotuvni tasdiqlang</DialogTitle>
+            <DialogTitle>{t("sell.confirmTitle")}</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            {items.length} ta mahsulot, jami{" "}
-            <span className="font-semibold">{totalRevenue().toLocaleString("uz-UZ")} so&apos;m</span>.
-            Davom etamizmi?
+            {t("sell.confirmText", {
+              count: items.length,
+              total: formatCurrency(totalRevenue()),
+            })}
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
-              Bekor
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleConfirmSale} disabled={saleMut.isPending}>
-              {saleMut.isPending ? "Sotilmoqda..." : "Sotish"}
+              {saleMut.isPending ? t("sell.selling") : t("sell.sellBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -231,7 +235,7 @@ export default function SellPage() {
         open={!!receipt}
         result={receipt}
         items={receiptItems}
-        shopName={shop?.name ?? "Do'kon"}
+        shopName={shop?.name ?? t("auth.shopNamePlaceholder")}
         onNext={() => setReceipt(null)}
       />
     </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Hash, Scale, AlertTriangle, ScanLine, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
 import {
@@ -43,6 +44,7 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
+  const { t } = useTranslation();
   const isEdit = !!product;
   const createMut = useCreateProduct();
   const updateMut = useUpdateProduct();
@@ -60,7 +62,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const isWeight = saleType === "weight";
-  const unitLabel = isWeight ? "kg" : "dona";
+  const unitLabel = isWeight ? t("common.kg") : t("common.pcs");
   const cost = parseFloat(costPrice) || 0;
   const selling = parseFloat(sellingPrice) || 0;
   const { profit, profitPercent } = calculateProfit(selling, cost);
@@ -70,23 +72,23 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const lowStockAlert = computeLowStockThreshold(qtyNum, saleType);
   const thresholdLabel = isWeight
     ? formatWeight(lowStockAlert)
-    : `${lowStockAlert} dona`;
+    : `${lowStockAlert} ${t("common.pcs")}`;
 
-  function switchType(t: SaleType) {
-    setSaleType(t);
+  function switchType(type: SaleType) {
+    setSaleType(type);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name.trim()) return toast.error("Mahsulot nomini kiriting");
+    if (!name.trim()) return toast.error(t("product.enterName"));
     if (!isEdit && images.length === 0)
-      return toast.error("Kamida bitta mahsulot rasmini tanlang");
-    if (cost <= 0 || selling <= 0) return toast.error("Narxlarni to'g'ri kiriting");
+      return toast.error(t("product.imagesRequired"));
+    if (cost <= 0 || selling <= 0) return toast.error(t("product.enterPrices"));
     const qty = parseFloat(quantity);
-    if (isNaN(qty) || qty < 0) return toast.error("Miqdorni to'g'ri kiriting");
+    if (isNaN(qty) || qty < 0) return toast.error(t("product.enterQty"));
     if (!isWeight && !Number.isInteger(qty))
-      return toast.error("Donali mahsulot miqdori butun son bo'lishi kerak");
+      return toast.error(t("product.unitInteger"));
 
     setSubmitting(true);
     try {
@@ -115,11 +117,11 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       if (isEdit && product) {
         const updated = await updateMut.mutateAsync({ id: product.id, ...payload });
         savedId = updated.id;
-        toast.success("Mahsulot yangilandi");
+        toast.success(t("product.updated"));
       } else {
         const created = await createMut.mutateAsync({ shop_id: shopId, ...payload });
         savedId = created.id;
-        toast.success("Mahsulot qo'shildi");
+        toast.success(t("product.added"));
       }
 
       // Vizual qidiruv uchun CLIP embeddinglar — barcha rasmlar BRAUZERDA fonda
@@ -144,7 +146,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
       onSuccess();
     } catch (err) {
-      toast.error("Saqlashda xato", {
+      toast.error(t("product.saveError"), {
         description: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -161,18 +163,18 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       />
 
       <div className="space-y-2">
-        <Label htmlFor="name">Mahsulot nomi</Label>
+        <Label htmlFor="name">{t("product.name")}</Label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Masalan: Shampun yoki Guruch"
+          placeholder={t("product.namePlaceholder")}
         />
       </div>
 
       {/* Sotuv turi toggle */}
       <div className="space-y-2">
-        <Label>Sotuv turi</Label>
+        <Label>{t("product.saleType")}</Label>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
@@ -184,7 +186,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
                 : "border-input bg-background text-muted-foreground"
             )}
           >
-            <Hash className="h-4 w-4" /> DONALI (dona)
+            <Hash className="h-4 w-4" /> {t("product.unitBtn")}
           </button>
           <button
             type="button"
@@ -196,7 +198,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
                 : "border-input bg-background text-muted-foreground"
             )}
           >
-            <Scale className="h-4 w-4" /> VAZN (kg)
+            <Scale className="h-4 w-4" /> {t("product.weightBtn")}
           </button>
         </div>
       </div>
@@ -204,7 +206,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       {/* Narxlar */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label htmlFor="cost">Tan narxi ({isWeight ? "1 kg" : "1 dona"})</Label>
+          <Label htmlFor="cost">{t("product.costPrice")} ({isWeight ? t("product.perKg") : t("product.perUnit")})</Label>
           <Input
             id="cost"
             type="number"
@@ -217,7 +219,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="selling">Sotish narxi ({isWeight ? "1 kg" : "1 dona"})</Label>
+          <Label htmlFor="selling">{t("product.sellingPrice")} ({isWeight ? t("product.perKg") : t("product.perUnit")})</Label>
           <Input
             id="selling"
             type="number"
@@ -241,7 +243,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
               : "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400"
           )}
         >
-          <span>Sof foyda ({isWeight ? "1 kg" : "1 dona"}):</span>
+          <span>{t("product.netProfit")} ({isWeight ? t("product.perKg") : t("product.perUnit")}):</span>
           <span className="font-semibold">
             {formatCurrency(profit)} ({profitPercent.toFixed(0)}%)
           </span>
@@ -250,7 +252,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
       {/* Miqdor — ogohlantirish chegarasi avtomatik (20%) */}
       <div className="space-y-2">
-        <Label htmlFor="qty">Miqdor ({unitLabel})</Label>
+        <Label htmlFor="qty">{t("product.quantity")} ({unitLabel})</Label>
         <Input
           id="qty"
           type="number"
@@ -265,27 +267,24 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" />
           {qtyNum > 0 ? (
             <span>
-              Avtomatik ogohlantirish:{" "}
+              {t("product.autoWarnPrefix")}{" "}
               <span className="font-medium text-foreground">{thresholdLabel}</span>{" "}
-              qolganda ({LOW_STOCK_RATIO * 100}%)
+              {t("product.autoWarnSuffix", { pct: LOW_STOCK_RATIO * 100 })}
             </span>
           ) : (
-            <span>
-              Mahsulot kiritilgan miqdorning {LOW_STOCK_RATIO * 100}% qolganda
-              avtomatik ogohlantiriladi
-            </span>
+            <span>{t("product.autoWarnHint", { pct: LOW_STOCK_RATIO * 100 })}</span>
           )}
         </p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="barcode">Barcode (ixtiyoriy)</Label>
+        <Label htmlFor="barcode">{t("product.barcodeOptional")}</Label>
         <div className="flex gap-2">
           <Input
             id="barcode"
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
-            placeholder="EAN-13 / QR"
+            placeholder={t("product.barcodePlaceholder")}
             className="flex-1"
           />
           <Button
@@ -293,8 +292,8 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
             variant="outline"
             size="icon"
             onClick={() => setScanning((s) => !s)}
-            aria-label={scanning ? "Skanerni yopish" : "Kamera bilan skanerlash"}
-            title={scanning ? "Skanerni yopish" : "Kamera bilan skanerlash"}
+            aria-label={scanning ? t("product.scanClose") : t("product.scanOpen")}
+            title={scanning ? t("product.scanClose") : t("product.scanOpen")}
           >
             {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
           </Button>
@@ -305,7 +304,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
               onDetected={(code) => {
                 setBarcode(code);
                 setScanning(false);
-                toast.success("Barcode o'qildi");
+                toast.success(t("product.barcodeRead"));
               }}
             />
           </div>
@@ -313,7 +312,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       </div>
 
       <Button type="submit" className="w-full" disabled={submitting}>
-        {submitting ? "Saqlanmoqda..." : isEdit ? "Yangilash" : "Qo'shish"}
+        {submitting ? t("product.saving") : isEdit ? t("product.updateBtn") : t("product.addBtn")}
       </Button>
     </form>
   );
