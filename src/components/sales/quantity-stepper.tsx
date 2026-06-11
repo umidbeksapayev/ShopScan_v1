@@ -1,6 +1,7 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { SaleType } from "@/types/database";
 import { Input } from "@/components/ui/input";
 
@@ -15,6 +16,7 @@ interface QuantityStepperProps {
  * DONALI: butun son stepper (−/+). VAZN: kg raqam maydoni (3 kasr).
  */
 export function QuantityStepper({ saleType, value, max, onChange }: QuantityStepperProps) {
+  const { t } = useTranslation();
   const isWeight = saleType === "weight";
 
   if (isWeight) {
@@ -40,7 +42,7 @@ export function QuantityStepper({ saleType, value, max, onChange }: QuantityStep
         onClick={() => onChange(Math.max(1, value - 1))}
         disabled={value <= 1}
         className="flex h-10 w-10 items-center justify-center rounded-full border bg-background hover:bg-accent disabled:opacity-40"
-        aria-label="Kamaytirish"
+        aria-label={t("common.decrease")}
       >
         <Minus className="h-4 w-4" />
       </button>
@@ -52,7 +54,7 @@ export function QuantityStepper({ saleType, value, max, onChange }: QuantityStep
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
         className="flex h-10 w-10 items-center justify-center rounded-full border bg-background hover:bg-accent disabled:opacity-40"
-        aria-label="Ko'paytirish"
+        aria-label={t("common.increase")}
       >
         <Plus className="h-4 w-4" />
       </button>

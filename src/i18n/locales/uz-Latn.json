@@ -8,7 +8,10 @@
     "search": "Qidirish",
     "loading": "Yuklanmoqda...",
     "pcs": "dona",
-    "kg": "kg"
+    "kg": "kg",
+    "close": "Yopish",
+    "decrease": "Kamaytirish",
+    "increase": "Ko'paytirish"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -103,7 +106,9 @@
     "archiveError": "Arxivlashda xato",
     "edit": "Tahrirlash",
     "archive": "Arxivlash",
-    "actions": "Amallar"
+    "actions": "Amallar",
+    "gridView": "Katak ko'rinishi",
+    "listView": "Ro'yxat ko'rinishi"
   },
   "product": {
     "name": "Mahsulot nomi",
@@ -151,7 +156,9 @@
     "notFoundDesc": "Barcode: {{code}}. Qo'lda qidirib ko'ring.",
     "multipleFound": "Bir nechta mahsulot topildi — birini tanlang",
     "searchError": "Qidiruvda xato",
-    "nothingFound": "Hech narsa topilmadi",
+    "nothingFound": "Topilmadi",
+    "livePlaceholder": "Mahsulot nomini yozing (2+ harf)...",
+    "searchAria": "Mahsulot qidirish",
     "noMatch": "O'xshash mahsulot topilmadi",
     "noMatchDesc": "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",
     "visualError": "Vizual qidiruv xatosi",
@@ -166,6 +173,8 @@
   "cart": {
     "title": "Savat",
     "empty": "Savat bo'sh",
+    "emptyHint": "Skanerlab yoki qidirib mahsulot qo'shing",
+    "remove": "O'chirish",
     "total": "Jami",
     "checkout": "Sotish",
     "remaining": "Qoldiq"
@@ -178,10 +187,16 @@
     "total": "Jami"
   },
   "receipt": {
+    "label": "Chek",
     "title": "Sotuv yakunlandi",
-    "total": "Jami summa",
-    "itemCount": "{{count}} ta mahsulot",
-    "next": "Yangi sotuv"
+    "itemsLabel": "Mahsulotlar:",
+    "totalRevenue": "Jami tushum:",
+    "print": "Chek chop etish",
+    "sending": "Yuborilmoqda...",
+    "bluetooth": "Bluetooth printer",
+    "printSent": "Chek printerga yuborildi",
+    "btError": "Bluetooth print xatosi",
+    "next": "Keyingisi"
   },
   "barcode": {
     "autoScan": "Avto skan",
@@ -199,7 +214,8 @@
   "visual": {
     "alignHint": "Mahsulotni ramka ichiga joylang va suratga oling",
     "searchBtn": "Rasmga qidirish",
-    "searching": "Qidirilmoqda..."
+    "searching": "Qidirilmoqda...",
+    "cameraNotReady": "Kamera tayyor emas"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -249,6 +265,18 @@
     "indexError": "Indekslash xatosi",
     "indexNote": "Eslatma: birinchi marta CLIP modeli yuklanadi (~25MB), keyin brauzerda keshlanadi. Internet aloqasi kerak.",
     "otherSettings": "Qolgan do'kon sozlamalari keyingi yangilanishlarda tayyor bo'ladi"
+  },
+  "uploader": {
+    "max": "Maksimal {{max}} ta rasm",
+    "processError": "Rasmni qayta ishlashda xato",
+    "existing": "Mavjud rasm",
+    "image": "Rasm",
+    "primary": "Asosiy",
+    "remove": "O'chirish",
+    "add": "Rasm qo'shish",
+    "camera": "Kamera",
+    "gallery": "Galereya",
+    "hint": "Bir nechta rakursdan {{max}} tagacha rasm — tanish aniqligi oshadi. Birinchisi katalogda ko'rinadi."
   },
   "theme": {
     "toggle": "Tungi rejim"

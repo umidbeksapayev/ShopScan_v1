@@ -49,7 +49,7 @@ export function Topbar() {
         <DropdownMenuTrigger asChild>
           <button
             className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-accent"
-            aria-label="Foydalanuvchi menyusi"
+            aria-label={t("nav.settings")}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
               {initial}

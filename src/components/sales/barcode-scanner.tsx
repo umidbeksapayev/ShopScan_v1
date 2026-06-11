@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/library";
 import { ScanLine, Zap, ZapOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +46,7 @@ function playBeep(): void {
  * Qo'shimcha: torch (flash) toggle va haptik (vibratsiya) feedback.
  */
 export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
   const modeRef = useRef<ScanMode>("auto");
@@ -113,8 +115,8 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
         setTorchSupported(Boolean(caps.torch));
       } catch {
         if (!cancelled) {
-          toast.error("Kameraga ruxsat berilmadi", {
-            description: "Brauzer sozlamalaridan kamerani yoqing.",
+          toast.error(t("barcode.cameraDenied"), {
+            description: t("barcode.cameraDeniedDesc"),
           });
         }
       }
@@ -142,9 +144,9 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
       } as unknown as MediaTrackConstraints);
       setTorchOn(next);
     } catch {
-      toast.error("Flashni boshqarib bo'lmadi");
+      toast.error(t("barcode.torchError"));
     }
-  }, [torchOn]);
+  }, [torchOn, t]);
 
   const armManualScan = useCallback(() => {
     armedRef.current = true;
@@ -152,8 +154,8 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
     window.setTimeout(() => {
       armedRef.current = false;
     }, 4000);
-    toast.info("Barcode'ni ramkaga to'g'rilang");
-  }, []);
+    toast.info(t("barcode.alignNow"));
+  }, [t]);
 
   return (
     <div className="space-y-3">
@@ -181,7 +183,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           <button
             type="button"
             onClick={toggleTorch}
-            aria-label={torchOn ? "Flashni o'chirish" : "Flashni yoqish"}
+            aria-label={torchOn ? t("barcode.torchOff") : t("barcode.torchOn")}
             className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
           >
             {torchOn ? <Zap className="h-5 w-5" /> : <ZapOff className="h-5 w-5" />}
@@ -190,7 +192,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
 
         {!cameraReady && (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-white/80">
-            Kamera yuklanmoqda...
+            {t("barcode.cameraLoading")}
           </div>
         )}
       </div>
@@ -207,7 +209,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
               : "border-input bg-background hover:bg-muted"
           )}
         >
-          Avto skan
+          {t("barcode.autoScan")}
         </button>
         <button
           type="button"
@@ -219,7 +221,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
               : "border-input bg-background hover:bg-muted"
           )}
         >
-          Qo&apos;lda
+          {t("barcode.manual")}
         </button>
       </div>
 
@@ -230,11 +232,11 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           disabled={!cameraReady}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
-          <ScanLine className="h-5 w-5" /> Skanerlash
+          <ScanLine className="h-5 w-5" /> {t("barcode.scanBtn")}
         </button>
       ) : (
         <p className="text-center text-xs text-muted-foreground">
-          Barcode'ni ramkaga to&apos;g&apos;rilang — avtomatik o&apos;qiladi
+          {t("barcode.alignHint")}
         </p>
       )}
     </div>

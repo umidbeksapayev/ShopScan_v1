@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Trash2, ShoppingCart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCartStore } from "@/stores/cart-store";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,14 +13,15 @@ interface CartPanelProps {
 }
 
 export function CartPanel({ onCheckout, loading }: CartPanelProps) {
+  const { t } = useTranslation();
   const { items, removeItem, totalRevenue } = useCartStore();
 
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-muted-foreground">
         <ShoppingCart className="mb-2 h-10 w-10" />
-        <p className="text-sm">Savat bo&apos;sh</p>
-        <p className="text-xs">Skanerlab yoki qidirib mahsulot qo&apos;shing</p>
+        <p className="text-sm">{t("cart.empty")}</p>
+        <p className="text-xs">{t("cart.emptyHint")}</p>
       </div>
     );
   }
@@ -27,7 +29,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
   return (
     <div className="flex flex-col rounded-xl border bg-card">
       <div className="border-b px-4 py-3 font-semibold">
-        Savat ({items.length})
+        {t("cart.title")} ({items.length})
       </div>
 
       <div className="max-h-[50vh] divide-y overflow-y-auto">
@@ -35,7 +37,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
           const isWeight = item.product.sale_type === "weight";
           const qtyText = isWeight
             ? formatWeight(item.quantity)
-            : `${item.quantity} dona`;
+            : `${item.quantity} ${t("common.pcs")}`;
           const lineTotal = item.product.selling_price * item.quantity;
 
           return (
@@ -61,7 +63,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
                   type="button"
                   onClick={() => removeItem(item.product.id)}
                   className="text-red-500 hover:text-red-700"
-                  aria-label="O'chirish"
+                  aria-label={t("cart.remove")}
                 >
                   <Trash2 className="ml-auto h-4 w-4" />
                 </button>
@@ -73,11 +75,11 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
 
       <div className="border-t p-4">
         <div className="mb-3 flex items-center justify-between">
-          <span className="text-muted-foreground">Jami:</span>
+          <span className="text-muted-foreground">{t("cart.total")}:</span>
           <span className="text-xl font-bold">{formatCurrency(totalRevenue())}</span>
         </div>
         <Button onClick={onCheckout} disabled={loading} className="w-full" size="lg">
-          {loading ? "Sotilmoqda..." : "Sotish"}
+          {loading ? t("sell.selling") : t("cart.checkout")}
         </Button>
       </div>
     </div>

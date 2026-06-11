@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bluetooth, CheckCircle2, Loader2, Printer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { CartSaleResult } from "@/lib/sales";
 import {
@@ -33,6 +34,7 @@ interface ReceiptProps {
  * Ikki chop etish usuli: HTML (window.print, universal) va Bluetooth BLE (mos qurilmalar).
  */
 export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps) {
+  const { t } = useTranslation();
   const [bleSupported, setBleSupported] = useState(false);
   const [blePrinting, setBlePrinting] = useState(false);
 
@@ -63,9 +65,9 @@ export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps)
     setBlePrinting(true);
     try {
       await printViaBluetooth(data);
-      toast.success("Chek printerga yuborildi");
+      toast.success(t("receipt.printSent"));
     } catch (err) {
-      toast.error("Bluetooth print xatosi", {
+      toast.error(t("receipt.btError"), {
         description: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -79,19 +81,19 @@ export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps)
     <Dialog open={open} onOpenChange={(o) => !o && onNext()}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle className="sr-only">Chek</DialogTitle>
+          <DialogTitle className="sr-only">{t("receipt.label")}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center py-4 text-center">
           <CheckCircle2 className="mb-3 h-14 w-14 text-green-500" />
-          <h2 className="text-lg font-semibold">Sotuv yakunlandi</h2>
+          <h2 className="text-lg font-semibold">{t("receipt.title")}</h2>
           {result && (
             <div className="mt-4 w-full space-y-2 rounded-lg bg-muted p-4 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Mahsulotlar:</span>
-                <span className="font-medium">{result.item_count} ta</span>
+                <span className="text-muted-foreground">{t("receipt.itemsLabel")}</span>
+                <span className="font-medium">{result.item_count} {t("common.pcs")}</span>
               </div>
               <div className="flex justify-between border-t pt-2">
-                <span className="text-muted-foreground">Jami tushum:</span>
+                <span className="text-muted-foreground">{t("receipt.totalRevenue")}</span>
                 <span className="text-lg font-bold">
                   {formatCurrency(result.total_revenue)}
                 </span>
@@ -107,7 +109,7 @@ export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps)
             size="lg"
             disabled={!canPrint}
           >
-            <Printer className="mr-2 h-5 w-5" /> Chek chop etish
+            <Printer className="mr-2 h-5 w-5" /> {t("receipt.print")}
           </Button>
 
           {bleSupported && (
@@ -120,18 +122,18 @@ export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps)
             >
               {blePrinting ? (
                 <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Yuborilmoqda...
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" /> {t("receipt.sending")}
                 </>
               ) : (
                 <>
-                  <Bluetooth className="mr-2 h-5 w-5" /> Bluetooth printer
+                  <Bluetooth className="mr-2 h-5 w-5" /> {t("receipt.bluetooth")}
                 </>
               )}
             </Button>
           )}
 
           <Button onClick={onNext} className="w-full" size="lg">
-            Keyingisi
+            {t("receipt.next")}
           </Button>
         </div>
       </DialogContent>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import type { Product, SearchMethod } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { QuantityStepper } from "@/components/sales/quantity-stepper";
@@ -29,6 +30,7 @@ export function AddToCartDialog({
   onAdd,
   onClose,
 }: AddToCartDialogProps) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<Product | null>(null);
   const [qty, setQty] = useState(1);
 
@@ -53,8 +55,8 @@ export function AddToCartDialog({
         <DialogHeader>
           <DialogTitle>
             {!selected && candidates.length > 1
-              ? "Mahsulotni tanlang"
-              : "Savatga qo'shish"}
+              ? t("addToCart.selectProduct")
+              : t("addToCart.addToCart")}
           </DialogTitle>
         </DialogHeader>
 
@@ -95,21 +97,21 @@ export function AddToCartDialog({
                 <p className="text-lg font-bold">
                   {formatCurrency(selected.selling_price)}
                   <span className="text-xs font-normal text-muted-foreground">
-                    {" "}/ {selected.sale_type === "weight" ? "kg" : "dona"}
+                    {" "}/ {selected.sale_type === "weight" ? t("common.kg") : t("common.pcs")}
                   </span>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Qoldiq:{" "}
+                  {t("addToCart.remaining")}:{" "}
                   {selected.sale_type === "weight"
                     ? formatWeight(selected.quantity)
-                    : `${selected.quantity} dona`}
+                    : `${selected.quantity} ${t("common.pcs")}`}
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm font-medium">
-                Miqdor ({selected.sale_type === "weight" ? "kg" : "dona"})
+                {t("addToCart.quantity")} ({selected.sale_type === "weight" ? t("common.kg") : t("common.pcs")})
               </p>
               <QuantityStepper
                 saleType={selected.sale_type}
@@ -137,14 +139,14 @@ export function AddToCartDialog({
             </div>
 
             <div className="flex items-center justify-between rounded-md bg-muted px-3 py-2">
-              <span className="text-sm text-muted-foreground">Jami:</span>
+              <span className="text-sm text-muted-foreground">{t("addToCart.total")}:</span>
               <span className="font-semibold">
                 {formatCurrency(selected.selling_price * qty)}
               </span>
             </div>
 
             <Button onClick={handleAdd} disabled={qty <= 0} className="w-full" size="lg">
-              Savatga qo&apos;shish
+              {t("addToCart.addToCart")}
             </Button>
           </div>
         )}

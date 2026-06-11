@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { Camera, ImagePlus, X, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { compressToWebp } from "@/lib/image";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ export function MultiImageUploader({
   max = 3,
   onChange,
 }: MultiImageUploaderProps) {
+  const { t } = useTranslation();
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +43,7 @@ export function MultiImageUploader({
 
     const room = max - value.length;
     if (room <= 0) {
-      toast.error(`Maksimal ${max} ta rasm`);
+      toast.error(t("uploader.max", { max }));
       return;
     }
 
@@ -55,7 +57,7 @@ export function MultiImageUploader({
       }
       onChange([...value, ...next]);
     } catch {
-      toast.error("Rasmni qayta ishlashda xato");
+      toast.error(t("uploader.processError"));
     }
   }
 
@@ -76,7 +78,7 @@ export function MultiImageUploader({
           <div className="relative col-span-1 aspect-square overflow-hidden rounded-lg border bg-muted">
             <Image
               src={existingUrl}
-              alt="Mavjud rasm"
+              alt={t("uploader.existing")}
               fill
               sizes="120px"
               className="object-cover"
@@ -93,7 +95,7 @@ export function MultiImageUploader({
           >
             <Image
               src={img.preview}
-              alt={`Rasm ${idx + 1}`}
+              alt={`${t("uploader.image")} ${idx + 1}`}
               fill
               sizes="120px"
               className="object-cover"
@@ -101,14 +103,14 @@ export function MultiImageUploader({
             />
             {idx === 0 && (
               <span className="absolute left-1 top-1 flex items-center gap-0.5 rounded bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
-                <Star className="h-2.5 w-2.5" /> Asosiy
+                <Star className="h-2.5 w-2.5" /> {t("uploader.primary")}
               </span>
             )}
             <button
               type="button"
               onClick={() => removeAt(idx)}
               className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white hover:bg-black/80"
-              aria-label="O'chirish"
+              aria-label={t("uploader.remove")}
             >
               <X className="h-3 w-3" />
             </button>
@@ -125,7 +127,7 @@ export function MultiImageUploader({
             )}
           >
             <ImagePlus className="h-6 w-6" />
-            <span className="text-[11px]">Rasm qo&apos;shish</span>
+            <span className="text-[11px]">{t("uploader.add")}</span>
           </button>
         )}
       </div>
@@ -137,22 +139,19 @@ export function MultiImageUploader({
             onClick={() => cameraRef.current?.click()}
             className="flex items-center justify-center gap-2 rounded-md border border-input bg-background py-2 text-sm font-medium hover:bg-accent"
           >
-            <Camera className="h-4 w-4" /> Kamera
+            <Camera className="h-4 w-4" /> {t("uploader.camera")}
           </button>
           <button
             type="button"
             onClick={() => galleryRef.current?.click()}
             className="flex items-center justify-center gap-2 rounded-md border border-input bg-background py-2 text-sm font-medium hover:bg-accent"
           >
-            <ImagePlus className="h-4 w-4" /> Galereya
+            <ImagePlus className="h-4 w-4" /> {t("uploader.gallery")}
           </button>
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">
-        Bir nechta rakursdan {max} tagacha rasm — tanish aniqligi oshadi. Birinchisi
-        katalogda ko&apos;rinadi.
-      </p>
+      <p className="text-xs text-muted-foreground">{t("uploader.hint", { max })}</p>
 
       <input
         ref={cameraRef}

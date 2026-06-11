@@ -90,7 +90,7 @@ export function CatalogToolbar() {
               "rounded-l-md p-2",
               viewMode === "grid" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
             )}
-            aria-label="Grid ko'rinish"
+            aria-label={t("catalog.gridView")}
           >
             <LayoutGrid className="h-4 w-4" />
           </button>
@@ -101,7 +101,7 @@ export function CatalogToolbar() {
               "rounded-r-md p-2",
               viewMode === "list" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
             )}
-            aria-label="Ro'yxat ko'rinish"
+            aria-label={t("catalog.listView")}
           >
             <List className="h-4 w-4" />
           </button>
