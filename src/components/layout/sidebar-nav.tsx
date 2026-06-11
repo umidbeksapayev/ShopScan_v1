@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Package,
@@ -19,22 +20,23 @@ import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   icon: LucideIcon;
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/catalog", label: "Mahsulotlar", icon: Package },
-  { href: "/sell", label: "Sotuv", icon: ShoppingCart },
-  { href: "/history", label: "Tarix", icon: ReceiptText },
-  { href: "/reports", label: "Hisobotlar", icon: BarChart3 },
-  { href: "/settings", label: "Sozlamalar", icon: Settings },
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/catalog", labelKey: "nav.products", icon: Package },
+  { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
+  { href: "/history", labelKey: "nav.history", icon: ReceiptText },
+  { href: "/reports", labelKey: "nav.reports", icon: BarChart3 },
+  { href: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation();
   const [signingOut, setSigningOut] = useState(false);
 
   async function handleLogout() {
@@ -53,7 +55,7 @@ export function SidebarNav() {
         </div>
         <div>
           <h1 className="text-lg font-bold leading-tight text-foreground">ShopScan</h1>
-          <p className="text-xs text-muted-foreground">Do&apos;kon boshqaruvi</p>
+          <p className="text-xs text-muted-foreground">{t("common.tagline")}</p>
         </div>
       </div>
 
@@ -76,7 +78,7 @@ export function SidebarNav() {
               )}
             >
               <Icon className="h-5 w-5 shrink-0" />
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           );
         })}
@@ -91,7 +93,7 @@ export function SidebarNav() {
           className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
         >
           <LogOut className="h-5 w-5 shrink-0" />
-          {signingOut ? "Chiqilmoqda..." : "Chiqish"}
+          {signingOut ? t("nav.loggingOut") : t("nav.logout")}
         </button>
       </div>
     </div>

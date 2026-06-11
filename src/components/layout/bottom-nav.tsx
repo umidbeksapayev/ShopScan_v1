@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Package,
@@ -14,20 +15,21 @@ import { cn } from "@/lib/utils";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
   icon: LucideIcon;
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Bosh", icon: LayoutDashboard },
-  { href: "/catalog", label: "Katalog", icon: Package },
-  { href: "/sell", label: "Sotuv", icon: ShoppingCart },
-  { href: "/history", label: "Tarix", icon: ReceiptText },
-  { href: "/reports", label: "Hisobot", icon: BarChart3 },
+  { href: "/dashboard", labelKey: "nav.home", icon: LayoutDashboard },
+  { href: "/catalog", labelKey: "nav.catalog", icon: Package },
+  { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
+  { href: "/history", labelKey: "nav.history", icon: ReceiptText },
+  { href: "/reports", labelKey: "nav.report", icon: BarChart3 },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <div className="flex items-center justify-around px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2">
@@ -53,7 +55,7 @@ export function BottomNav() {
             >
               <Icon className="h-5 w-5" />
             </span>
-            <span className="text-[10px] font-medium">{item.label}</span>
+            <span className="text-[10px] font-medium">{t(item.labelKey)}</span>
           </Link>
         );
       })}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ScanLine } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,14 +26,14 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      toast.error("Kirish amalga oshmadi", {
-        description: "Email yoki parol noto'g'ri.",
+      toast.error(t("auth.loginFailed"), {
+        description: t("auth.loginFailedDesc"),
       });
       setLoading(false);
       return;
     }
 
-    toast.success("Xush kelibsiz!");
+    toast.success(t("auth.welcome"));
     router.push("/dashboard");
     router.refresh();
   }
@@ -44,12 +46,12 @@ export default function LoginPage() {
             <ScanLine className="h-7 w-7" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">ShopScan</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Do&apos;koningizga kiring</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("auth.loginSubtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -62,7 +64,7 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Parol</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input
               id="password"
               type="password"
@@ -75,14 +77,14 @@ export default function LoginPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Kirilmoqda..." : "Kirish"}
+            {loading ? t("auth.loggingIn") : t("auth.loginBtn")}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          Hisobingiz yo&apos;qmi?{" "}
+          {t("auth.noAccount")}{" "}
           <Link href="/register" className="font-medium text-primary hover:underline">
-            Ro&apos;yxatdan o&apos;ting
+            {t("auth.goRegister")}
           </Link>
         </p>
       </div>
