@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product } from "@/types/database";
 import { useShop } from "@/hooks/use-shop";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function CatalogPage() {
+  const { t } = useTranslation();
   const { data: shop } = useShop();
   const { search, saleType, sortBy, sortDir } = useCatalogStore();
   const { data: products, isLoading } = useProducts({
@@ -43,21 +45,21 @@ export default function CatalogPage() {
   }
 
   async function handleArchive(p: Product) {
-    if (!confirm(`"${p.name}" mahsulotini arxivlashni tasdiqlaysizmi?`)) return;
+    if (!confirm(t("catalog.archiveConfirm", { name: p.name }))) return;
     try {
       await archiveMut.mutateAsync(p.id);
-      toast.success("Mahsulot arxivlandi");
+      toast.success(t("catalog.archived"));
     } catch {
-      toast.error("Arxivlashda xato");
+      toast.error(t("catalog.archiveError"));
     }
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Mahsulotlar</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("catalog.title")}</h1>
         <Button onClick={openAdd} disabled={!shop}>
-          <Plus className="mr-1 h-4 w-4" /> Qo&apos;shish
+          <Plus className="mr-1 h-4 w-4" /> {t("common.add")}
         </Button>
       </div>
 
@@ -72,11 +74,11 @@ export default function CatalogPage() {
       ) : !products || products.length === 0 ? (
         <div className="rounded-xl border border-dashed py-16 text-center">
           <p className="text-muted-foreground">
-            {search ? "Hech narsa topilmadi" : "Hali mahsulot yo'q"}
+            {search ? t("catalog.notFound") : t("catalog.empty")}
           </p>
           {!search && (
             <Button onClick={openAdd} variant="outline" className="mt-4" disabled={!shop}>
-              <Plus className="mr-1 h-4 w-4" /> Birinchi mahsulotni qo&apos;shing
+              <Plus className="mr-1 h-4 w-4" /> {t("catalog.addFirst")}
             </Button>
           )}
         </div>
@@ -97,7 +99,7 @@ export default function CatalogPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editing ? "Mahsulotni tahrirlash" : "Yangi mahsulot"}
+              {editing ? t("catalog.editProduct") : t("catalog.newProduct")}
             </DialogTitle>
           </DialogHeader>
           {shop && (

@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 import type { SalesTrendPoint } from "@/lib/dashboard";
 import { formatCurrency } from "@/lib/utils";
 
@@ -64,6 +65,7 @@ function ChartTooltip({
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
+  const { t } = useTranslation();
   const chartData = data.map((d) => ({ ...d, label: dayLabel(d.day) }));
 
   return (
@@ -101,7 +103,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
         <Area
           type="monotone"
           dataKey="revenue"
-          name="Tushum"
+          name={t("reports.revenue")}
           stroke="#6C5DD3"
           strokeWidth={2.5}
           fill="url(#revGrad)"
@@ -109,7 +111,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
         <Area
           type="monotone"
           dataKey="profit"
-          name="Foyda"
+          name={t("reports.profit")}
           stroke="#10b981"
           strokeWidth={2.5}
           fill="url(#profitGrad)"

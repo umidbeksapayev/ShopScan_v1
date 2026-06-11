@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, LayoutGrid, List, Hash, Scale } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useCatalogStore, type SortField, type SortDir } from "@/stores/catalog-store";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export function CatalogToolbar() {
+  const { t } = useTranslation();
   const {
     search,
     saleType,
@@ -33,7 +35,7 @@ export function CatalogToolbar() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Mahsulot nomi bo'yicha qidirish..."
+          placeholder={t("catalog.searchPlaceholder")}
           className="pl-9"
         />
       </div>
@@ -45,15 +47,15 @@ export function CatalogToolbar() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Barcha turlar</SelectItem>
+            <SelectItem value="all">{t("catalog.allTypes")}</SelectItem>
             <SelectItem value="unit">
               <span className="flex items-center gap-2">
-                <Hash className="h-3.5 w-3.5" /> Donali
+                <Hash className="h-3.5 w-3.5" /> {t("catalog.unit")}
               </span>
             </SelectItem>
             <SelectItem value="weight">
               <span className="flex items-center gap-2">
-                <Scale className="h-3.5 w-3.5" /> Vazn
+                <Scale className="h-3.5 w-3.5" /> {t("catalog.weight")}
               </span>
             </SelectItem>
           </SelectContent>
@@ -71,11 +73,11 @@ export function CatalogToolbar() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="created_at:desc">Eng yangi</SelectItem>
-            <SelectItem value="name:asc">Nom (A→Z)</SelectItem>
-            <SelectItem value="selling_price:asc">Narx (arzon)</SelectItem>
-            <SelectItem value="selling_price:desc">Narx (qimmat)</SelectItem>
-            <SelectItem value="quantity:asc">Qoldiq (kam)</SelectItem>
+            <SelectItem value="created_at:desc">{t("catalog.sortNewest")}</SelectItem>
+            <SelectItem value="name:asc">{t("catalog.sortNameAsc")}</SelectItem>
+            <SelectItem value="selling_price:asc">{t("catalog.sortPriceAsc")}</SelectItem>
+            <SelectItem value="selling_price:desc">{t("catalog.sortPriceDesc")}</SelectItem>
+            <SelectItem value="quantity:asc">{t("catalog.sortQtyAsc")}</SelectItem>
           </SelectContent>
         </Select>
 
