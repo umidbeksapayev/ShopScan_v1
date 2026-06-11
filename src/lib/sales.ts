@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { normalizeBarcode } from "@/lib/utils";
 import type { Product, SearchMethod } from "@/types/database";
 
 /**
@@ -8,10 +9,11 @@ import type { Product, SearchMethod } from "@/types/database";
  */
 export async function findProductsByBarcode(barcode: string): Promise<Product[]> {
   const supabase = createClient();
+  const normalized = normalizeBarcode(barcode);
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .eq("barcode", barcode)
+    .eq("barcode", normalized)
     .eq("is_active", true)
     .gt("quantity", 0)
     .order("created_at", { ascending: false })
@@ -57,7 +59,8 @@ export async function searchProductsByImage(
     p_shop_id: shopId,
     p_embedding: JSON.stringify(embedding),
     p_match_count: 3,
-    p_threshold: 0.0,
+    // Past o'xshashlikdagi (bog'liq bo'lmagan) natijalarni chiqarib tashlaymiz
+    p_threshold: 0.2,
   });
 
   if (error) throw new Error(error.message);

@@ -69,6 +69,13 @@ export default function SellPage() {
         });
         return;
       }
+      // Bitta DONALI mahsulot → darhol savatga (qo'shimcha klik yo'q)
+      if (found.length === 1 && found[0].sale_type === "unit") {
+        addItem(found[0], 1, "barcode");
+        toast.success(`${found[0].name} — savatga qo'shildi`);
+        return;
+      }
+      // Vazn (kg kiritish kerak) yoki bir nechta moslik → dialog
       if (found.length > 1) {
         toast.info("Bir nechta mahsulot topildi — birini tanlang");
       }
