@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Package } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { TopProduct } from "@/lib/dashboard";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 
@@ -11,6 +12,7 @@ interface TopProductsProps {
 }
 
 export function TopProducts({ products, loading }: TopProductsProps) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="space-y-2">
@@ -25,7 +27,7 @@ export function TopProducts({ products, loading }: TopProductsProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
         <Package className="h-8 w-8 text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">Bu davrda sotuvlar yo&apos;q</p>
+        <p className="text-sm text-muted-foreground">{t("reports.noSales")}</p>
       </div>
     );
   }
@@ -36,7 +38,7 @@ export function TopProducts({ products, loading }: TopProductsProps) {
     <ul className="space-y-3">
       {products.map((p, idx) => {
         const soldLabel =
-          p.sale_type === "weight" ? formatWeight(p.units_sold) : `${p.units_sold} dona`;
+          p.sale_type === "weight" ? formatWeight(p.units_sold) : `${p.units_sold} ${t("common.pcs")}`;
         return (
           <li key={p.product_id} className="flex items-center gap-3">
             <span className="w-4 shrink-0 text-sm font-semibold text-muted-foreground tabular-nums">

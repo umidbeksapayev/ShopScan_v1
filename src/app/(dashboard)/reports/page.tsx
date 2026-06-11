@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Wallet, TrendingUp, ShoppingCart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import { useSalesTrend, useTopProducts } from "@/hooks/use-dashboard";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -19,11 +20,12 @@ const RevenueChart = dynamic(
 );
 
 const PERIODS = [
-  { label: "7 kun", days: 7 },
-  { label: "30 kun", days: 30 },
+  { labelKey: "reports.days7", days: 7 },
+  { labelKey: "reports.days30", days: 30 },
 ] as const;
 
 export default function ReportsPage() {
+  const { t } = useTranslation();
   const { data: shop } = useShop();
   const [days, setDays] = useState<number>(7);
 
@@ -44,7 +46,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-foreground">Hisobotlar</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("reports.title")}</h1>
 
         {/* Davr tanlash */}
         <div className="inline-flex rounded-lg border bg-card p-0.5">
@@ -60,7 +62,7 @@ export default function ReportsPage() {
                   : "text-muted-foreground hover:bg-accent"
               )}
             >
-              {p.label}
+              {t(p.labelKey)}
             </button>
           ))}
         </div>
@@ -69,22 +71,22 @@ export default function ReportsPage() {
       {/* Davr yig'indilari */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
-          label={`Tushum (${days} kun)`}
+          label={`${t("reports.revenue")} (${days})`}
           value={formatCurrency(totals.revenue)}
           icon={Wallet}
           variant="violet"
           loading={trendLoading}
         />
         <StatCard
-          label={`Foyda (${days} kun)`}
+          label={`${t("reports.profit")} (${days})`}
           value={formatCurrency(totals.profit)}
           icon={TrendingUp}
           variant="green"
           loading={trendLoading}
         />
         <StatCard
-          label={`Sotuvlar (${days} kun)`}
-          value={`${totals.count} ta`}
+          label={`${t("reports.sales")} (${days})`}
+          value={`${totals.count} ${t("common.pcs")}`}
           icon={ShoppingCart}
           variant="blue"
           loading={trendLoading}
@@ -94,7 +96,7 @@ export default function ReportsPage() {
       {/* Trend grafigi */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Tushum va Foyda dinamikasi</CardTitle>
+          <CardTitle className="text-base">{t("reports.revenueDynamics")}</CardTitle>
         </CardHeader>
         <CardContent>
           {trendLoading ? (
@@ -108,7 +110,7 @@ export default function ReportsPage() {
       {/* Eng ko'p sotilgan */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Eng ko&apos;p tushum keltirgan mahsulotlar</CardTitle>
+          <CardTitle className="text-base">{t("reports.topProducts")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TopProducts products={top ?? []} loading={topLoading} />

@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ScanLine, Settings, LogOut, Store } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +19,7 @@ import {
 export function Topbar() {
   const { data: shop } = useShop();
   const router = useRouter();
+  const { t } = useTranslation();
   const initial = shop?.name?.trim()?.[0]?.toUpperCase() ?? "S";
 
   async function handleLogout() {
@@ -34,31 +37,32 @@ export function Topbar() {
         </span>
         <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
           <Store className="h-4 w-4" />
-          <span className="font-medium text-foreground">{shop?.name ?? "Mening do'konim"}</span>
+          <span className="font-medium text-foreground">{shop?.name ?? t("auth.shopNamePlaceholder")}</span>
         </div>
       </div>
 
-      {/* O'ng: tema + avatar menyu */}
+      {/* O'ng: til + tema + avatar menyu */}
       <div className="flex items-center gap-1">
+        <LanguageSwitcher />
         <ThemeToggle />
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-accent"
-            aria-label="Foydalanuvchi menyusi"
+            aria-label={t("nav.settings")}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
               {initial}
             </span>
             <span className="hidden max-w-[120px] truncate text-sm font-medium text-foreground sm:inline">
-              {shop?.name ?? "Do'kon"}
+              {shop?.name ?? t("auth.shopNamePlaceholder")}
             </span>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>
             <Link href="/settings">
-              <Settings className="mr-2 h-4 w-4" /> Sozlamalar
+              <Settings className="mr-2 h-4 w-4" /> {t("nav.settings")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -66,7 +70,7 @@ export function Topbar() {
             onClick={handleLogout}
             className="text-red-600 focus:text-red-600"
           >
-            <LogOut className="mr-2 h-4 w-4" /> Chiqish
+            <LogOut className="mr-2 h-4 w-4" /> {t("nav.logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
         </DropdownMenu>

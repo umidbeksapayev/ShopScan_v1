@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Wallet, TrendingUp, ShoppingCart, AlertTriangle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import {
   useDashboardStats,
@@ -23,6 +24,7 @@ const RevenueChart = dynamic(
 );
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { data: shop } = useShop();
   const { data: stats, isLoading: statsLoading } = useDashboardStats(shop?.id);
   const { data: trend, isLoading: trendLoading } = useSalesTrend(shop?.id, 7);
@@ -31,36 +33,36 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("dashboard.title")}</h1>
         {shop && <p className="text-sm text-muted-foreground">{shop.name}</p>}
       </div>
 
       {/* Statistika kartlari */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         <StatCard
-          label="Bugungi tushum"
+          label={t("dashboard.todayRevenue")}
           value={formatCurrency(stats?.today_revenue ?? 0)}
           icon={Wallet}
           variant="violet"
           loading={statsLoading}
         />
         <StatCard
-          label="Sof foyda"
+          label={t("dashboard.netProfit")}
           value={formatCurrency(stats?.today_profit ?? 0)}
           icon={TrendingUp}
           variant="green"
           loading={statsLoading}
         />
         <StatCard
-          label="Sotuvlar soni"
+          label={t("dashboard.salesCount")}
           value={`${stats?.today_sales_count ?? 0}`}
           icon={ShoppingCart}
           variant="blue"
           loading={statsLoading}
         />
         <StatCard
-          label="Kam qoldi"
-          value={`${stats?.low_stock_count ?? 0} ta`}
+          label={t("dashboard.lowStock")}
+          value={`${stats?.low_stock_count ?? 0} ${t("common.pcs")}`}
           icon={AlertTriangle}
           variant="amber"
           loading={statsLoading}
@@ -71,7 +73,7 @@ export default function DashboardPage() {
         {/* Tushum trendi */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Oxirgi 7 kun — Tushum va Foyda</CardTitle>
+            <CardTitle className="text-base">{t("dashboard.last7days")}</CardTitle>
           </CardHeader>
           <CardContent>
             {trendLoading ? (
@@ -85,7 +87,7 @@ export default function DashboardPage() {
         {/* Kam qoldiq */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Kam qolgan mahsulotlar</CardTitle>
+            <CardTitle className="text-base">{t("dashboard.lowStockProducts")}</CardTitle>
           </CardHeader>
           <CardContent>
             <LowStockList products={lowStock ?? []} loading={lowLoading} />

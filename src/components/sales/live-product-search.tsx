@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight, cn } from "@/lib/utils";
 import { matchScore } from "@/lib/translit";
@@ -21,6 +22,7 @@ const MAX_RESULTS = 8;
  * Lotin/kiril normalizatsiya, ↑/↓ navigatsiya, Enter/klik bilan savatga.
  */
 export function LiveProductSearch({ products, onSelect }: LiveProductSearchProps) {
+  const { t } = useTranslation();
   const [term, setTerm] = useState("");
   const [debounced, setDebounced] = useState("");
   const [active, setActive] = useState(0);
@@ -77,9 +79,9 @@ export function LiveProductSearch({ products, onSelect }: LiveProductSearchProps
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           onKeyDown={handleKey}
-          placeholder="Mahsulot nomini yozing (2+ harf)..."
+          placeholder={t("sell.livePlaceholder")}
           className="pl-9"
-          aria-label="Mahsulot qidirish"
+          aria-label={t("sell.searchAria")}
         />
       </div>
 
@@ -87,7 +89,7 @@ export function LiveProductSearch({ products, onSelect }: LiveProductSearchProps
         <div className="overflow-hidden rounded-lg border bg-card">
           {results.length === 0 ? (
             <p className="px-3 py-4 text-center text-sm text-muted-foreground">
-              Topilmadi
+              {t("sell.nothingFound")}
             </p>
           ) : (
             <ul className="max-h-72 overflow-y-auto">
@@ -95,7 +97,7 @@ export function LiveProductSearch({ products, onSelect }: LiveProductSearchProps
                 const qtyLabel =
                   p.sale_type === "weight"
                     ? formatWeight(p.quantity)
-                    : `${p.quantity} dona`;
+                    : `${p.quantity} ${t("common.pcs")}`;
                 return (
                   <li key={p.id}>
                     <button

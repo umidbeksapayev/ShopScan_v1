@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { MoreVertical, Pencil, Archive, Hash, Scale } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+type TFn = (key: string) => string;
+
 interface ProductCardProps {
   product: Product;
   onEdit: (p: Product) => void;
@@ -19,19 +22,23 @@ interface ProductCardProps {
 }
 
 /** Qoldiq holatini aniqlaydi (FR-33). cost_price BU YERDA hech qachon ko'rsatilmaydi. */
-function stockState(p: Product): { label: string; variant: "success" | "warning" | "destructive" } {
+function stockState(
+  p: Product,
+  t: TFn
+): { label: string; variant: "success" | "warning" | "destructive" } {
   const isWeight = p.sale_type === "weight";
-  const qtyText = isWeight ? formatWeight(p.quantity) : `${p.quantity} dona`;
+  const qtyText = isWeight ? formatWeight(p.quantity) : `${p.quantity} ${t("common.pcs")}`;
 
-  if (p.quantity <= 0) return { label: "Tugadi", variant: "destructive" };
-  // Ogohlantirish chegarasi: miqdor chegaraga yetganda yoki undan kam bo'lganda (<=)
-  // — Dashboard va kam-qoldiq ro'yxati bilan bir xil mantiq.
-  if (p.quantity <= p.low_stock_alert) return { label: `${qtyText} (kam!)`, variant: "warning" };
+  if (p.quantity <= 0) return { label: t("dashboard.out"), variant: "destructive" };
+  // Ogohlantirish chegarasi: miqdor chegaraga yetganda yoki undan kam bo'lganda (<=).
+  if (p.quantity <= p.low_stock_alert)
+    return { label: `${qtyText} (${t("dashboard.low").toLowerCase()}!)`, variant: "warning" };
   return { label: qtyText, variant: "success" };
 }
 
 export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
-  const stock = stockState(product);
+  const { t } = useTranslation();
+  const stock = stockState(product, t);
   const isWeight = product.sale_type === "weight";
 
   return (
@@ -49,27 +56,27 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
           className="absolute left-2 top-2 gap-1 bg-white/90"
         >
           {isWeight ? <Scale className="h-3 w-3" /> : <Hash className="h-3 w-3" />}
-          {isWeight ? "kg" : "dona"}
+          {isWeight ? t("common.kg") : t("common.pcs")}
         </Badge>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               className="absolute right-2 top-2 rounded-full bg-white/90 p-1.5 text-foreground shadow hover:bg-white"
-              aria-label="Amallar"
+              aria-label={t("catalog.actions")}
             >
               <MoreVertical className="h-4 w-4" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(product)}>
-              <Pencil className="mr-2 h-4 w-4" /> Tahrirlash
+              <Pencil className="mr-2 h-4 w-4" /> {t("catalog.edit")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onArchive(product)}
               className="text-red-600 focus:text-red-600"
             >
-              <Archive className="mr-2 h-4 w-4" /> Arxivlash
+              <Archive className="mr-2 h-4 w-4" /> {t("catalog.archive")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

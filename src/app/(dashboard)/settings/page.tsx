@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sparkles, Loader2, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useShop } from "@/hooks/use-shop";
@@ -22,6 +23,7 @@ interface BackfillResult {
 }
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { data: shop } = useShop();
   const [running, setRunning] = useState(false);
@@ -39,7 +41,7 @@ export default function SettingsPage() {
 
       if (total === 0) {
         setResult({ indexed: 0, failed: 0, total: 0 });
-        toast.success("Barcha mahsulotlar allaqachon indekslangan");
+        toast.success(t("settings.allIndexed"));
         return;
       }
 
@@ -60,11 +62,11 @@ export default function SettingsPage() {
 
       setResult({ indexed, failed, total });
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success(`${indexed} ta mahsulot indekslandi`, {
-        description: failed > 0 ? `${failed} ta muvaffaqiyatsiz` : undefined,
+      toast.success(t("settings.indexedToast", { count: indexed }), {
+        description: failed > 0 ? t("settings.indexFailed", { failed }) : undefined,
       });
     } catch (err) {
-      toast.error("Indekslash xatosi", {
+      toast.error(t("settings.indexError"), {
         description: err instanceof Error ? err.message : undefined,
       });
     } finally {
@@ -75,20 +77,15 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Sozlamalar</h1>
+      <h1 className="text-2xl font-bold text-foreground">{t("settings.title")}</h1>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            Vizual qidiruv indeksi
+            {t("settings.visualIndex")}
           </CardTitle>
-          <CardDescription>
-            Mahsulot rasmlarini CLIP bilan indekslaydi — shundan keyin sotuvda kamera
-            orqali rasmga qarab mahsulot topish mumkin. Indekslash{" "}
-            <strong>brauzeringizda</strong> bajariladi (bepul, server kerak emas).
-            Yangi mahsulotlar avtomatik indekslanadi; bu tugma eski mahsulotlar uchun.
-          </CardDescription>
+          <CardDescription>{t("settings.visualIndexDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button onClick={handleBackfill} disabled={running}>
@@ -96,13 +93,13 @@ export default function SettingsPage() {
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {progress
-                  ? `Indekslanmoqda... ${progress.done}/${progress.total}`
-                  : "Tayyorlanmoqda..."}
+                  ? `${t("settings.indexing")} ${progress.done}/${progress.total}`
+                  : t("settings.preparing")}
               </>
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Indekslashni boshlash
+                {t("settings.startIndex")}
               </>
             )}
           </Button>
@@ -112,22 +109,24 @@ export default function SettingsPage() {
               <CheckCircle2 className="h-4 w-4" />
               <span>
                 {result.total === 0
-                  ? "Indekslanmagan mahsulot yo'q."
-                  : `${result.indexed}/${result.total} indekslandi` +
-                    (result.failed > 0 ? `, ${result.failed} xato` : "")}
+                  ? t("settings.noUnindexed")
+                  : t("settings.indexedCount", {
+                      indexed: result.indexed,
+                      total: result.total,
+                    }) +
+                    (result.failed > 0
+                      ? ", " + t("settings.indexFailed", { failed: result.failed })
+                      : "")}
               </span>
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground">
-            Eslatma: birinchi marta CLIP modeli yuklanadi (~25MB), keyin brauzerda
-            keshlanadi. Internet aloqasi kerak.
-          </p>
+          <p className="text-xs text-muted-foreground">{t("settings.indexNote")}</p>
         </CardContent>
       </Card>
 
       <p className="py-4 text-center text-sm text-muted-foreground">
-        Qolgan do&apos;kon sozlamalari keyingi yangilanishlarda tayyor bo&apos;ladi
+        {t("settings.otherSettings")}
       </p>
     </div>
   );

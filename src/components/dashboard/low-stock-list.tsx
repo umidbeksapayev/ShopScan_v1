@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatWeight } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ interface LowStockListProps {
 }
 
 export function LowStockList({ products, loading }: LowStockListProps) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="space-y-2">
@@ -26,7 +28,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
         <CheckCircle2 className="h-8 w-8 text-green-500" />
-        <p className="text-sm text-muted-foreground">Barcha mahsulotlar yetarli miqdorda</p>
+        <p className="text-sm text-muted-foreground">{t("dashboard.allStocked")}</p>
       </div>
     );
   }
@@ -36,7 +38,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
       {products.map((p) => {
         const isOut = p.quantity <= 0;
         const qtyLabel =
-          p.sale_type === "weight" ? formatWeight(p.quantity) : `${p.quantity} dona`;
+          p.sale_type === "weight" ? formatWeight(p.quantity) : `${p.quantity} ${t("common.pcs")}`;
         return (
           <li key={p.id}>
             <Link
@@ -48,7 +50,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
-                <p className="text-xs text-muted-foreground tabular-nums">Qoldiq: {qtyLabel}</p>
+                <p className="text-xs text-muted-foreground tabular-nums">{t("dashboard.remaining")}: {qtyLabel}</p>
               </div>
               <span
                 className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -58,7 +60,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
                 }`}
               >
                 <AlertTriangle className="h-3 w-3" />
-                {isOut ? "Tugadi" : "Kam"}
+                {isOut ? t("dashboard.out") : t("dashboard.low")}
               </span>
             </Link>
           </li>

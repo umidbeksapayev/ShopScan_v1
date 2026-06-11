@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { Sparkles, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 interface VisualSearchProps {
@@ -21,6 +22,7 @@ const videoConstraints = {
  * onCapture orqali yuboriladi. CLIP embed + match_products server-side bajariladi.
  */
 export function VisualSearch({ onCapture, searching = false }: VisualSearchProps) {
+  const { t } = useTranslation();
   const webcamRef = useRef<Webcam>(null);
   const [cameraReady, setCameraReady] = useState(false);
 
@@ -28,11 +30,11 @@ export function VisualSearch({ onCapture, searching = false }: VisualSearchProps
     // Kichik o'lcham → tezroq yuklash va embed (CLIP baribir 224px ga keltiradi)
     const shot = webcamRef.current?.getScreenshot({ width: 640, height: 480 });
     if (!shot) {
-      toast.error("Kamera tayyor emas");
+      toast.error(t("visual.cameraNotReady"));
       return;
     }
     onCapture(shot);
-  }, [onCapture]);
+  }, [onCapture, t]);
 
   return (
     <div className="space-y-3">
@@ -45,8 +47,8 @@ export function VisualSearch({ onCapture, searching = false }: VisualSearchProps
           videoConstraints={videoConstraints}
           onUserMedia={() => setCameraReady(true)}
           onUserMediaError={() =>
-            toast.error("Kameraga ruxsat berilmadi", {
-              description: "Brauzer sozlamalaridan kamerani yoqing.",
+            toast.error(t("barcode.cameraDenied"), {
+              description: t("barcode.cameraDeniedDesc"),
             })
           }
           className="h-full w-full object-cover"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ScanLine } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { Label } from "@/components/ui/label";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [shopName, setShopName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,7 +23,7 @@ export default function RegisterPage() {
     e.preventDefault();
 
     if (password.length < 6) {
-      toast.error("Parol kamida 6 ta belgidan iborat bo'lishi kerak");
+      toast.error(t("auth.passwordTooShort"));
       return;
     }
 
@@ -36,7 +38,7 @@ export default function RegisterPage() {
     });
 
     if (error) {
-      toast.error("Ro'yxatdan o'tish amalga oshmadi", {
+      toast.error(t("auth.registerFailed"), {
         description: error.message,
       });
       setLoading(false);
@@ -52,9 +54,8 @@ export default function RegisterPage() {
         password,
       });
       if (signInErr) {
-        toast.error("Hisob yaratildi, lekin avtomatik kirish bo'lmadi", {
-          description:
-            "Supabase'da \"Confirm email\" yoqilgan bo'lishi mumkin. Login sahifasidan kiring.",
+        toast.error(t("auth.autoSignInFailed"), {
+          description: t("auth.autoSignInFailedDesc"),
         });
         setLoading(false);
         router.push("/login");
@@ -62,7 +63,7 @@ export default function RegisterPage() {
       }
     }
 
-    toast.success("Xush kelibsiz!");
+    toast.success(t("auth.welcome"));
     router.push("/dashboard");
     router.refresh();
   }
@@ -75,24 +76,24 @@ export default function RegisterPage() {
             <ScanLine className="h-7 w-7" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">ShopScan</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Yangi do&apos;kon hisobini yarating</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("auth.registerSubtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="shopName">Do&apos;kon nomi</Label>
+            <Label htmlFor="shopName">{t("auth.shopName")}</Label>
             <Input
               id="shopName"
               type="text"
               required
-              placeholder="Mening do'konim"
+              placeholder={t("auth.shopNamePlaceholder")}
               value={shopName}
               onChange={(e) => setShopName(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -105,27 +106,27 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Parol</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input
               id="password"
               type="password"
               required
               autoComplete="new-password"
-              placeholder="Kamida 6 ta belgi"
+              placeholder={t("auth.passwordHint")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Yaratilmoqda..." : "Ro'yxatdan o'tish"}
+            {loading ? t("auth.registering") : t("auth.registerBtn")}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          Hisobingiz bormi?{" "}
+          {t("auth.haveAccount")}{" "}
           <Link href="/login" className="font-medium text-primary hover:underline">
-            Kirish
+            {t("auth.goLogin")}
           </Link>
         </p>
       </div>
