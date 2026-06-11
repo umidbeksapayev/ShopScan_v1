@@ -44,16 +44,27 @@ export default function RegisterPage() {
     }
 
     // Email tasdiqlash yoqilgan bo'lsa sessiya bo'lmaydi
-    if (data.session) {
-      toast.success("Hisob yaratildi!");
-      router.push("/dashboard");
-      router.refresh();
-    } else {
-      toast.success("Hisob yaratildi!", {
-        description: "Emailingizni tasdiqlang, so'ng tizimga kiring.",
+    // Auto-kirish: "Confirm email" o'chirilgan bo'lsa signUp sessiyani darhol qaytaradi.
+    // Aks holda login/parol bilan darhol kirishga harakat qilamiz (email yuborilmaydi).
+    if (!data.session) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      router.push("/login");
+      if (signInErr) {
+        toast.error("Hisob yaratildi, lekin avtomatik kirish bo'lmadi", {
+          description:
+            "Supabase'da \"Confirm email\" yoqilgan bo'lishi mumkin. Login sahifasidan kiring.",
+        });
+        setLoading(false);
+        router.push("/login");
+        return;
+      }
     }
+
+    toast.success("Xush kelibsiz!");
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
