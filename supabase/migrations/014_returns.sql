@@ -187,11 +187,14 @@ BEGIN
   WHERE shop_id = p_shop_id
     AND (sold_at AT TIME ZONE 'Asia/Tashkent')::date = v_today;
 
-  SELECT COALESCE(SUM(total_refund), 0), COALESCE(SUM(total_profit), 0)
+  -- Qaytarishni ASL SOTUV sanasiga bog'laymiz: sotilgan kun net'i kamayadi,
+  -- qaytargan kun manfiyga tushmaydi (sotib-qaytarsa → 0).
+  SELECT COALESCE(SUM(r.total_refund), 0), COALESCE(SUM(r.total_profit), 0)
   INTO v_ret_refund, v_ret_profit
-  FROM returns
-  WHERE shop_id = p_shop_id
-    AND (created_at AT TIME ZONE 'Asia/Tashkent')::date = v_today;
+  FROM returns r
+  JOIN sales s ON s.id = r.sale_id
+  WHERE r.shop_id = p_shop_id
+    AND (s.sold_at AT TIME ZONE 'Asia/Tashkent')::date = v_today;
 
   SELECT COUNT(*) INTO v_low
   FROM products
@@ -238,10 +241,12 @@ BEGIN
     GROUP BY 1
   ),
   ret AS (
-    SELECT (r.created_at AT TIME ZONE 'Asia/Tashkent')::date AS day,
+    -- asl sotuv sanasi bo'yicha (qaytargan kun emas)
+    SELECT (s.sold_at AT TIME ZONE 'Asia/Tashkent')::date AS day,
            SUM(r.total_refund) AS refund,
            SUM(r.total_profit) AS profit
     FROM returns r
+    JOIN sales s ON s.id = r.sale_id
     WHERE r.shop_id = p_shop_id
     GROUP BY 1
   )
@@ -295,8 +300,9 @@ BEGIN
            SUM(ri.refund_amount) AS rev,
            SUM(ri.profit_amount) AS prof
     FROM return_items ri
+    JOIN sales s ON s.id = ri.sale_id
     WHERE ri.shop_id = p_shop_id
-      AND (ri.created_at AT TIME ZONE 'Asia/Tashkent')::date
+      AND (s.sold_at AT TIME ZONE 'Asia/Tashkent')::date
           > (now() AT TIME ZONE 'Asia/Tashkent')::date - p_days
     GROUP BY ri.product_id
   )
