@@ -10,6 +10,7 @@ import {
   ReceiptText,
   BarChart3,
   ShieldCheck,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { useProfile } from "@/hooks/use-profile";
@@ -26,6 +27,7 @@ const baseItems: NavItem[] = [
   { href: "/catalog", labelKey: "nav.catalog", icon: Package },
   { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
   { href: "/history", labelKey: "nav.history", icon: ReceiptText },
+  { href: "/customers", labelKey: "nav.customers", icon: Users },
   { href: "/reports", labelKey: "nav.report", icon: BarChart3 },
 ];
 

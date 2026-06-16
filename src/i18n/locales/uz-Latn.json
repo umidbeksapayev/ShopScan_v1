@@ -11,7 +11,9 @@
     "kg": "kg",
     "close": "Yopish",
     "decrease": "Kamaytirish",
-    "increase": "Ko'paytirish"
+    "increase": "Ko'paytirish",
+    "saving": "Saqlanmoqda...",
+    "clear": "Tozalash"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -25,7 +27,8 @@
     "loggingOut": "Chiqilmoqda...",
     "home": "Bosh",
     "catalog": "Katalog",
-    "report": "Hisobot"
+    "report": "Hisobot",
+    "customers": "Mijozlar"
   },
   "landing": {
     "badge": "Aqlli POS tizimi — bepul",
@@ -173,7 +176,11 @@
     "confirmText": "{{count}} ta mahsulot, jami {{total}}. Davom etamizmi?",
     "sellBtn": "Sotish",
     "selling": "Sotilmoqda...",
-    "saleFailed": "Sotuv amalga oshmadi"
+    "saleFailed": "Sotuv amalga oshmadi",
+    "customerLabel": "Mijoz (nasiya uchun)",
+    "onCredit": "Qarzga yozish",
+    "paidAmount": "To'langan summa",
+    "willOwe": "Qarz qoladi"
   },
   "cart": {
     "title": "Savat",
@@ -230,7 +237,8 @@
     "allStocked": "Barcha mahsulotlar yetarli miqdorda",
     "out": "Tugadi",
     "low": "Kam",
-    "remaining": "Qoldiq"
+    "remaining": "Qoldiq",
+    "totalDebt": "Jami qarz"
   },
   "reports": {
     "title": "Hisobotlar",
@@ -312,5 +320,34 @@
     "uz-Latn": "O'zbekcha",
     "uz-Cyrl": "Ўзбекча",
     "ru": "Русский"
+  },
+  "customers": {
+    "title": "Mijozlar",
+    "empty": "Hali mijoz yo'q",
+    "notFound": "Mijoz topilmadi",
+    "searchPlaceholder": "Mijoz nomi yoki telefon...",
+    "addNew": "Mijoz qo'shish",
+    "newCustomer": "Yangi mijoz",
+    "name": "Ism",
+    "namePlaceholder": "Mijoz ismi",
+    "phone": "Telefon",
+    "note": "Eslatma",
+    "notePlaceholder": "Ixtiyoriy eslatma",
+    "nameRequired": "Ism kiritilishi shart",
+    "added": "Mijoz qo'shildi",
+    "saveError": "Saqlashda xato",
+    "totalDebt": "Jami qarz",
+    "noDebt": "Qarz yo'q",
+    "back": "Mijozlarga qaytish",
+    "currentDebt": "Joriy qarz",
+    "recordPayment": "To'lov qabul qilish",
+    "acceptPayment": "Qabul qilish",
+    "paymentAmount": "To'lov summasi",
+    "payFullDebt": "To'liq qarzni to'lash ({{amount}})",
+    "invalidAmount": "To'lov summasi noto'g'ri",
+    "paymentRecorded": "To'lov qabul qilindi",
+    "paymentsHistory": "To'lovlar tarixi",
+    "noPayments": "Hali to'lov yo'q",
+    "salesHistory": "Sotuvlar tarixi"
   }
 }

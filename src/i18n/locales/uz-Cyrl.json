@@ -11,7 +11,9 @@
     "kg": "кг",
     "close": "Ёпиш",
     "decrease": "Камайтириш",
-    "increase": "Кўпайтириш"
+    "increase": "Кўпайтириш",
+    "saving": "Сақланмоқда...",
+    "clear": "Тозалаш"
   },
   "nav": {
     "dashboard": "Дашборд",
@@ -25,7 +27,8 @@
     "loggingOut": "Чиқилмоқда...",
     "home": "Бош",
     "catalog": "Каталог",
-    "report": "Ҳисобот"
+    "report": "Ҳисобот",
+    "customers": "Мижозлар"
   },
   "landing": {
     "badge": "Ақлли POS тизими — бепул",
@@ -173,7 +176,11 @@
     "confirmText": "{{count}} та маҳсулот, жами {{total}}. Давом этамизми?",
     "sellBtn": "Сотиш",
     "selling": "Сотилмоқда...",
-    "saleFailed": "Сотув амалга ошмади"
+    "saleFailed": "Сотув амалга ошмади",
+    "customerLabel": "Мижоз (насия учун)",
+    "onCredit": "Қарзга ёзиш",
+    "paidAmount": "Тўланган сумма",
+    "willOwe": "Қарз қолади"
   },
   "cart": {
     "title": "Сават",
@@ -230,7 +237,8 @@
     "allStocked": "Барча маҳсулотлар етарли миқдорда",
     "out": "Тугади",
     "low": "Кам",
-    "remaining": "Қолдиқ"
+    "remaining": "Қолдиқ",
+    "totalDebt": "Жами қарз"
   },
   "reports": {
     "title": "Ҳисоботлар",
@@ -312,5 +320,34 @@
     "uz-Latn": "O'zbekcha",
     "uz-Cyrl": "Ўзбекча",
     "ru": "Русский"
+  },
+  "customers": {
+    "title": "Мижозлар",
+    "empty": "Ҳали мижоз йўқ",
+    "notFound": "Мижоз топилмади",
+    "searchPlaceholder": "Мижоз номи ёки телефон...",
+    "addNew": "Мижоз қўшиш",
+    "newCustomer": "Янги мижоз",
+    "name": "Исм",
+    "namePlaceholder": "Мижоз исми",
+    "phone": "Телефон",
+    "note": "Эслатма",
+    "notePlaceholder": "Ихтиёрий эслатма",
+    "nameRequired": "Исм киритилиши шарт",
+    "added": "Мижоз қўшилди",
+    "saveError": "Сақлашда хато",
+    "totalDebt": "Жами қарз",
+    "noDebt": "Қарз йўқ",
+    "back": "Мижозларга қайтиш",
+    "currentDebt": "Жорий қарз",
+    "recordPayment": "Тўлов қабул қилиш",
+    "acceptPayment": "Қабул қилиш",
+    "paymentAmount": "Тўлов суммаси",
+    "payFullDebt": "Тўлиқ қарзни тўлаш ({{amount}})",
+    "invalidAmount": "Тўлов суммаси нотўғри",
+    "paymentRecorded": "Тўлов қабул қилинди",
+    "paymentsHistory": "Тўловлар тарихи",
+    "noPayments": "Ҳали тўлов йўқ",
+    "salesHistory": "Сотувлар тарихи"
   }
 }

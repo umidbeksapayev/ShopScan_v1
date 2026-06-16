@@ -11,7 +11,9 @@
     "kg": "кг",
     "close": "Закрыть",
     "decrease": "Уменьшить",
-    "increase": "Увеличить"
+    "increase": "Увеличить",
+    "saving": "Сохранение...",
+    "clear": "Очистить"
   },
   "nav": {
     "dashboard": "Дашборд",
@@ -25,7 +27,8 @@
     "loggingOut": "Выход...",
     "home": "Главная",
     "catalog": "Каталог",
-    "report": "Отчёт"
+    "report": "Отчёт",
+    "customers": "Клиенты"
   },
   "landing": {
     "badge": "Умная POS-система — бесплатно",
@@ -173,7 +176,11 @@
     "confirmText": "{{count}} товаров, итого {{total}}. Продолжить?",
     "sellBtn": "Продать",
     "selling": "Продажа...",
-    "saleFailed": "Продажа не выполнена"
+    "saleFailed": "Продажа не выполнена",
+    "customerLabel": "Клиент (для долга)",
+    "onCredit": "Записать в долг",
+    "paidAmount": "Оплаченная сумма",
+    "willOwe": "Останется долг"
   },
   "cart": {
     "title": "Корзина",
@@ -230,7 +237,8 @@
     "allStocked": "Всех товаров достаточно",
     "out": "Закончился",
     "low": "Мало",
-    "remaining": "Остаток"
+    "remaining": "Остаток",
+    "totalDebt": "Общий долг"
   },
   "reports": {
     "title": "Отчёты",
@@ -312,5 +320,34 @@
     "uz-Latn": "O'zbekcha",
     "uz-Cyrl": "Ўзбекча",
     "ru": "Русский"
+  },
+  "customers": {
+    "title": "Клиенты",
+    "empty": "Пока нет клиентов",
+    "notFound": "Клиент не найден",
+    "searchPlaceholder": "Имя клиента или телефон...",
+    "addNew": "Добавить клиента",
+    "newCustomer": "Новый клиент",
+    "name": "Имя",
+    "namePlaceholder": "Имя клиента",
+    "phone": "Телефон",
+    "note": "Заметка",
+    "notePlaceholder": "Необязательная заметка",
+    "nameRequired": "Введите имя",
+    "added": "Клиент добавлен",
+    "saveError": "Ошибка сохранения",
+    "totalDebt": "Общий долг",
+    "noDebt": "Нет долга",
+    "back": "К клиентам",
+    "currentDebt": "Текущий долг",
+    "recordPayment": "Принять оплату",
+    "acceptPayment": "Принять",
+    "paymentAmount": "Сумма оплаты",
+    "payFullDebt": "Оплатить весь долг ({{amount}})",
+    "invalidAmount": "Неверная сумма оплаты",
+    "paymentRecorded": "Оплата принята",
+    "paymentsHistory": "История оплат",
+    "noPayments": "Пока нет оплат",
+    "salesHistory": "История продаж"
   }
 }

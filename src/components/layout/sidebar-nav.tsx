@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   LogOut,
   ScanLine,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -31,6 +32,7 @@ const baseItems: NavItem[] = [
   { href: "/catalog", labelKey: "nav.products", icon: Package },
   { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
   { href: "/history", labelKey: "nav.history", icon: ReceiptText },
+  { href: "/customers", labelKey: "nav.customers", icon: Users },
   { href: "/reports", labelKey: "nav.reports", icon: BarChart3 },
   { href: "/settings", labelKey: "nav.settings", icon: Settings },
 ];

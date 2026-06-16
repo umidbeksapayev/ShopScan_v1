@@ -37,12 +37,44 @@ export interface SaleItem {
 export interface Sale {
   id: string;
   shop_id: string;
+  customer_id: string | null;
   total_revenue: number;
   total_profit: number;
   item_count: number;
+  paid_amount: number;
   search_method: SearchMethod;
   sold_at: string;
   items?: SaleItem[];
+}
+
+/** Mijoz (qarz daftari). */
+export interface Customer {
+  id: string;
+  shop_id: string;
+  name: string;
+  phone: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+/** Mijoz + joriy qarz balansi (get_customers_with_balance RPC). */
+export interface CustomerWithBalance {
+  id: string;
+  name: string;
+  phone: string | null;
+  note: string | null;
+  created_at: string;
+  balance: number;
+}
+
+/** Mijozning qarz to'lovi (qaytarib berish). */
+export interface CustomerPayment {
+  id: string;
+  shop_id: string;
+  customer_id: string;
+  amount: number;
+  paid_at: string;
+  note: string | null;
 }
 
 export interface Shop {
