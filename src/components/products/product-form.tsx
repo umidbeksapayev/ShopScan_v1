@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-// Kamera kutubxonalari (react-webcam/@zxing) faqat skaner ochilganda yuklanadi.
+// Kamera kutubxonasi (@zxing) faqat skaner ochilganda yuklanadi.
 const BarcodeScanner = dynamic(
   () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
   {
