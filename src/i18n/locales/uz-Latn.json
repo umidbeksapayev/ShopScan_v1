@@ -158,7 +158,6 @@
   "sell": {
     "title": "Sotuv",
     "tabBarcode": "Barcode",
-    "tabVisual": "Vizual",
     "tabManual": "Qidirish",
     "searchPlaceholder": "Mahsulot nomi...",
     "notFound": "Mahsulot topilmadi",
@@ -168,9 +167,6 @@
     "nothingFound": "Topilmadi",
     "livePlaceholder": "Mahsulot nomini yozing (2+ harf)...",
     "searchAria": "Mahsulot qidirish",
-    "noMatch": "O'xshash mahsulot topilmadi",
-    "noMatchDesc": "Mahsulotlar indekslanganmi? Sozlamalardan tekshiring.",
-    "visualError": "Vizual qidiruv xatosi",
     "addedToCart": "Savatga qo'shildi",
     "addedNamed": "{{name}} — savatga qo'shildi",
     "confirmTitle": "Sotuvni tasdiqlang",
@@ -223,12 +219,6 @@
     "cameraError": "Kamerani ochib bo'lmadi",
     "cameraErrorDesc": "Kamera band (boshqa ilova ishlatyapti) yoki qurilmada kamera topilmadi."
   },
-  "visual": {
-    "alignHint": "Mahsulotni ramka ichiga joylang va suratga oling",
-    "searchBtn": "Rasmga qidirish",
-    "searching": "Qidirilmoqda...",
-    "cameraNotReady": "Kamera tayyor emas"
-  },
   "dashboard": {
     "title": "Dashboard",
     "todayRevenue": "Bugungi tushum",
@@ -260,7 +250,6 @@
     "noSalesDesc": "Sotuv ekranidan birinchi sotuvni amalga oshiring",
     "itemCount": "{{count}} ta mahsulot",
     "methodBarcode": "Barcode",
-    "methodVisual": "Vizual",
     "methodManual": "Qo'lda"
   },
   "settings": {
@@ -284,22 +273,7 @@
     "exporting": "Tayyorlanmoqda...",
     "exportEmpty": "Eksport uchun mahsulot yo'q",
     "exportDone": "Fayl yuklab olindi",
-    "exportError": "Eksport xatosi",
-    "visualIndex": "Vizual qidiruv indeksi",
-    "visualIndexDesc": "Mahsulot rasmlarini CLIP bilan indekslaydi — shundan keyin sotuvda kamera orqali rasmga qarab mahsulot topish mumkin. Indekslash brauzeringizda bajariladi (bepul, server kerak emas). Yangi mahsulotlar avtomatik indekslanadi; bu tugma eski mahsulotlar uchun.",
-    "startIndex": "Indekslashni boshlash",
-    "indexing": "Indekslanmoqda...",
-    "preparing": "Tayyorlanmoqda...",
-    "indexedCount": "{{indexed}}/{{total}} indekslandi",
-    "indexFailed": "{{failed}} xato",
-    "noUnindexed": "Indekslanmagan mahsulot yo'q.",
-    "allIndexed": "Barcha mahsulotlar allaqachon indekslangan",
-    "indexedToast": "{{count}} ta mahsulot indekslandi",
-    "indexError": "Indekslash xatosi",
-    "indexNote": "Eslatma: birinchi marta CLIP modeli yuklanadi (~25MB), keyin brauzerda keshlanadi. Internet aloqasi kerak.",
-    "comingSoonTitle": "Profil va sozlamalar",
-    "comingSoonDesc": "Email, parol, do'kon nomini tahrirlash va Excel eksport — keyingi yangilanishda.",
-    "otherSettings": "Qolgan do'kon sozlamalari keyingi yangilanishlarda tayyor bo'ladi"
+    "exportError": "Eksport xatosi"
   },
   "admin": {
     "title": "Super-admin paneli",

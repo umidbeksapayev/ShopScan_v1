@@ -169,6 +169,9 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
       }
       readerRef.current = null;
     };
+    // t faqat xato toast'lari uchun ishlatiladi — til o'zgarganda kamerani
+    // qayta ishga tushirmaslik uchun uni deps'ga qo'shmaymiz.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acceptResult]);
 
   const toggleTorch = useCallback(async () => {
