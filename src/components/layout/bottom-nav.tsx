@@ -9,8 +9,10 @@ import {
   ShoppingCart,
   ReceiptText,
   BarChart3,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
+import { useProfile } from "@/hooks/use-profile";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -19,7 +21,7 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const navItems: NavItem[] = [
+const baseItems: NavItem[] = [
   { href: "/dashboard", labelKey: "nav.home", icon: LayoutDashboard },
   { href: "/catalog", labelKey: "nav.catalog", icon: Package },
   { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
@@ -30,6 +32,12 @@ const navItems: NavItem[] = [
 export function BottomNav() {
   const pathname = usePathname();
   const { t } = useTranslation();
+  const { data: profile } = useProfile();
+
+  const navItems =
+    profile?.role === "super_admin"
+      ? [...baseItems, { href: "/admin", labelKey: "nav.admin", icon: ShieldCheck }]
+      : baseItems;
 
   return (
     <div className="flex items-center justify-around px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2">
