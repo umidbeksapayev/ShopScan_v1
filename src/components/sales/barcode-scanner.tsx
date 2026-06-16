@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 
 interface BarcodeScannerProps {
   onDetected: (barcode: string) => void;
+  /** Dialog ochiq bo'lganda skanni vaqtincha to'xtatadi (qayta qo'shilishni oldini oladi). */
+  paused?: boolean;
 }
 
 type ScanMode = "auto" | "manual";
@@ -45,7 +47,7 @@ function playBeep(): void {
  * - Qo'lda: foydalanuvchi "Skanerlash" bosgandagi keyingi aniqlangan kodni qabul qiladi.
  * Qo'shimcha: torch (flash) toggle va haptik (vibratsiya) feedback.
  */
-export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
+export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerProps) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserMultiFormatReader | null>(null);
@@ -53,6 +55,7 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   const armedRef = useRef(false); // qo'lda rejim: keyingi aniqlanishni qabul qilish
   const lastScanRef = useRef<{ value: string; at: number } | null>(null);
   const onDetectedRef = useRef(onDetected);
+  const pausedRef = useRef(paused);
 
   const [mode, setMode] = useState<ScanMode>("auto");
   const [cameraReady, setCameraReady] = useState(false);
@@ -66,8 +69,14 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   useEffect(() => {
     modeRef.current = mode;
   }, [mode]);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   const acceptResult = useCallback((text: string) => {
+    // Dialog ochiq (paused) bo'lsa — skan natijasini umuman qabul qilmaymiz.
+    if (pausedRef.current) return;
+
     const now = Date.now();
 
     if (modeRef.current === "auto") {
