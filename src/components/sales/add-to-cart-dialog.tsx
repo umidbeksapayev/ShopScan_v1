@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import { ProductThumb } from "@/components/products/product-thumb";
 import type { Product, SearchMethod } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { QuantityStepper } from "@/components/sales/quantity-stepper";
@@ -74,7 +74,7 @@ export function AddToCartDialog({
                 className="flex w-full items-center gap-3 rounded-lg border p-2 text-left hover:bg-accent"
               >
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-                  <Image src={p.image_url} alt={p.name} fill sizes="48px" className="object-cover" />
+                  <ProductThumb src={p.image_url} alt={p.name} sizes="48px" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
@@ -90,7 +90,7 @@ export function AddToCartDialog({
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
-                <Image src={selected.image_url} alt={selected.name} fill sizes="64px" className="object-cover" />
+                <ProductThumb src={selected.image_url} alt={selected.name} sizes="64px" />
               </div>
               <div>
                 <p className="font-medium">{selected.name}</p>

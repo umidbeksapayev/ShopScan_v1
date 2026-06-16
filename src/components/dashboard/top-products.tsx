@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Package } from "lucide-react";
+import { ProductThumb } from "@/components/products/product-thumb";
 import { useTranslation } from "react-i18next";
 import type { TopProduct } from "@/lib/dashboard";
 import { formatCurrency, formatWeight } from "@/lib/utils";
@@ -45,7 +45,7 @@ export function TopProducts({ products, loading }: TopProductsProps) {
               {idx + 1}
             </span>
             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
-              <Image src={p.image_url} alt={p.name} fill sizes="40px" className="object-cover" />
+              <ProductThumb src={p.image_url} alt={p.name} sizes="40px" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="line-clamp-1 text-sm font-medium">{p.name}</p>

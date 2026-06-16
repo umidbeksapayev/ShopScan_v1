@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import { Search } from "lucide-react";
+import { ProductThumb } from "@/components/products/product-thumb";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight, cn } from "@/lib/utils";
@@ -110,13 +110,7 @@ export function LiveProductSearch({ products, onSelect }: LiveProductSearchProps
                       )}
                     >
                       <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-muted">
-                        <Image
-                          src={p.image_url}
-                          alt={p.name}
-                          fill
-                          sizes="36px"
-                          className="object-cover"
-                        />
+                        <ProductThumb src={p.image_url} alt={p.name} sizes="36px" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="line-clamp-1 text-sm font-medium">{p.name}</p>

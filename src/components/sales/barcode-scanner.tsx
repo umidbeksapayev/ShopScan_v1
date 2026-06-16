@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader } from "@zxing/library";
+import { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } from "@zxing/library";
 import { ScanLine, Zap, ZapOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -91,7 +91,18 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
   // Kamera + uzluksiz dekoderni bir marta ishga tushiramiz.
   useEffect(() => {
     let cancelled = false;
-    const reader = new BrowserMultiFormatReader();
+    // F-1: faqat do'konda uchraydigan formatlarga cheklash → dekod sezilarli tezroq.
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.EAN_13,
+      BarcodeFormat.EAN_8,
+      BarcodeFormat.UPC_A,
+      BarcodeFormat.UPC_E,
+      BarcodeFormat.CODE_128,
+      BarcodeFormat.CODE_39,
+      BarcodeFormat.QR_CODE,
+    ]);
+    const reader = new BrowserMultiFormatReader(hints);
     readerRef.current = reader;
 
     (async () => {

@@ -40,33 +40,6 @@ export async function searchProductsByName(term: string): Promise<Product[]> {
   return (data ?? []) as Product[];
 }
 
-/**
- * Vizual qidiruv (CLIP): kameradan olingan rasmga eng o'xshash mahsulotlarni topadi.
- * Embedding BRAUZERDA hisoblanadi (Transformers.js), keyin match_products RPC chaqiriladi.
- * Bepul — API/token/to'lov kerak emas.
- * @param shopId - joriy do'kon id'si
- * @param imageDataUri - "data:image/...;base64,..." formatida
- */
-export async function searchProductsByImage(
-  shopId: string,
-  imageDataUri: string
-): Promise<Product[]> {
-  const { embedImage } = await import("@/lib/clip-browser");
-  const embedding = await embedImage(imageDataUri);
-
-  const supabase = createClient();
-  const { data, error } = await supabase.rpc("match_products", {
-    p_shop_id: shopId,
-    p_embedding: JSON.stringify(embedding),
-    p_match_count: 3,
-    // Past o'xshashlikdagi (bog'liq bo'lmagan) natijalarni chiqarib tashlaymiz
-    p_threshold: 0.2,
-  });
-
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Product[];
-}
-
 export interface CartSaleItem {
   product_id: string;
   quantity: number;
