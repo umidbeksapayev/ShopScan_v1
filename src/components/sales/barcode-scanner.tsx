@@ -96,6 +96,15 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
 
     (async () => {
       try {
+        // getUserMedia faqat HTTPS yoki localhost da ishlaydi — aks holda aniq xabar.
+        if (typeof window !== "undefined" && !window.isSecureContext) {
+          if (!cancelled) {
+            toast.error(t("barcode.cameraDenied"), {
+              description: t("barcode.insecureContext"),
+            });
+          }
+          return;
+        }
         await reader.decodeFromConstraints(
           { video: { facingMode: { ideal: "environment" } } },
           videoRef.current!,
@@ -113,10 +122,19 @@ export function BarcodeScanner({ onDetected }: BarcodeScannerProps) {
           torch?: boolean;
         };
         setTorchSupported(Boolean(caps.torch));
-      } catch {
-        if (!cancelled) {
+      } catch (err) {
+        if (cancelled) return;
+        const name =
+          err && typeof err === "object" && "name" in err
+            ? String((err as { name: unknown }).name)
+            : "";
+        if (name === "NotAllowedError" || name === "PermissionDeniedError") {
           toast.error(t("barcode.cameraDenied"), {
             description: t("barcode.cameraDeniedDesc"),
+          });
+        } else {
+          toast.error(t("barcode.cameraError"), {
+            description: t("barcode.cameraErrorDesc"),
           });
         }
       }

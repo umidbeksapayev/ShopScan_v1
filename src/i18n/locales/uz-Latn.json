@@ -83,7 +83,15 @@
     "registerFailed": "Ro'yxatdan o'tish amalga oshmadi",
     "autoSignInFailed": "Hisob yaratildi, lekin avtomatik kirish bo'lmadi",
     "autoSignInFailedDesc": "Supabase'da \"Confirm email\" yoqilgan bo'lishi mumkin. Login sahifasidan kiring.",
-    "passwordTooShort": "Parol kamida 6 ta belgidan iborat bo'lishi kerak"
+    "passwordTooShort": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+    "errInvalidCredentials": "Email yoki parol noto'g'ri.",
+    "errEmailNotConfirmed": "Email tasdiqlanmagan. Avval pochtangizni tasdiqlang yoki admin bilan bog'laning.",
+    "errAlreadyRegistered": "Bu email allaqachon ro'yxatdan o'tgan. Kirish sahifasiga o'ting.",
+    "errRateLimit": "Juda ko'p urinish. Bir necha daqiqa kutib, qayta urining.",
+    "errWeakPassword": "Parol juda oddiy. Kamida 6 ta belgidan iborat kuchliroq parol tanlang.",
+    "errInvalidEmail": "Email manzili noto'g'ri formatda.",
+    "errNetwork": "Internet aloqasi yo'q. Ulanishni tekshirib qayta urining.",
+    "errGeneric": "Xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring."
   },
   "catalog": {
     "title": "Mahsulotlar",
@@ -209,7 +217,10 @@
     "cameraLoading": "Kamera yuklanmoqda...",
     "torchError": "Flashni boshqarib bo'lmadi",
     "torchOn": "Flashni yoqish",
-    "torchOff": "Flashni o'chirish"
+    "torchOff": "Flashni o'chirish",
+    "insecureContext": "Kamera faqat HTTPS yoki localhost da ishlaydi. Saytni HTTPS orqali oching.",
+    "cameraError": "Kamerani ochib bo'lmadi",
+    "cameraErrorDesc": "Kamera band (boshqa ilova ishlatyapti) yoki qurilmada kamera topilmadi."
   },
   "visual": {
     "alignHint": "Mahsulotni ramka ichiga joylang va suratga oling",

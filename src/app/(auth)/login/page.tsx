@@ -7,6 +7,7 @@ import { ScanLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { authErrorKey } from "@/lib/auth-errors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +28,7 @@ export default function LoginPage() {
 
     if (error) {
       toast.error(t("auth.loginFailed"), {
-        description: t("auth.loginFailedDesc"),
+        description: t(authErrorKey(error.message)),
       });
       setLoading(false);
       return;
