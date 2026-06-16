@@ -46,7 +46,7 @@ export interface CartSaleItem {
 }
 
 export interface CartSaleResult {
-  sale_ids: string[];
+  sale_id: string;
   item_count: number;
   total_revenue: number;
   total_profit: number;

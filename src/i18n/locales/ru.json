@@ -257,6 +257,7 @@
     "recentSales": "Последние {{count}} продаж",
     "noSales": "Продаж пока нет",
     "noSalesDesc": "Совершите первую продажу на экране продаж",
+    "itemCount": "{{count}} товаров",
     "methodBarcode": "Штрихкод",
     "methodVisual": "Визуальный",
     "methodManual": "Вручную"
