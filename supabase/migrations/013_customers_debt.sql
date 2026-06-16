@@ -245,15 +245,20 @@ BEGIN
     RAISE EXCEPTION 'Ruxsat yo''q';
   END IF;
 
+  -- Ichki subquery: RETURNS TABLE ustun nomlari (balance, id...) PL/pgSQL
+  -- o'zgaruvchilari bilan to'qnashmasligi uchun barcha murojaatlar qualified.
   RETURN QUERY
-  SELECT
-    c.id, c.name, c.phone, c.note, c.created_at,
-    (
-      COALESCE((SELECT SUM(s.total_revenue - s.paid_amount) FROM sales s WHERE s.customer_id = c.id), 0)
-      - COALESCE((SELECT SUM(cp.amount) FROM customer_payments cp WHERE cp.customer_id = c.id), 0)
-    )::DECIMAL(12,2) AS balance
-  FROM customers c
-  WHERE c.shop_id = p_shop_id
-  ORDER BY balance DESC, c.created_at DESC;
+  SELECT q.id, q.name, q.phone, q.note, q.created_at, q.balance
+  FROM (
+    SELECT
+      c.id, c.name, c.phone, c.note, c.created_at,
+      (
+        COALESCE((SELECT SUM(s.total_revenue - s.paid_amount) FROM sales s WHERE s.customer_id = c.id), 0)
+        - COALESCE((SELECT SUM(cp.amount) FROM customer_payments cp WHERE cp.customer_id = c.id), 0)
+      )::DECIMAL(12,2) AS balance
+    FROM customers c
+    WHERE c.shop_id = p_shop_id
+  ) q
+  ORDER BY q.balance DESC, q.created_at DESC;
 END;
 $$;
