@@ -40,13 +40,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background p-4">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-gradient-to-br from-background via-accent/40 to-background p-4">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-border bg-card p-8 shadow-card">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-pop">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gradient text-primary-foreground shadow-pop">
             <ScanLine className="h-7 w-7" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">ShopScan</h1>
+          <h1 className="text-2xl font-bold text-brand-gradient">ShopScan</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("auth.loginSubtitle")}</p>
         </div>
 

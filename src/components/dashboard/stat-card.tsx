@@ -10,11 +10,12 @@ interface StatCardProps {
   loading?: boolean;
 }
 
+// Jonli gradient ikona tiles (premium)
 const variants = {
-  violet: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300",
-  blue: "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300",
-  green: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300",
-  amber: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300",
+  violet: "from-violet-500 to-indigo-500",
+  blue: "from-sky-500 to-blue-500",
+  green: "from-emerald-500 to-teal-500",
+  amber: "from-amber-500 to-orange-500",
 };
 
 export function StatCard({
@@ -25,12 +26,12 @@ export function StatCard({
   loading,
 }: StatCardProps) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 shadow-soft transition-shadow hover:shadow-card sm:p-5">
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card sm:p-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <div
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm",
             variants[variant]
           )}
         >
@@ -38,9 +39,9 @@ export function StatCard({
         </div>
       </div>
       {loading ? (
-        <div className="mt-3 h-7 w-24 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-8 w-24 animate-pulse rounded bg-muted" />
       ) : (
-        <p className="mt-2 text-xl font-bold tabular-nums text-foreground sm:text-2xl">
+        <p className="mt-2 text-2xl font-bold tabular-nums text-foreground sm:text-3xl">
           {value}
         </p>
       )}

@@ -32,7 +32,7 @@ export function Topbar() {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6">
       {/* Chap: mobil logo / do'kon nomi */}
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-pop xl:hidden">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop xl:hidden">
           <ScanLine className="h-5 w-5" />
         </span>
         <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
@@ -51,7 +51,7 @@ export function Topbar() {
             className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-accent"
             aria-label={t("nav.settings")}
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-primary-foreground">
               {initial}
             </span>
             <span className="hidden max-w-[120px] truncate text-sm font-medium text-foreground sm:inline">
