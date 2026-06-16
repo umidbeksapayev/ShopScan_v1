@@ -33,6 +33,12 @@ export interface SaleItem {
   product?: Pick<Product, "name" | "image_url" | "sale_type">;
 }
 
+/** Sotuvga biriktirilgan qaytarish qisqacha (tarix badge'i uchun). */
+export interface SaleReturnSummary {
+  id: string;
+  total_refund: number;
+}
+
 /** Sotuv sarlavhasi (header): bitta sotuv = bitta yozuv, ichida sale_items. */
 export interface Sale {
   id: string;
@@ -45,6 +51,33 @@ export interface Sale {
   search_method: SearchMethod;
   sold_at: string;
   items?: SaleItem[];
+  returns?: SaleReturnSummary[];
+}
+
+/** Qaytarish sarlavhasi (return/refund). */
+export interface Return {
+  id: string;
+  shop_id: string;
+  sale_id: string;
+  total_refund: number;
+  total_profit: number;
+  reason: string | null;
+  created_at: string;
+  items?: ReturnItem[];
+}
+
+/** Qaytarilgan qator. */
+export interface ReturnItem {
+  id: string;
+  return_id: string;
+  sale_item_id: string;
+  product_id: string;
+  shop_id: string;
+  sale_id: string;
+  quantity: number;
+  refund_amount: number;
+  profit_amount: number;
+  created_at: string;
 }
 
 /** Mijoz (qarz daftari). */
