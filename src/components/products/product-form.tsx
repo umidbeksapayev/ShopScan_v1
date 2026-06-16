@@ -12,6 +12,7 @@ import {
   formatCurrency,
   formatWeight,
   computeLowStockThreshold,
+  normalizeBarcode,
   LOW_STOCK_RATIO,
 } from "@/lib/utils";
 import { uploadProductImage } from "@/lib/storage";
@@ -109,7 +110,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         quantity: qty,
         // Avtomatik: kiritilgan miqdorning 20% (sotuv jarayoni buni o'zgartirmaydi)
         low_stock_alert: computeLowStockThreshold(qty, saleType),
-        barcode: barcode.trim() || null,
+        barcode: normalizeBarcode(barcode) || null,
         image_url: imageUrl,
       };
 
