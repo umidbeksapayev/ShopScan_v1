@@ -238,15 +238,16 @@ RETURNS TABLE (
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+-- RETURNS TABLE ustun nomlari (id, name, balance...) PL/pgSQL o'zgaruvchilari
+-- hisoblanadi; to'qnashuvda ustunni tanlaymiz + barcha murojaatlar qualified.
+#variable_conflict use_column
 BEGIN
   IF NOT EXISTS (
-    SELECT 1 FROM shops WHERE id = p_shop_id AND owner_id = auth.uid()
+    SELECT 1 FROM shops WHERE shops.id = p_shop_id AND shops.owner_id = auth.uid()
   ) THEN
     RAISE EXCEPTION 'Ruxsat yo''q';
   END IF;
 
-  -- Ichki subquery: RETURNS TABLE ustun nomlari (balance, id...) PL/pgSQL
-  -- o'zgaruvchilari bilan to'qnashmasligi uchun barcha murojaatlar qualified.
   RETURN QUERY
   SELECT q.id, q.name, q.phone, q.note, q.created_at, q.balance
   FROM (
