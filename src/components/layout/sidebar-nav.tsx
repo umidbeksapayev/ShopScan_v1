@@ -11,11 +11,13 @@ import {
   ReceiptText,
   BarChart3,
   Settings,
+  ShieldCheck,
   LogOut,
   ScanLine,
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useProfile } from "@/hooks/use-profile";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -24,7 +26,7 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const navItems: NavItem[] = [
+const baseItems: NavItem[] = [
   { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { href: "/catalog", labelKey: "nav.products", icon: Package },
   { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
@@ -37,7 +39,14 @@ export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useTranslation();
+  const { data: profile } = useProfile();
   const [signingOut, setSigningOut] = useState(false);
+
+  // Super-admin uchun qo'shimcha "Admin" havolasi
+  const navItems =
+    profile?.role === "super_admin"
+      ? [...baseItems, { href: "/admin", labelKey: "nav.admin", icon: ShieldCheck }]
+      : baseItems;
 
   async function handleLogout() {
     setSigningOut(true);

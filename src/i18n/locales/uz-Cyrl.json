@@ -20,6 +20,7 @@
     "history": "Тарих",
     "reports": "Ҳисоботлар",
     "settings": "Созламалар",
+    "admin": "Админ",
     "logout": "Чиқиш",
     "loggingOut": "Чиқилмоқда...",
     "home": "Бош",
@@ -299,6 +300,23 @@
     "comingSoonTitle": "Профил ва созламалар",
     "comingSoonDesc": "Email, парол, дўкон номини таҳрирлаш ва Excel экспорт — кейинги янгиланишда.",
     "otherSettings": "Қолган дўкон созламалари кейинги янгиланишларда тайёр бўлади"
+  },
+  "admin": {
+    "title": "Супер-админ панели",
+    "users": "Фойдаланувчилар",
+    "shops": "Дўконлар",
+    "products": "Маҳсулотлар",
+    "sales": "Сотувлар",
+    "totalRevenue": "Умумий тушум",
+    "shopsList": "Дўконлар рўйхати",
+    "noShops": "Дўконлар йўқ",
+    "colShop": "Дўкон",
+    "colOwner": "Эгаси (email)",
+    "colProducts": "Маҳсулот",
+    "colSales": "Сотув",
+    "colRevenue": "Тушум",
+    "subscriptions": "Обуналар",
+    "subscriptionsDesc": "Обуна (subscription) маълумотлари кейинги версияларда кўринади."
   },
   "uploader": {
     "max": "Максимал {{max}} та расм",

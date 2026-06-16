@@ -20,6 +20,7 @@
     "history": "Tarix",
     "reports": "Hisobotlar",
     "settings": "Sozlamalar",
+    "admin": "Admin",
     "logout": "Chiqish",
     "loggingOut": "Chiqilmoqda...",
     "home": "Bosh",
@@ -299,6 +300,23 @@
     "comingSoonTitle": "Profil va sozlamalar",
     "comingSoonDesc": "Email, parol, do'kon nomini tahrirlash va Excel eksport — keyingi yangilanishda.",
     "otherSettings": "Qolgan do'kon sozlamalari keyingi yangilanishlarda tayyor bo'ladi"
+  },
+  "admin": {
+    "title": "Super-admin paneli",
+    "users": "Foydalanuvchilar",
+    "shops": "Do'konlar",
+    "products": "Mahsulotlar",
+    "sales": "Sotuvlar",
+    "totalRevenue": "Umumiy tushum",
+    "shopsList": "Do'konlar ro'yxati",
+    "noShops": "Do'konlar yo'q",
+    "colShop": "Do'kon",
+    "colOwner": "Egasi (email)",
+    "colProducts": "Mahsulot",
+    "colSales": "Sotuv",
+    "colRevenue": "Tushum",
+    "subscriptions": "Obunalar",
+    "subscriptionsDesc": "Obuna (subscription) ma'lumotlari keyingi versiyalarda ko'rinadi."
   },
   "uploader": {
     "max": "Maksimal {{max}} ta rasm",
