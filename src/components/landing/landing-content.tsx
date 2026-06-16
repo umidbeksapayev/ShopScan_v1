@@ -42,7 +42,7 @@ export function LandingContent() {
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-pop">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
               <ScanLine className="h-5 w-5" />
             </span>
             <span className="text-lg font-bold">ShopScan</span>
@@ -58,7 +58,7 @@ export function LandingContent() {
             </Link>
             <Link
               href="/register"
-              className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-pop transition-colors hover:bg-primary/90"
+              className="rounded-xl bg-brand-gradient px-4 py-2 text-sm font-medium text-primary-foreground shadow-pop transition-all hover:brightness-110"
             >
               {t("landing.ctaStart")}
             </Link>
@@ -67,12 +67,17 @@ export function LandingContent() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto w-full max-w-6xl px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-24">
+      <section className="relative mx-auto w-full max-w-6xl overflow-hidden px-4 pt-16 pb-12 text-center sm:px-6 sm:pt-24">
+        {/* Dekorativ gradient blob */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-0 -z-10 h-72 w-[36rem] max-w-full -translate-x-1/2 rounded-full bg-brand-gradient opacity-20 blur-3xl"
+        />
         <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
           <Sparkles className="h-3.5 w-3.5" /> {t("landing.badge")}
         </span>
         <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          {t("landing.heroTitle1")} <span className="text-primary">{t("landing.heroAccent")}</span> {t("landing.heroTitle2")}
+          {t("landing.heroTitle1")} <span className="text-brand-gradient">{t("landing.heroAccent")}</span> {t("landing.heroTitle2")}
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
           {t("landing.heroDesc")}
@@ -80,7 +85,7 @@ export function LandingContent() {
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/register"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-pop transition-colors hover:bg-primary/90 sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gradient px-6 py-3 text-base font-semibold text-primary-foreground shadow-pop transition-all hover:brightness-110 sm:w-auto"
           >
             {t("landing.ctaStart")} <ArrowRight className="h-4 w-4" />
           </Link>
@@ -104,7 +109,7 @@ export function LandingContent() {
             return (
               <div
                 key={f.titleKey}
-                className="rounded-2xl border border-border bg-card p-5 shadow-soft transition-shadow hover:shadow-card"
+                className="rounded-2xl border border-border bg-card p-5 shadow-soft transition-all duration-200 hover:-translate-y-1 hover:shadow-card"
               >
                 <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${f.cls}`}>
                   <Icon className="h-5 w-5" />
@@ -123,7 +128,7 @@ export function LandingContent() {
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {steps.map((s) => (
             <div key={s.n} className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground shadow-pop">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gradient text-lg font-bold text-primary-foreground shadow-pop">
                 {s.n}
               </div>
               <h3 className="mt-4 font-semibold">{t(s.titleKey)}</h3>
@@ -146,7 +151,7 @@ export function LandingContent() {
 
       {/* Final CTA */}
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-        <div className="rounded-3xl bg-primary px-6 py-12 text-center text-primary-foreground shadow-pop sm:px-12">
+        <div className="rounded-3xl bg-brand-gradient px-6 py-12 text-center text-primary-foreground shadow-pop sm:px-12">
           <h2 className="text-2xl font-bold sm:text-3xl">{t("landing.finalTitle")}</h2>
           <p className="mx-auto mt-3 max-w-xl text-primary-foreground/80">{t("landing.finalDesc")}</p>
           <Link
@@ -162,7 +167,7 @@ export function LandingContent() {
       <footer className="mt-auto border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient text-primary-foreground">
               <ScanLine className="h-4 w-4" />
             </span>
             <span className="font-semibold text-foreground">ShopScan</span>

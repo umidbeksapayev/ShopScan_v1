@@ -59,7 +59,7 @@ export function SidebarNav() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-pop">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
           <ScanLine className="h-5 w-5" />
         </div>
         <div>
@@ -82,7 +82,7 @@ export function SidebarNav() {
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-pop"
+                  ? "bg-brand-gradient text-primary-foreground shadow-pop"
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               )}
             >

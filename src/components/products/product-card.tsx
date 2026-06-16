@@ -42,7 +42,7 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
   const isWeight = product.sale_type === "weight";
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-card">
       <div className="relative aspect-square w-full bg-muted">
         {product.image_url ? (
           <Image
