@@ -54,6 +54,8 @@ export default function SellPage() {
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
 
   async function handleBarcode(barcode: string) {
+    // Dialog ochiq bo'lsa — uzluksiz skan savatni buzmasin (qo'shimcha himoya).
+    if (addOpen) return;
     try {
       const found = await findProductsByBarcode(barcode);
       if (found.length === 0) {
@@ -62,16 +64,11 @@ export default function SellPage() {
         });
         return;
       }
-      // Bitta DONALI mahsulot → darhol savatga (qo'shimcha klik yo'q)
-      if (found.length === 1 && found[0].sale_type === "unit") {
-        addItem(found[0], 1, "barcode");
-        toast.success(t("sell.addedNamed", { name: found[0].name }));
-        return;
-      }
-      // Vazn (kg kiritish kerak) yoki bir nechta moslik → dialog
+      // Bir nechta moslik bo'lsa — ogohlantirish
       if (found.length > 1) {
         toast.info(t("sell.multipleFound"));
       }
+      // DONALI ham, VAZN ham — miqdor dialogini ochamiz (+/− bilan sonni tanlash).
       setMethod("barcode");
       setCandidates(found);
       setAddOpen(true);
@@ -139,7 +136,7 @@ export default function SellPage() {
             </TabsList>
 
             <TabsContent value="barcode">
-              <BarcodeScanner onDetected={handleBarcode} />
+              <BarcodeScanner onDetected={handleBarcode} paused={addOpen} />
             </TabsContent>
 
             <TabsContent value="manual">
