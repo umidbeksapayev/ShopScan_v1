@@ -83,8 +83,6 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
     e.preventDefault();
 
     if (!name.trim()) return toast.error(t("product.enterName"));
-    if (!isEdit && images.length === 0)
-      return toast.error(t("product.imagesRequired"));
     if (cost <= 0 || selling <= 0) return toast.error(t("product.enterPrices"));
     const qty = parseFloat(quantity);
     if (isNaN(qty) || qty < 0) return toast.error(t("product.enterQty"));
@@ -93,13 +91,10 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
     setSubmitting(true);
     try {
-      let imageUrl = product?.image_url ?? "";
-      let uploadedUrls: string[] = [];
+      // Rasm IXTIYORIY (F-2). Tanlangan bo'lsa — birinchisini yuklaymiz.
+      let imageUrl: string | null = product?.image_url ?? null;
       if (images.length > 0) {
-        uploadedUrls = await Promise.all(
-          images.map((img) => uploadProductImage(img.blob, shopId))
-        );
-        imageUrl = uploadedUrls[0];
+        imageUrl = await uploadProductImage(images[0].blob, shopId);
       }
 
       const payload = {
@@ -114,35 +109,12 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         image_url: imageUrl,
       };
 
-      let savedId: string;
       if (isEdit && product) {
-        const updated = await updateMut.mutateAsync({ id: product.id, ...payload });
-        savedId = updated.id;
+        await updateMut.mutateAsync({ id: product.id, ...payload });
         toast.success(t("product.updated"));
       } else {
-        const created = await createMut.mutateAsync({ shop_id: shopId, ...payload });
-        savedId = created.id;
+        await createMut.mutateAsync({ shop_id: shopId, ...payload });
         toast.success(t("product.added"));
-      }
-
-      // Vizual qidiruv uchun CLIP embeddinglar — barcha rasmlar BRAUZERDA fonda
-      // indekslanadi (multi-image; UI bloklanmaydi). Tahrirlashda eski embeddinglar
-      // tozalanib qaytadan hisoblanadi.
-      if (images.length > 0) {
-        const imgs = images.map((img, i) => ({
-          source: img.blob,
-          imageUrl: uploadedUrls[i] ?? null,
-        }));
-        void import("@/lib/products").then(
-          async ({ clearProductEmbeddings, indexProductImages }) => {
-            try {
-              if (isEdit) await clearProductEmbeddings(savedId);
-              await indexProductImages(savedId, shopId, imgs);
-            } catch {
-              /* embed xatosi mahsulot saqlashni to'smaydi */
-            }
-          }
-        );
       }
 
       onSuccess();
@@ -160,6 +132,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       <MultiImageUploader
         value={images}
         existingUrl={product?.image_url ?? null}
+        max={1}
         onChange={setImages}
       />
 

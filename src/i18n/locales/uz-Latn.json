@@ -31,14 +31,14 @@
     "heroTitle1": "Do'koningizni",
     "heroAccent": "aqlli",
     "heroTitle2": "boshqaring",
-    "heroDesc": "Barcode skanerlash, AI vizual qidiruv va real-time hisobotlar — bularning barchasi bitta oddiy tizimda. Telefon yoki kompyuterda, bepul.",
+    "heroDesc": "Barcode skanerlash, tez qidiruv va real-time hisobotlar — bularning barchasi bitta oddiy tizimda. Telefon yoki kompyuterda, bepul.",
     "ctaStart": "Bepul boshlash",
     "ctaLogin": "Kirish",
     "noCard": "Karta talab qilinmaydi · Darhol ishlaydi",
     "feature1Title": "Barcode skanerlash",
     "feature1Desc": "Kamera mahsulotni avtomatik o'qiydi va 1 soniyada savatga qo'shadi.",
-    "feature2Title": "AI vizual qidiruv",
-    "feature2Desc": "Barcode yo'qmi? Mahsulotni suratga oling — tizim rasmga qarab topadi (CLIP).",
+    "feature2Title": "Tez qidiruv",
+    "feature2Desc": "Barcode yo'qmi? Mahsulot nomini yozing — ro'yxatdan bir bosishda toping va soting.",
     "feature3Title": "DONALI va VAZN",
     "feature3Desc": "Dona bilan ham, kilogramm bilan ham soting — 1 gramm aniqlikgacha.",
     "feature4Title": "Hisobot va dashboard",
@@ -51,9 +51,9 @@
     "step1Title": "Ro'yxatdan o'ting",
     "step1Desc": "30 soniyada do'kon hisobi yarating — email va parol.",
     "step2Title": "Mahsulot qo'shing",
-    "step2Desc": "Rasm, narx va miqdorni kiriting. Barcode ixtiyoriy.",
+    "step2Desc": "Narx va miqdorni kiriting. Rasm va barcode ixtiyoriy.",
     "step3Title": "Soting",
-    "step3Desc": "Barcode, rasm yoki nom bo'yicha toping va savatga qo'shing.",
+    "step3Desc": "Barcode yoki nom bo'yicha toping va savatga qo'shing.",
     "trust1": "Tan narxingiz maxfiy qoladi",
     "trust2": "Ma'lumotlaringiz faqat sizniki",
     "trust3": "Internetsiz ham asosiy ishlar",
@@ -275,6 +275,8 @@
     "indexedToast": "{{count}} ta mahsulot indekslandi",
     "indexError": "Indekslash xatosi",
     "indexNote": "Eslatma: birinchi marta CLIP modeli yuklanadi (~25MB), keyin brauzerda keshlanadi. Internet aloqasi kerak.",
+    "comingSoonTitle": "Profil va sozlamalar",
+    "comingSoonDesc": "Email, parol, do'kon nomini tahrirlash va Excel eksport — keyingi yangilanishda.",
     "otherSettings": "Qolgan do'kon sozlamalari keyingi yangilanishlarda tayyor bo'ladi"
   },
   "uploader": {
@@ -287,7 +289,7 @@
     "add": "Rasm qo'shish",
     "camera": "Kamera",
     "gallery": "Galereya",
-    "hint": "Bir nechta rakursdan {{max}} tagacha rasm — tanish aniqligi oshadi. Birinchisi katalogda ko'rinadi."
+    "hint": "Mahsulot rasmi — ixtiyoriy. Katalog va chekda ko'rinadi."
   },
   "theme": {
     "toggle": "Tungi rejim"

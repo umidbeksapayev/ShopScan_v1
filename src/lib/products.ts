@@ -18,7 +18,7 @@ export interface CreateProductInput {
   quantity: number;
   low_stock_alert: number;
   barcode?: string | null;
-  image_url: string;
+  image_url: string | null;
 }
 
 export type UpdateProductInput = Partial<
@@ -98,76 +98,4 @@ export async function archiveProduct(id: string): Promise<void> {
     .update({ is_active: false })
     .eq("id", id);
   if (error) throw new Error(error.message);
-}
-
-/**
- * Mahsulot rasmidan CLIP embedding hisoblab, product_embeddings jadvaliga qo'shadi.
- * Bitta mahsulotga bir nechta rasm (multi-image) — har biri alohida qator.
- * RLS faqat egasiga ruxsat beradi. CLIP lib lazy-load qilinadi.
- * @param productId - mahsulot id'si
- * @param shopId - do'kon id'si
- * @param source - Blob (yangi yuklangan) yoki image_url (string, backfill uchun)
- * @param imageUrl - saqlanadigan rasm URL (ixtiyoriy)
- */
-export async function addProductEmbedding(
-  productId: string,
-  shopId: string,
-  source: Blob | string,
-  imageUrl?: string | null
-): Promise<void> {
-  const { embedImage } = await import("@/lib/clip-browser");
-  const embedding = await embedImage(source);
-
-  const supabase = createClient();
-  const { error } = await supabase.from("product_embeddings").insert({
-    product_id: productId,
-    shop_id: shopId,
-    image_url: imageUrl ?? null,
-    embedding: JSON.stringify(embedding),
-  });
-  if (error) throw new Error(error.message);
-}
-
-/** Mahsulotning barcha embeddinglarini o'chiradi (rasm yangilanganda qayta indekslash uchun). */
-export async function clearProductEmbeddings(productId: string): Promise<void> {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from("product_embeddings")
-    .delete()
-    .eq("product_id", productId);
-  if (error) throw new Error(error.message);
-}
-
-/**
- * Bir nechta rasmni ketma-ket indekslaydi (multi-image).
- * @param images - {source, imageUrl} ro'yxati
- */
-export async function indexProductImages(
-  productId: string,
-  shopId: string,
-  images: { source: Blob | string; imageUrl?: string | null }[]
-): Promise<void> {
-  for (const img of images) {
-    await addProductEmbedding(productId, shopId, img.source, img.imageUrl ?? null);
-  }
-}
-
-/** Hali indekslanmagan (product_embeddings'da qatori yo'q) faol mahsulotlar. */
-export async function getUnindexedProducts(): Promise<
-  Pick<Product, "id" | "image_url">[]
-> {
-  const supabase = createClient();
-  const [prodsRes, embsRes] = await Promise.all([
-    supabase.from("products").select("id, image_url").eq("is_active", true),
-    supabase.from("product_embeddings").select("product_id"),
-  ]);
-  if (prodsRes.error) throw new Error(prodsRes.error.message);
-  if (embsRes.error) throw new Error(embsRes.error.message);
-
-  const indexed = new Set(
-    (embsRes.data ?? []).map((e: { product_id: string }) => e.product_id)
-  );
-  return ((prodsRes.data ?? []) as Pick<Product, "id" | "image_url">[]).filter(
-    (p) => !indexed.has(p.id)
-  );
 }

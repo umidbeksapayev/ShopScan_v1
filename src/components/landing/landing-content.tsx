@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   ScanLine,
   Sparkles,
+  Search,
   Scale,
   BarChart3,
   Zap,
@@ -19,7 +20,7 @@ import { LanguageSwitcher } from "@/components/layout/language-switcher";
 
 const features: { icon: LucideIcon; titleKey: string; descKey: string; cls: string }[] = [
   { icon: ScanLine, titleKey: "landing.feature1Title", descKey: "landing.feature1Desc", cls: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300" },
-  { icon: Sparkles, titleKey: "landing.feature2Title", descKey: "landing.feature2Desc", cls: "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300" },
+  { icon: Search, titleKey: "landing.feature2Title", descKey: "landing.feature2Desc", cls: "bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300" },
   { icon: Scale, titleKey: "landing.feature3Title", descKey: "landing.feature3Desc", cls: "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300" },
   { icon: BarChart3, titleKey: "landing.feature4Title", descKey: "landing.feature4Desc", cls: "bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300" },
   { icon: Zap, titleKey: "landing.feature5Title", descKey: "landing.feature5Desc", cls: "bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-300" },

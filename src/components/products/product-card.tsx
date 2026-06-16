@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { MoreVertical, Pencil, Archive, Hash, Scale } from "lucide-react";
+import { MoreVertical, Pencil, Archive, Hash, Scale, Package } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
@@ -44,13 +44,19 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
       <div className="relative aspect-square w-full bg-muted">
-        <Image
-          src={product.image_url}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
-          className="object-cover"
-        />
+        {product.image_url ? (
+          <Image
+            src={product.image_url}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 200px"
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-muted-foreground/40">
+            <Package className="h-10 w-10" />
+          </div>
+        )}
         <Badge
           variant={isWeight ? "secondary" : "outline"}
           className="absolute left-2 top-2 gap-1 bg-white/90"

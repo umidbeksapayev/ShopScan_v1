@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ScanLine, Sparkles } from "lucide-react";
+import { Search, ScanLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
@@ -10,17 +10,13 @@ import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
 import { useCartStore } from "@/stores/cart-store";
 import dynamic from "next/dynamic";
-import {
-  findProductsByBarcode,
-  searchProductsByImage,
-  type CartSaleResult,
-} from "@/lib/sales";
+import { findProductsByBarcode, type CartSaleResult } from "@/lib/sales";
 import type { ReceiptLineItem } from "@/lib/receipt-print";
 import { useProducts } from "@/hooks/use-products";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 import { LiveProductSearch } from "@/components/sales/live-product-search";
 
-// Og'ir kutubxonalar (react-webcam + @zxing/library) faqat kerak bo'lganda yuklanadi
+// Og'ir kamera kutubxonasi (@zxing/library) faqat kerak bo'lganda yuklanadi
 const cameraLoading = () => (
   <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
     Kamera yuklanmoqda...
@@ -29,11 +25,6 @@ const cameraLoading = () => (
 
 const BarcodeScanner = dynamic(
   () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
-  { ssr: false, loading: cameraLoading }
-);
-
-const VisualSearch = dynamic(
-  () => import("@/components/sales/visual-search").then((m) => m.VisualSearch),
   { ssr: false, loading: cameraLoading }
 );
 import { CartPanel } from "@/components/sales/cart-panel";
@@ -61,7 +52,6 @@ export default function SellPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
-  const [visualSearching, setVisualSearching] = useState(false);
 
   async function handleBarcode(barcode: string) {
     try {
@@ -87,29 +77,6 @@ export default function SellPage() {
       setAddOpen(true);
     } catch {
       toast.error(t("sell.searchError"));
-    }
-  }
-
-  async function handleVisualSearch(imageDataUri: string) {
-    if (!shop) return;
-    setVisualSearching(true);
-    try {
-      const found = await searchProductsByImage(shop.id, imageDataUri);
-      if (found.length === 0) {
-        toast.error(t("sell.noMatch"), {
-          description: t("sell.noMatchDesc"),
-        });
-        return;
-      }
-      setMethod("visual");
-      setCandidates(found);
-      setAddOpen(true);
-    } catch (err) {
-      toast.error(t("sell.visualError"), {
-        description: err instanceof Error ? err.message : undefined,
-      });
-    } finally {
-      setVisualSearching(false);
     }
   }
 
@@ -166,9 +133,6 @@ export default function SellPage() {
               <TabsTrigger value="barcode" className="flex-1 gap-1.5">
                 <ScanLine className="h-4 w-4" /> {t("sell.tabBarcode")}
               </TabsTrigger>
-              <TabsTrigger value="visual" className="flex-1 gap-1.5">
-                <Sparkles className="h-4 w-4" /> {t("sell.tabVisual")}
-              </TabsTrigger>
               <TabsTrigger value="manual" className="flex-1 gap-1.5">
                 <Search className="h-4 w-4" /> {t("sell.tabManual")}
               </TabsTrigger>
@@ -176,10 +140,6 @@ export default function SellPage() {
 
             <TabsContent value="barcode">
               <BarcodeScanner onDetected={handleBarcode} />
-            </TabsContent>
-
-            <TabsContent value="visual">
-              <VisualSearch onCapture={handleVisualSearch} searching={visualSearching} />
             </TabsContent>
 
             <TabsContent value="manual">

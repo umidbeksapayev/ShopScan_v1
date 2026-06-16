@@ -11,7 +11,7 @@ export interface SalesTrendPoint {
 export interface TopProduct {
   product_id: string;
   name: string;
-  image_url: string;
+  image_url: string | null;
   sale_type: "unit" | "weight";
   units_sold: number;
   revenue: number;

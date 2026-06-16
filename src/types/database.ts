@@ -12,8 +12,7 @@ export interface Product {
   quantity: number;
   low_stock_alert: number;
   barcode: string | null;
-  image_url: string;
-  image_embedding: number[] | null;
+  image_url: string | null;
   is_active: boolean;
   created_at: string;
 }

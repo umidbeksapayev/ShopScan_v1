@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Trash2, ShoppingCart } from "lucide-react";
+import { ProductThumb } from "@/components/products/product-thumb";
 import { useTranslation } from "react-i18next";
 import { useCartStore } from "@/stores/cart-store";
 import { formatCurrency, formatWeight } from "@/lib/utils";
@@ -43,12 +43,10 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
           return (
             <div key={item.product.id} className="flex items-center gap-3 p-3">
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-                <Image
+                <ProductThumb
                   src={item.product.image_url}
                   alt={item.product.name}
-                  fill
                   sizes="48px"
-                  className="object-cover"
                 />
               </div>
               <div className="min-w-0 flex-1">

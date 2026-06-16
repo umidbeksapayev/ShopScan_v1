@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { ProductThumb } from "@/components/products/product-thumb";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
@@ -46,7 +46,7 @@ export function LowStockList({ products, loading }: LowStockListProps) {
               className="flex items-center gap-3 rounded-lg border p-2 transition-colors hover:bg-accent"
             >
               <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
-                <Image src={p.image_url} alt={p.name} fill sizes="40px" className="object-cover" />
+                <ProductThumb src={p.image_url} alt={p.name} sizes="40px" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
