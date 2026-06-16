@@ -257,6 +257,7 @@
     "recentSales": "Oxirgi {{count}} ta sotuv",
     "noSales": "Hali sotuvlar yo'q",
     "noSalesDesc": "Sotuv ekranidan birinchi sotuvni amalga oshiring",
+    "itemCount": "{{count}} ta mahsulot",
     "methodBarcode": "Barcode",
     "methodVisual": "Vizual",
     "methodManual": "Qo'lda"

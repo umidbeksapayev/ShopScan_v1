@@ -17,8 +17,9 @@ export interface Product {
   created_at: string;
 }
 
-export interface Sale {
+export interface SaleItem {
   id: string;
+  sale_id: string;
   shop_id: string;
   product_id: string;
   sale_type: SaleType;
@@ -30,6 +31,18 @@ export interface Sale {
   search_method: SearchMethod;
   sold_at: string;
   product?: Pick<Product, "name" | "image_url" | "sale_type">;
+}
+
+/** Sotuv sarlavhasi (header): bitta sotuv = bitta yozuv, ichida sale_items. */
+export interface Sale {
+  id: string;
+  shop_id: string;
+  total_revenue: number;
+  total_profit: number;
+  item_count: number;
+  search_method: SearchMethod;
+  sold_at: string;
+  items?: SaleItem[];
 }
 
 export interface Shop {
