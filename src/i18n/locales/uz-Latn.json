@@ -349,5 +349,20 @@
     "paymentsHistory": "To'lovlar tarixi",
     "noPayments": "Hali to'lov yo'q",
     "salesHistory": "Sotuvlar tarixi"
+  },
+  "returns": {
+    "title": "Sotuvni qaytarish",
+    "action": "Qaytarish",
+    "badge": "Qaytarilgan",
+    "returnable": "Qaytarish mumkin",
+    "reason": "Sabab",
+    "reasonPlaceholder": "Sabab (ixtiyoriy)",
+    "refundTotal": "Qaytariladigan summa",
+    "refunded": "Qaytarilgan",
+    "confirm": "Tasdiqlash",
+    "processing": "Qaytarilmoqda...",
+    "success": "Qaytarish bajarildi",
+    "error": "Qaytarishda xato",
+    "nothingSelected": "Qaytariladigan mahsulot tanlanmadi"
   }
 }

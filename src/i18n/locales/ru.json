@@ -349,5 +349,20 @@
     "paymentsHistory": "История оплат",
     "noPayments": "Пока нет оплат",
     "salesHistory": "История продаж"
+  },
+  "returns": {
+    "title": "Возврат продажи",
+    "action": "Возврат",
+    "badge": "Возвращено",
+    "returnable": "Можно вернуть",
+    "reason": "Причина",
+    "reasonPlaceholder": "Причина (необязательно)",
+    "refundTotal": "Сумма возврата",
+    "refunded": "Возвращено",
+    "confirm": "Подтвердить",
+    "processing": "Возврат...",
+    "success": "Возврат выполнен",
+    "error": "Ошибка возврата",
+    "nothingSelected": "Товар для возврата не выбран"
   }
 }

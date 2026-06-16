@@ -79,7 +79,9 @@ export async function getSalesHistory(limit = 50): Promise<Sale[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("sales")
-    .select("*, items:sale_items(*, product:products(name, image_url, sale_type))")
+    .select(
+      "*, items:sale_items(*, product:products(name, image_url, sale_type)), returns(id, total_refund)"
+    )
     .order("sold_at", { ascending: false })
     .limit(limit);
 

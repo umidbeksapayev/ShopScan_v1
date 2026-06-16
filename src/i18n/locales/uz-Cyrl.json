@@ -349,5 +349,20 @@
     "paymentsHistory": "Тўловлар тарихи",
     "noPayments": "Ҳали тўлов йўқ",
     "salesHistory": "Сотувлар тарихи"
+  },
+  "returns": {
+    "title": "Сотувни қайтариш",
+    "action": "Қайтариш",
+    "badge": "Қайтарилган",
+    "returnable": "Қайтариш мумкин",
+    "reason": "Сабаб",
+    "reasonPlaceholder": "Сабаб (ихтиёрий)",
+    "refundTotal": "Қайтариладиган сумма",
+    "refunded": "Қайтарилган",
+    "confirm": "Тасдиқлаш",
+    "processing": "Қайтарилмоқда...",
+    "success": "Қайтариш бажарилди",
+    "error": "Қайтаришда хато",
+    "nothingSelected": "Қайтариладиган маҳсулот танланмади"
   }
 }

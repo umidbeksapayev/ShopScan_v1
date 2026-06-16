@@ -1,15 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { Sale } from "@/types/database";
 import { useShop } from "@/hooks/use-shop";
 import { useSalesHistory } from "@/hooks/use-dashboard";
 import { SalesHistoryList } from "@/components/dashboard/sales-history-list";
+import { ReturnDialog } from "@/components/sales/return-dialog";
 import { formatCurrency } from "@/lib/utils";
 
 export default function HistoryPage() {
   const { t } = useTranslation();
   const { data: shop } = useShop();
   const { data: sales, isLoading } = useSalesHistory(shop?.id, 50);
+  const [returnSale, setReturnSale] = useState<Sale | null>(null);
 
   const total = (sales ?? []).reduce((sum, s) => sum + s.total_revenue, 0);
 
@@ -27,7 +31,20 @@ export default function HistoryPage() {
         )}
       </div>
 
-      <SalesHistoryList sales={sales ?? []} loading={isLoading} />
+      <SalesHistoryList
+        sales={sales ?? []}
+        loading={isLoading}
+        onReturn={shop ? (s) => setReturnSale(s) : undefined}
+      />
+
+      {shop && (
+        <ReturnDialog
+          open={!!returnSale}
+          sale={returnSale}
+          shopId={shop.id}
+          onClose={() => setReturnSale(null)}
+        />
+      )}
     </div>
   );
 }
