@@ -38,6 +38,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  CustomerPicker,
+  type PickableCustomer,
+} from "@/components/customers/customer-picker";
+import { remainingDebt } from "@/lib/debt";
 
 export default function SellPage() {
   const { t } = useTranslation();
@@ -52,6 +60,10 @@ export default function SellPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
+  // Nasiya: mijoz + to'lov turi (checkout paytida)
+  const [customer, setCustomer] = useState<PickableCustomer | null>(null);
+  const [isCredit, setIsCredit] = useState(false);
+  const [paidInput, setPaidInput] = useState("");
 
   async function handleBarcode(barcode: string) {
     // Dialog ochiq bo'lsa — uzluksiz skan savatni buzmasin (qo'shimcha himoya).
@@ -91,12 +103,16 @@ export default function SellPage() {
 
   async function handleConfirmSale() {
     if (!shop) return;
+    const total = totalRevenue();
+    const paid = customer ? (isCredit ? Number(paidInput) || 0 : total) : total;
     try {
       const result = await saleMut.mutateAsync({
         shopId: shop.id,
         items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
         // Savatdagi birinchi element usulini umumiy usul sifatida olamiz
         method: items[0]?.method ?? "manual",
+        customerId: customer?.id ?? null,
+        paidAmount: customer ? paid : null,
       });
       // Savat tozalanishidan OLDIN chek uchun snapshot olamiz (narxsiz/foydasiz).
       setReceiptItems(
@@ -109,6 +125,9 @@ export default function SellPage() {
       );
       setConfirmOpen(false);
       clear();
+      setCustomer(null);
+      setIsCredit(false);
+      setPaidInput("");
       setReceipt(result);
     } catch (err) {
       setConfirmOpen(false);
@@ -117,6 +136,10 @@ export default function SellPage() {
       });
     }
   }
+
+  const cartTotal = totalRevenue();
+  const cartPaid = customer ? (isCredit ? Number(paidInput) || 0 : cartTotal) : cartTotal;
+  const cartDebt = remainingDebt(cartTotal, cartPaid);
 
   return (
     <div className="space-y-6">
@@ -170,12 +193,63 @@ export default function SellPage() {
           <DialogHeader>
             <DialogTitle>{t("sell.confirmTitle")}</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {t("sell.confirmText", {
-              count: items.length,
-              total: formatCurrency(totalRevenue()),
-            })}
-          </p>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              {t("sell.confirmText", {
+                count: items.length,
+                total: formatCurrency(cartTotal),
+              })}
+            </p>
+
+            {/* Mijoz (nasiya uchun ixtiyoriy) */}
+            {shop && (
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">
+                  {t("sell.customerLabel")}
+                </Label>
+                <CustomerPicker
+                  shopId={shop.id}
+                  value={customer}
+                  onChange={(c) => {
+                    setCustomer(c);
+                    if (!c) setIsCredit(false);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* To'lov turi — faqat mijoz tanlanganda */}
+            {customer && (
+              <div className="space-y-3 rounded-xl border border-border p-3">
+                <label className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{t("sell.onCredit")}</span>
+                  <Switch checked={isCredit} onCheckedChange={setIsCredit} />
+                </label>
+                {isCredit && (
+                  <div className="space-y-2">
+                    <Label htmlFor="paid-input" className="text-xs text-muted-foreground">
+                      {t("sell.paidAmount")}
+                    </Label>
+                    <Input
+                      id="paid-input"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      value={paidInput}
+                      onChange={(e) => setPaidInput(e.target.value)}
+                      placeholder="0"
+                    />
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">{t("sell.willOwe")}</span>
+                      <span className="font-semibold tabular-nums text-amber-600 dark:text-amber-400">
+                        {formatCurrency(cartDebt)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               {t("common.cancel")}

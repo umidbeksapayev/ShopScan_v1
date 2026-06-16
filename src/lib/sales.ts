@@ -50,21 +50,34 @@ export interface CartSaleResult {
   item_count: number;
   total_revenue: number;
   total_profit: number;
+  paid_amount: number;
+  debt: number;
+}
+
+export interface ProcessCartOptions {
+  /** Nasiya sotuv uchun mijoz (null → naqd sotuv). */
+  customerId?: string | null;
+  /** To'langan summa (null → to'liq to'lov). Mijozsiz sotuvda e'tiborga olinmaydi. */
+  paidAmount?: number | null;
 }
 
 /**
  * Savatdagi barcha mahsulotlarni atomar sotadi (process_sale_cart RPC).
+ * Mijoz + qisman to'lov berilsa — qolgani qarzga yoziladi.
  */
 export async function processCartSale(
   shopId: string,
   items: CartSaleItem[],
-  method: SearchMethod
+  method: SearchMethod,
+  options: ProcessCartOptions = {}
 ): Promise<CartSaleResult> {
   const supabase = createClient();
   const { data, error } = await supabase.rpc("process_sale_cart", {
     p_shop_id: shopId,
     p_items: items,
     p_search_method: method,
+    p_customer_id: options.customerId ?? null,
+    p_paid_amount: options.paidAmount ?? null,
   });
 
   if (error) throw new Error(error.message);

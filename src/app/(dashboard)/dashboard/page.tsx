@@ -1,7 +1,16 @@
 "use client";
 
+import { useMemo } from "react";
 import dynamic from "next/dynamic";
-import { Wallet, TrendingUp, ShoppingCart, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import {
+  Wallet,
+  TrendingUp,
+  ShoppingCart,
+  AlertTriangle,
+  Coins,
+  ChevronRight,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import {
@@ -9,6 +18,7 @@ import {
   useSalesTrend,
   useLowStockProducts,
 } from "@/hooks/use-dashboard";
+import { useCustomers } from "@/hooks/use-customers";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { LowStockList } from "@/components/dashboard/low-stock-list";
 import { formatCurrency } from "@/lib/utils";
@@ -29,6 +39,11 @@ export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats(shop?.id);
   const { data: trend, isLoading: trendLoading } = useSalesTrend(shop?.id, 7);
   const { data: lowStock, isLoading: lowLoading } = useLowStockProducts(shop?.id);
+  const { data: customers } = useCustomers(shop?.id);
+  const totalDebt = useMemo(
+    () => (customers ?? []).reduce((sum, c) => sum + Math.max(0, c.balance), 0),
+    [customers]
+  );
 
   return (
     <div className="space-y-6">
@@ -68,6 +83,27 @@ export default function DashboardPage() {
           loading={statsLoading}
         />
       </div>
+
+      {/* Jami qarz — mijozlar sahifasiga havola */}
+      <Link
+        href="/customers"
+        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card sm:p-5"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-sm">
+            <Coins className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t("dashboard.totalDebt")}
+            </p>
+            <p className="text-2xl font-bold tabular-nums text-foreground">
+              {formatCurrency(totalDebt)}
+            </p>
+          </div>
+        </div>
+        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+      </Link>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Tushum trendi */}
