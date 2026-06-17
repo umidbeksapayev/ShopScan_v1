@@ -85,9 +85,9 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [categoryId, setCategoryId] = useState<string>(product?.category_id ?? "none");
   const [newCatMode, setNewCatMode] = useState(false);
   const [newCatName, setNewCatName] = useState("");
-  // "Qo'shimcha" bo'limi (rasm/kategoriya/barcode) — tahrirda mavjud qiymat bo'lsa ochiq
+  // "Qo'shimcha" bo'limi (rasm/kategoriya) — tahrirda mavjud qiymat bo'lsa ochiq
   const [showMore, setShowMore] = useState(
-    Boolean(product?.category_id || product?.barcode || product?.image_url)
+    Boolean(product?.category_id || product?.image_url)
   );
 
   const isWeight = saleType === "weight";
@@ -212,6 +212,41 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           onChange={(e) => setName(e.target.value)}
           placeholder={t("product.namePlaceholder")}
         />
+      </div>
+
+      {/* Barcode + skaner — oldinda (tez-tez skanerlanadigan maydon) */}
+      <div className="space-y-1.5">
+        <Label htmlFor="barcode">{t("product.barcodeOptional")}</Label>
+        <div className="flex gap-2">
+          <Input
+            id="barcode"
+            value={barcode}
+            onChange={(e) => setBarcode(e.target.value)}
+            placeholder={t("product.barcodePlaceholder")}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => setScanning((s) => !s)}
+            aria-label={scanning ? t("product.scanClose") : t("product.scanOpen")}
+            title={scanning ? t("product.scanClose") : t("product.scanOpen")}
+          >
+            {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
+          </Button>
+        </div>
+        {scanning && (
+          <div className="rounded-xl border p-2">
+            <BarcodeScanner
+              onDetected={(code) => {
+                setBarcode(code);
+                setScanning(false);
+                toast.success(t("product.barcodeRead"));
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Narxlar */}
@@ -387,41 +422,6 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Barcode */}
-            <div className="space-y-1.5">
-              <Label htmlFor="barcode">{t("product.barcodeOptional")}</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="barcode"
-                  value={barcode}
-                  onChange={(e) => setBarcode(e.target.value)}
-                  placeholder={t("product.barcodePlaceholder")}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setScanning((s) => !s)}
-                  aria-label={scanning ? t("product.scanClose") : t("product.scanOpen")}
-                  title={scanning ? t("product.scanClose") : t("product.scanOpen")}
-                >
-                  {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
-                </Button>
-              </div>
-              {scanning && (
-                <div className="rounded-xl border p-2">
-                  <BarcodeScanner
-                    onDetected={(code) => {
-                      setBarcode(code);
-                      setScanning(false);
-                      toast.success(t("product.barcodeRead"));
-                    }}
-                  />
                 </div>
               )}
             </div>

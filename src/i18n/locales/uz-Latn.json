@@ -168,7 +168,7 @@
     "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi",
     "category": "Kategoriya",
     "noCategory": "Kategoriyasiz",
-    "moreSection": "Qo'shimcha (rasm, kategoriya, barcode)"
+    "moreSection": "Qo'shimcha (rasm, kategoriya)"
   },
   "sell": {
     "title": "Sotuv",
