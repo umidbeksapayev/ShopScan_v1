@@ -28,7 +28,7 @@ Komponentlarda HEX emas, **semantik token** ishlating (`bg-primary`, `text-foreg
 ## Spacing & Layout
 - 4/8px ritm (Tailwind default). Konteyner: `max-w-6xl`.
 - Radius: `--radius: 0.85rem` (lg). Kartlar `rounded-2xl` (1.25rem), tugmalar `rounded-md/xl`.
-- Mobile-first; `(dashboard)` da desktop sidebar + mobil bottom-nav (≤6 element).
+- Mobile-first; `(dashboard)` da desktop sidebar (hamma havola) + mobil bottom-nav **≤5 tugma** (4 asosiy: Bosh/Katalog/Sotuv/Tarix + "Ko'proq" menyusi qolganlari uchun). 5 tadan oshmasin — telefonda noqulay.
 
 ## Effektlar (soyalar)
 - `shadow-soft` — nozik (kartlar tinch holati)

@@ -80,6 +80,40 @@ export interface ReturnItem {
   created_at: string;
 }
 
+/** Ta'minotchi. */
+export interface Supplier {
+  id: string;
+  shop_id: string;
+  name: string;
+  phone: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+/** Kirim qatori. */
+export interface PurchaseItem {
+  id: string;
+  purchase_id: string;
+  product_id: string;
+  shop_id: string;
+  quantity: number;
+  cost_price: number;
+  created_at: string;
+  product?: Pick<Product, "name" | "image_url" | "sale_type">;
+}
+
+/** Kirim sarlavhasi (mahsulot kirimi / stock-in). */
+export interface Purchase {
+  id: string;
+  shop_id: string;
+  supplier_id: string | null;
+  total: number;
+  note: string | null;
+  created_at: string;
+  supplier?: { name: string } | null;
+  items?: PurchaseItem[];
+}
+
 /** Mijoz (qarz daftari). */
 export interface Customer {
   id: string;
