@@ -13,8 +13,24 @@ export interface Product {
   low_stock_alert: number;
   barcode: string | null;
   image_url: string | null;
+  category_id: string | null;
   is_active: boolean;
   created_at: string;
+  /** Embed: kategoriya nomi (listProducts select'ida qo'shiladi). */
+  category?: { name: string } | null;
+}
+
+/** Kategoriya (mahsulot guruhi). */
+export interface Category {
+  id: string;
+  shop_id: string;
+  name: string;
+  created_at: string;
+}
+
+/** Kategoriya + unga tegishli mahsulotlar soni (boshqaruv dialogi uchun). */
+export interface CategoryWithCount extends Category {
+  product_count: number;
 }
 
 export interface SaleItem {

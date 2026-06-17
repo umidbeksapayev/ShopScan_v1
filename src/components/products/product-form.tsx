@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Hash, Scale, AlertTriangle, ScanLine, X } from "lucide-react";
+import { Hash, Scale, AlertTriangle, ScanLine, X, Plus, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
@@ -24,6 +24,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCategories, useCreateCategory } from "@/hooks/use-categories";
 
 // Kamera kutubxonasi (@zxing) faqat skaner ochilganda yuklanadi.
 const BarcodeScanner = dynamic(
@@ -62,6 +70,13 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [scanning, setScanning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Kategoriya (ixtiyoriy): "none" = kategoriyasiz
+  const { data: categories } = useCategories();
+  const createCatMut = useCreateCategory();
+  const [categoryId, setCategoryId] = useState<string>(product?.category_id ?? "none");
+  const [newCatMode, setNewCatMode] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+
   const isWeight = saleType === "weight";
   const unitLabel = isWeight ? t("common.kg") : t("common.pcs");
   const cost = parseFloat(costPrice) || 0;
@@ -77,6 +92,22 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
   function switchType(type: SaleType) {
     setSaleType(type);
+  }
+
+  async function handleCreateCategory() {
+    const nm = newCatName.trim();
+    if (!nm) return;
+    try {
+      const cat = await createCatMut.mutateAsync(nm);
+      setCategoryId(cat.id);
+      setNewCatMode(false);
+      setNewCatName("");
+      toast.success(t("category.created"));
+    } catch (err) {
+      toast.error(t("category.saveError"), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -107,6 +138,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         low_stock_alert: computeLowStockThreshold(qty, saleType),
         barcode: normalizeBarcode(barcode) || null,
         image_url: imageUrl,
+        category_id: categoryId === "none" ? null : categoryId,
       };
 
       if (isEdit && product) {
@@ -144,6 +176,75 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           onChange={(e) => setName(e.target.value)}
           placeholder={t("product.namePlaceholder")}
         />
+      </div>
+
+      {/* Kategoriya (ixtiyoriy) — tanlash yoki inline yangi yaratish */}
+      <div className="space-y-2">
+        <Label>{t("product.category")}</Label>
+        {newCatMode ? (
+          <div className="flex gap-2">
+            <Input
+              autoFocus
+              value={newCatName}
+              onChange={(e) => setNewCatName(e.target.value)}
+              placeholder={t("category.namePlaceholder")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleCreateCategory();
+                }
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={handleCreateCategory}
+              disabled={createCatMut.isPending || !newCatName.trim()}
+              aria-label={t("common.add")}
+            >
+              <Check className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setNewCatMode(false);
+                setNewCatName("");
+              }}
+              aria-label={t("common.cancel")}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <Select value={categoryId} onValueChange={setCategoryId}>
+              <SelectTrigger className="flex-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("product.noCategory")}</SelectItem>
+                {(categories ?? []).map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setNewCatMode(true)}
+              aria-label={t("category.add")}
+              title={t("category.add")}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Sotuv turi toggle */}

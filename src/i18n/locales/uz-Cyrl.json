@@ -14,7 +14,8 @@
     "increase": "Кўпайтириш",
     "saving": "Сақланмоқда...",
     "clear": "Тозалаш",
-    "delete": "Ўчириш"
+    "delete": "Ўчириш",
+    "edit": "Таҳрирлаш"
   },
   "nav": {
     "dashboard": "Дашборд",
@@ -126,7 +127,9 @@
     "archive": "Архивлаш",
     "actions": "Амаллар",
     "gridView": "Катак кўриниши",
-    "listView": "Рўйхат кўриниши"
+    "listView": "Рўйхат кўриниши",
+    "allCategories": "Барча категориялар",
+    "noCategory": "Категориясиз"
   },
   "product": {
     "name": "Маҳсулот номи",
@@ -162,7 +165,9 @@
     "scanClose": "Сканерни ёпиш",
     "autoWarnPrefix": "Автоматик огоҳлантириш:",
     "autoWarnSuffix": "қолганда ({{pct}}%)",
-    "autoWarnHint": "Маҳсулот киритилган миқдорнинг {{pct}}% қолганда автоматик огоҳлантирилади"
+    "autoWarnHint": "Маҳсулот киритилган миқдорнинг {{pct}}% қолганда автоматик огоҳлантирилади",
+    "category": "Категория",
+    "noCategory": "Категориясиз"
   },
   "sell": {
     "title": "Сотув",
@@ -437,5 +442,56 @@
     "perm_manage_debt": "Мижоз қарзи",
     "perm_view_reports": "Ҳисоботлар",
     "perm_view_cost": "Тан нарх кўриш"
+  },
+  "category": {
+    "manageBtn": "Категориялар",
+    "manageTitle": "Категориялар",
+    "manageHint": "Категория қўшинг, номини ўзгартиринг ёки ўчиринг.",
+    "namePlaceholder": "Категория номи",
+    "empty": "Ҳали категория йўқ",
+    "productCount": "{{count}} та маҳсулот",
+    "add": "Янги категория",
+    "created": "Категория қўшилди",
+    "renamed": "Категория номи ўзгартирилди",
+    "deleted": "Категория ўчирилди",
+    "deleteConfirm": "\"{{name}}\" категориясини ўчирасизми? {{count}} та маҳсулот категориясиз қолади.",
+    "saveError": "Сақлашда хато"
+  },
+  "import": {
+    "btn": "Импорт",
+    "title": "Маҳсулотларни импорт қилиш",
+    "subtitle": "Excel ёки CSV файлдан оммавий маҳсулот қўшинг",
+    "step1Title": "1. Намуна файлни юклаб олинг",
+    "columnsHint": "Устунлар: Номи*, Тур (дона/кг), Тан нархи*, Сотиш нархи*, Миқдор*, Баркод, Категория. * — мажбурий.",
+    "downloadTemplate": "Намуна (.xlsx)",
+    "step2Title": "Файлни танланг",
+    "fileTypes": ".xlsx ёки .csv",
+    "parsing": "Файл ўқилмоқда...",
+    "parseError": "Файлни ўқишда хато",
+    "headerError": "Устун сарлавҳалари топилмади. Намуна файлдан фойдаланинг (Номи, Тан нархи, Сотиш нархи, Миқдор).",
+    "templateError": "Намуна файлни яратишда хато",
+    "importError": "Импорт хатоси",
+    "done": "Импорт якунланди",
+    "countValid": "{{count}} та тайёр",
+    "countDuplicate": "{{count}} та дубликат",
+    "countError": "{{count}} та хато",
+    "chooseAnother": "Бошқа файл",
+    "confirmBtn": "{{count}} та маҳсулотни импорт қилиш",
+    "importMore": "Яна импорт",
+    "resultInserted": "{{count}} та маҳсулот қўшилди",
+    "resultCategories": "{{count}} та янги категория",
+    "resultSkipped": "{{count}} та ўтказиб юборилди",
+    "status_valid": "Тайёр",
+    "status_duplicate": "Дубликат",
+    "status_error": "Хато",
+    "err": {
+      "name_required": "Ном йўқ",
+      "invalid_type": "Тур нотўғри",
+      "invalid_cost": "Тан нархи нотўғри",
+      "invalid_selling": "Сотиш нархи нотўғри",
+      "invalid_quantity": "Миқдор нотўғри",
+      "unit_not_integer": "Дона — бутун сон бўлиши керак",
+      "duplicate": "Баркод аллақачон мавжуд"
+    }
   }
 }

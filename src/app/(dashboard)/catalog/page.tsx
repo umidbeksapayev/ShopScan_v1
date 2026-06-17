@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Upload, FolderTree } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product } from "@/types/database";
@@ -12,6 +12,8 @@ import { useCatalogStore } from "@/stores/catalog-store";
 import { CatalogToolbar } from "@/components/products/catalog-toolbar";
 import { ProductCard } from "@/components/products/product-card";
 import { ProductForm } from "@/components/products/product-form";
+import { CategoryManager } from "@/components/products/category-manager";
+import { ImportDialog } from "@/components/products/import-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -24,10 +26,11 @@ import {
 export default function CatalogPage() {
   const { t } = useTranslation();
   const { data: shop } = useShop();
-  const { search, saleType, sortBy, sortDir } = useCatalogStore();
+  const { search, saleType, categoryId, sortBy, sortDir } = useCatalogStore();
   const { data: products, isLoading } = useProducts({
     search,
     saleType,
+    categoryId,
     sortBy,
     sortDir,
   });
@@ -36,6 +39,8 @@ export default function CatalogPage() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [catManagerOpen, setCatManagerOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   function openAdd() {
     setEditing(null);
@@ -60,11 +65,19 @@ export default function CatalogPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold text-foreground">{t("catalog.title")}</h1>
-        <Button onClick={openAdd} disabled={!shop}>
-          <Plus className="mr-1 h-4 w-4" /> {t("common.add")}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setCatManagerOpen(true)} disabled={!shop}>
+            <FolderTree className="mr-1 h-4 w-4" /> {t("category.manageBtn")}
+          </Button>
+          <Button variant="outline" onClick={() => setImportOpen(true)} disabled={!shop}>
+            <Upload className="mr-1 h-4 w-4" /> {t("import.btn")}
+          </Button>
+          <Button onClick={openAdd} disabled={!shop}>
+            <Plus className="mr-1 h-4 w-4" /> {t("common.add")}
+          </Button>
+        </div>
       </div>
 
       <CatalogToolbar />
@@ -115,6 +128,9 @@ export default function CatalogPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <CategoryManager open={catManagerOpen} onOpenChange={setCatManagerOpen} />
+      <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }

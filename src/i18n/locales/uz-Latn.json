@@ -14,7 +14,8 @@
     "increase": "Ko'paytirish",
     "saving": "Saqlanmoqda...",
     "clear": "Tozalash",
-    "delete": "O'chirish"
+    "delete": "O'chirish",
+    "edit": "Tahrirlash"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -126,7 +127,9 @@
     "archive": "Arxivlash",
     "actions": "Amallar",
     "gridView": "Katak ko'rinishi",
-    "listView": "Ro'yxat ko'rinishi"
+    "listView": "Ro'yxat ko'rinishi",
+    "allCategories": "Barcha kategoriyalar",
+    "noCategory": "Kategoriyasiz"
   },
   "product": {
     "name": "Mahsulot nomi",
@@ -162,7 +165,9 @@
     "scanClose": "Skanerni yopish",
     "autoWarnPrefix": "Avtomatik ogohlantirish:",
     "autoWarnSuffix": "qolganda ({{pct}}%)",
-    "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi"
+    "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi",
+    "category": "Kategoriya",
+    "noCategory": "Kategoriyasiz"
   },
   "sell": {
     "title": "Sotuv",
@@ -437,5 +442,56 @@
     "perm_manage_debt": "Mijoz qarzi",
     "perm_view_reports": "Hisobotlar",
     "perm_view_cost": "Tan narx ko'rish"
+  },
+  "category": {
+    "manageBtn": "Kategoriyalar",
+    "manageTitle": "Kategoriyalar",
+    "manageHint": "Kategoriya qo'shing, nomini o'zgartiring yoki o'chiring.",
+    "namePlaceholder": "Kategoriya nomi",
+    "empty": "Hali kategoriya yo'q",
+    "productCount": "{{count}} ta mahsulot",
+    "add": "Yangi kategoriya",
+    "created": "Kategoriya qo'shildi",
+    "renamed": "Kategoriya nomi o'zgartirildi",
+    "deleted": "Kategoriya o'chirildi",
+    "deleteConfirm": "\"{{name}}\" kategoriyasini o'chirasizmi? {{count}} ta mahsulot kategoriyasiz qoladi.",
+    "saveError": "Saqlashda xato"
+  },
+  "import": {
+    "btn": "Import",
+    "title": "Mahsulotlarni import qilish",
+    "subtitle": "Excel yoki CSV fayldan ommaviy mahsulot qo'shing",
+    "step1Title": "1. Namuna faylni yuklab oling",
+    "columnsHint": "Ustunlar: Nomi*, Tur (dona/kg), Tan narxi*, Sotish narxi*, Miqdor*, Barcode, Kategoriya. * — majburiy.",
+    "downloadTemplate": "Namuna (.xlsx)",
+    "step2Title": "Faylni tanlang",
+    "fileTypes": ".xlsx yoki .csv",
+    "parsing": "Fayl o'qilmoqda...",
+    "parseError": "Faylni o'qishda xato",
+    "headerError": "Ustun sarlavhalari topilmadi. Namuna fayldan foydalaning (Nomi, Tan narxi, Sotish narxi, Miqdor).",
+    "templateError": "Namuna faylni yaratishda xato",
+    "importError": "Import xatosi",
+    "done": "Import yakunlandi",
+    "countValid": "{{count}} ta tayyor",
+    "countDuplicate": "{{count}} ta dublikat",
+    "countError": "{{count}} ta xato",
+    "chooseAnother": "Boshqa fayl",
+    "confirmBtn": "{{count}} ta mahsulotni import qilish",
+    "importMore": "Yana import",
+    "resultInserted": "{{count}} ta mahsulot qo'shildi",
+    "resultCategories": "{{count}} ta yangi kategoriya",
+    "resultSkipped": "{{count}} ta o'tkazib yuborildi",
+    "status_valid": "Tayyor",
+    "status_duplicate": "Dublikat",
+    "status_error": "Xato",
+    "err": {
+      "name_required": "Nom yo'q",
+      "invalid_type": "Tur noto'g'ri",
+      "invalid_cost": "Tan narxi noto'g'ri",
+      "invalid_selling": "Sotish narxi noto'g'ri",
+      "invalid_quantity": "Miqdor noto'g'ri",
+      "unit_not_integer": "Dona — butun son bo'lishi kerak",
+      "duplicate": "Barcode allaqachon mavjud"
+    }
   }
 }

@@ -3,6 +3,7 @@
 import { Search, LayoutGrid, List, Hash, Scale } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCatalogStore, type SortField, type SortDir } from "@/stores/catalog-store";
+import { useCategories } from "@/hooks/use-categories";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
@@ -18,14 +19,17 @@ export function CatalogToolbar() {
   const {
     search,
     saleType,
+    categoryId,
     sortBy,
     sortDir,
     viewMode,
     setSearch,
     setSaleType,
+    setCategoryId,
     setSort,
     setViewMode,
   } = useCatalogStore();
+  const { data: categories } = useCategories();
 
   return (
     <div className="space-y-3">
@@ -58,6 +62,22 @@ export function CatalogToolbar() {
                 <Scale className="h-3.5 w-3.5" /> {t("catalog.weight")}
               </span>
             </SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Kategoriya filtri */}
+        <Select value={categoryId} onValueChange={setCategoryId}>
+          <SelectTrigger className="w-[150px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("catalog.allCategories")}</SelectItem>
+            <SelectItem value="none">{t("catalog.noCategory")}</SelectItem>
+            {(categories ?? []).map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 

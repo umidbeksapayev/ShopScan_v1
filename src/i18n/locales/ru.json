@@ -14,7 +14,8 @@
     "increase": "Увеличить",
     "saving": "Сохранение...",
     "clear": "Очистить",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "edit": "Редактировать"
   },
   "nav": {
     "dashboard": "Дашборд",
@@ -126,7 +127,9 @@
     "archive": "Архивировать",
     "actions": "Действия",
     "gridView": "Сетка",
-    "listView": "Список"
+    "listView": "Список",
+    "allCategories": "Все категории",
+    "noCategory": "Без категории"
   },
   "product": {
     "name": "Название товара",
@@ -162,7 +165,9 @@
     "scanClose": "Закрыть сканер",
     "autoWarnPrefix": "Авто-напоминание:",
     "autoWarnSuffix": "когда останется ({{pct}}%)",
-    "autoWarnHint": "Напомним автоматически, когда останется {{pct}}% от введённого количества"
+    "autoWarnHint": "Напомним автоматически, когда останется {{pct}}% от введённого количества",
+    "category": "Категория",
+    "noCategory": "Без категории"
   },
   "sell": {
     "title": "Продажа",
@@ -437,5 +442,56 @@
     "perm_manage_debt": "Долги клиентов",
     "perm_view_reports": "Отчёты",
     "perm_view_cost": "Видеть себестоимость"
+  },
+  "category": {
+    "manageBtn": "Категории",
+    "manageTitle": "Категории",
+    "manageHint": "Добавляйте, переименовывайте или удаляйте категории.",
+    "namePlaceholder": "Название категории",
+    "empty": "Категорий пока нет",
+    "productCount": "{{count}} товаров",
+    "add": "Новая категория",
+    "created": "Категория добавлена",
+    "renamed": "Категория переименована",
+    "deleted": "Категория удалена",
+    "deleteConfirm": "Удалить категорию \"{{name}}\"? {{count}} товаров останутся без категории.",
+    "saveError": "Ошибка сохранения"
+  },
+  "import": {
+    "btn": "Импорт",
+    "title": "Импорт товаров",
+    "subtitle": "Массовое добавление товаров из Excel или CSV",
+    "step1Title": "1. Скачайте файл-шаблон",
+    "columnsHint": "Столбцы: Название*, Тип (шт/кг), Себестоимость*, Цена продажи*, Количество*, Штрихкод, Категория. * — обязательно.",
+    "downloadTemplate": "Шаблон (.xlsx)",
+    "step2Title": "Выберите файл",
+    "fileTypes": ".xlsx или .csv",
+    "parsing": "Чтение файла...",
+    "parseError": "Ошибка чтения файла",
+    "headerError": "Заголовки столбцов не найдены. Используйте файл-шаблон (Название, Себестоимость, Цена продажи, Количество).",
+    "templateError": "Ошибка создания шаблона",
+    "importError": "Ошибка импорта",
+    "done": "Импорт завершён",
+    "countValid": "{{count}} готово",
+    "countDuplicate": "{{count}} дубликатов",
+    "countError": "{{count}} с ошибкой",
+    "chooseAnother": "Другой файл",
+    "confirmBtn": "Импортировать {{count}} товаров",
+    "importMore": "Ещё импорт",
+    "resultInserted": "Добавлено {{count}} товаров",
+    "resultCategories": "{{count}} новых категорий",
+    "resultSkipped": "{{count}} пропущено",
+    "status_valid": "Готово",
+    "status_duplicate": "Дубликат",
+    "status_error": "Ошибка",
+    "err": {
+      "name_required": "Нет названия",
+      "invalid_type": "Неверный тип",
+      "invalid_cost": "Неверная себестоимость",
+      "invalid_selling": "Неверная цена продажи",
+      "invalid_quantity": "Неверное количество",
+      "unit_not_integer": "Штучный — должно быть целым",
+      "duplicate": "Штрихкод уже существует"
+    }
   }
 }
