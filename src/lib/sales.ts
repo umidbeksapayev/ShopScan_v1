@@ -63,6 +63,8 @@ export interface ProcessCartOptions {
   customerId?: string | null;
   /** To'langan summa (null → to'liq to'lov). Mijozsiz sotuvda e'tiborga olinmaydi. */
   paidAmount?: number | null;
+  /** Lokal sotuv id (offline navbat replay'ida idempotentlik — ikki marta yozilmaydi). */
+  clientId?: string | null;
 }
 
 /**
@@ -82,6 +84,7 @@ export async function processCartSale(
     p_search_method: method,
     p_customer_id: options.customerId ?? null,
     p_paid_amount: options.paidAmount ?? null,
+    p_client_id: options.clientId ?? null,
   });
 
   if (error) throw new Error(error.message);

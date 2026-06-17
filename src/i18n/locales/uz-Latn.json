@@ -219,7 +219,8 @@
     "bluetooth": "Bluetooth printer",
     "printSent": "Chek printerga yuborildi",
     "btError": "Bluetooth print xatosi",
-    "next": "Keyingisi"
+    "next": "Keyingisi",
+    "queuedNote": "Bu sotuv internetsiz amalga oshirildi — ulanish tiklangach serverga yuboriladi."
   },
   "barcode": {
     "autoScan": "Avto skan",
@@ -496,6 +497,20 @@
   },
   "offline": {
     "banner": "Internet aloqasi yo'q — oflayn rejim",
-    "checkoutBlocked": "Internetsiz sotuvni yakunlab bo'lmaydi. Ulanishni tekshiring."
+    "checkoutBlocked": "Internetsiz sotuvni yakunlab bo'lmaydi. Ulanishni tekshiring.",
+    "checkoutQueued": "Internetsiz — sotuv navbatga qo'yiladi va ulanish tiklangach yuboriladi.",
+    "sellQueueBtn": "Navbatga qo'shish"
+  },
+  "sync": {
+    "queued": "{{count}} ta sotuv navbatda",
+    "syncing": "Sinxronlanmoqda... ({{count}})",
+    "failedStrip": "{{count}} ta sotuv sinxronlanmadi",
+    "failedTitle": "Sinxronlanmagan sotuvlar",
+    "failedHint": "Bu sotuvlar serverga yozilmadi (masalan, qoldiq yetmadi). Qayta urinib ko'ring yoki bekor qiling.",
+    "retry": "Qayta urinish",
+    "discard": "Bekor qilish",
+    "synced": "{{count}} ta offline sotuv sinxronlandi",
+    "failedToast": "{{count}} ta sotuv sinxronlanmadi",
+    "queuedToast": "Sotuv navbatga qo'shildi (internetsiz)"
   }
 }

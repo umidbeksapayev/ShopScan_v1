@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bluetooth, CheckCircle2, Loader2, Printer } from "lucide-react";
+import { Bluetooth, CheckCircle2, CloudOff, Loader2, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { CartSaleResult } from "@/lib/sales";
@@ -27,13 +27,15 @@ interface ReceiptProps {
   items: ReceiptLineItem[];
   shopName: string;
   onNext: () => void;
+  /** Offline sotuv — server'ga sinxronlash navbatiga qo'yilgan. */
+  queued?: boolean;
 }
 
 /**
  * Sotuvdan keyingi chek. Xaridorga faqat tushum ko'rsatiladi (tan narxi/foyda emas).
  * Ikki chop etish usuli: HTML (window.print, universal) va Bluetooth BLE (mos qurilmalar).
  */
-export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps) {
+export function Receipt({ open, result, items, shopName, onNext, queued }: ReceiptProps) {
   const { t } = useTranslation();
   const [bleSupported, setBleSupported] = useState(false);
   const [blePrinting, setBlePrinting] = useState(false);
@@ -99,6 +101,12 @@ export function Receipt({ open, result, items, shopName, onNext }: ReceiptProps)
                 </span>
               </div>
             </div>
+          )}
+          {queued && (
+            <p className="mt-3 flex items-center gap-1.5 rounded-lg bg-sky-50 px-3 py-2 text-xs text-sky-700 dark:bg-sky-500/10 dark:text-sky-400">
+              <CloudOff className="h-3.5 w-3.5 shrink-0" />
+              {t("receipt.queuedNote")}
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-2">
