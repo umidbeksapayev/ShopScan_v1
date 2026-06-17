@@ -403,6 +403,15 @@
     "noLines": "Kamida bitta mahsulot qo'shing",
     "history": "Kirim tarixi",
     "noPurchases": "Hali kirim yo'q",
-    "noSupplier": "Ta'minotchisiz"
+    "noSupplier": "Ta'minotchisiz",
+    "subtitle": "Yangi kelgan tovarni do'konga qo'shing",
+    "step1Title": "Ta'minotchi",
+    "step1Hint": "Kim olib keldi? (ixtiyoriy)",
+    "step2Title": "Kelgan mahsulotlar",
+    "step2Empty": "Hali mahsulot qo'shilmagan",
+    "step2EmptyHint": "Kelgan mahsulotni tanlab, nechta va qanchadan kelganini yozing",
+    "step3Title": "Tekshiring va saqlang",
+    "secret": "Tan narx faqat sizga ko'rinadi",
+    "addMore": "Yana mahsulot qo'shish"
   }
 }
