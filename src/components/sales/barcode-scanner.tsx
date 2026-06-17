@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } from "@zxing/library";
-import { ScanLine, Zap, ZapOff } from "lucide-react";
+import { BarcodeDetector as BarcodeDetectorPonyfill } from "barcode-detector/ponyfill";
+import { ScanLine, Zap, ZapOff, ZoomIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -15,8 +15,45 @@ interface BarcodeScannerProps {
 
 type ScanMode = "auto" | "manual";
 
-/** Bir xil barcode'ning ketma-ket qayta o'qilishini cheklash (Flutter cooldown mantig'i). */
+/** Bir xil barcode'ning ketma-ket qayta o'qilishini cheklash. */
 const COOLDOWN_MS = 2000;
+
+// Do'konda uchraydigan formatlar (BarcodeDetector spec — kichik harf, snake_case).
+// Yengil ro'yxat = tez dekod (ayniqsa zxing-wasm yo'lида). ITF (10/14 raqamli)
+// qoldirildi; og'ir/kam-uchraydigan data_matrix, code_93, codabar olib tashlandi.
+const FORMATS = [
+  "ean_13",
+  "ean_8",
+  "upc_a",
+  "upc_e",
+  "code_128",
+  "code_39",
+  "itf",
+  "qr_code",
+] as const;
+
+interface DetectorLike {
+  detect: (source: CanvasImageSource) => Promise<{ rawValue: string; format?: string }[]>;
+}
+type DetectorCtor = new (o: { formats: readonly string[] }) => DetectorLike;
+
+/**
+ * Detektor yaratadi: Android Chrome/WebView'da NATIVE `BarcodeDetector` (apparat,
+ * past sifatli kamerada ham < 1s) ishlatiladi; mavjud bo'lmasa (iOS Safari va h.k.)
+ * `barcode-detector` ponyfill (zxing-wasm) ga tushadi.
+ */
+function createDetector(): DetectorLike {
+  const w = window as unknown as { BarcodeDetector?: DetectorCtor };
+  if (typeof w.BarcodeDetector === "function") {
+    try {
+      return new w.BarcodeDetector({ formats: FORMATS });
+    } catch {
+      /* native qurib bo'lmadi — ponyfill'ga tushamiz */
+    }
+  }
+  const Ponyfill = BarcodeDetectorPonyfill as unknown as DetectorCtor;
+  return new Ponyfill({ formats: FORMATS });
+}
 
 /** Muvaffaqiyatli skan uchun qisqa "beep" ovozi (Web Audio — qo'shimcha fayl shart emas). */
 function playBeep(): void {
@@ -42,27 +79,32 @@ function playBeep(): void {
 }
 
 /**
- * Uzluksiz (avto) yoki qo'lda barcode skaneri.
- * - Avto: kameradan uzluksiz dekod, cooldown bilan dublikat oldini oladi.
- * - Qo'lda: foydalanuvchi "Skanerlash" bosgandagi keyingi aniqlangan kodni qabul qiladi.
- * Qo'shimcha: torch (flash) toggle va haptik (vibratsiya) feedback.
+ * Tez barcode skaneri — NATIVE BarcodeDetector (apparat) + zxing-wasm fallback.
+ * Kadrlar requestAnimationFrame bilan tekshiriladi (busy-guard: bir vaqtda bitta
+ * detect). Avto: cooldown bilan dublikat oldini oladi. Qo'lda: keyingi aniqlangan
+ * kodni qabul qiladi. Torch (flash) + haptik feedback.
  */
 export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerProps) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const modeRef = useRef<ScanMode>("auto");
   const armedRef = useRef(false); // qo'lda rejim: keyingi aniqlanishni qabul qilish
   const lastScanRef = useRef<{ value: string; at: number } | null>(null);
   const onDetectedRef = useRef(onDetected);
   const pausedRef = useRef(paused);
+  const zoomRangeRef = useRef({ min: 1, max: 1, step: 0.1 });
+  // Tekshiruv-raqamsiz formatlar (ITF/Code39) uchun ketma-ket bir xil o'qishlar
+  const confirmRef = useRef<{ value: string; count: number }>({ value: "", count: 0 });
 
   const [mode, setMode] = useState<ScanMode>("auto");
   const [cameraReady, setCameraReady] = useState(false);
   const [torchOn, setTorchOn] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
+  const [zoomSupported, setZoomSupported] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [focusPoint, setFocusPoint] = useState<{ x: number; y: number } | null>(null);
 
-  // Eng so'nggi callback va rejimni ref'da saqlaymiz (decoder qayta yaratilmasin).
   useEffect(() => {
     onDetectedRef.current = onDetected;
   }, [onDetected]);
@@ -74,9 +116,7 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   }, [paused]);
 
   const acceptResult = useCallback((text: string) => {
-    // Dialog ochiq (paused) bo'lsa — skan natijasini umuman qabul qilmaymiz.
     if (pausedRef.current) return;
-
     const now = Date.now();
 
     if (modeRef.current === "auto") {
@@ -88,71 +128,59 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
       armedRef.current = false;
     }
 
-    // Ovozli + haptik feedback (muvaffaqiyatli skan).
     playBeep();
     if (typeof navigator !== "undefined" && typeof navigator.vibrate === "function") {
       navigator.vibrate(80);
     }
-
     onDetectedRef.current(text);
   }, []);
 
-  // Kamera + uzluksiz dekoderni bir marta ishga tushiramiz.
+  // Kamera + uzluksiz detektsiya tsiklini bir marta ishga tushiramiz.
   useEffect(() => {
     let cancelled = false;
-    // F-1: faqat do'konda uchraydigan formatlarga cheklash → dekod sezilarli tezroq.
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-      BarcodeFormat.EAN_13,
-      BarcodeFormat.EAN_8,
-      BarcodeFormat.UPC_A,
-      BarcodeFormat.UPC_E,
-      BarcodeFormat.CODE_128,
-      BarcodeFormat.CODE_39,
-      BarcodeFormat.QR_CODE,
-    ]);
-    const reader = new BrowserMultiFormatReader(hints);
-    readerRef.current = reader;
+    let raf = 0;
+    let busy = false;
 
     (async () => {
       try {
-        // getUserMedia faqat HTTPS yoki localhost da ishlaydi — aks holda aniq xabar.
         if (typeof window !== "undefined" && !window.isSecureContext) {
-          if (!cancelled) {
-            toast.error(t("barcode.cameraDenied"), {
-              description: t("barcode.insecureContext"),
-            });
-          }
+          toast.error(t("barcode.cameraDenied"), {
+            description: t("barcode.insecureContext"),
+          });
           return;
         }
-        // Yuqori resolution → kichik barcode'lar aniq o'qiladi (default 640×480
-        // loyqa edi). `ideal` — qurilma qo'llab-quvvatlamasa eng yaqinini tanlaydi.
-        await reader.decodeFromConstraints(
-          {
-            video: {
-              facingMode: { ideal: "environment" },
-              width: { ideal: 1920 },
-              height: { ideal: 1080 },
-            },
-          },
-          videoRef.current!,
-          (result) => {
-            if (result) acceptResult(result.getText());
-          }
-        );
-        if (cancelled) return;
+
+        // Adaptiv resolution: native BarcodeDetector (Chrome) tez — 1080p (kichik
+        // barcode aniqroq); wasm fallback'da 720p (sekinlashmasin). + boshlang'ich
+        // so'rovning o'zida uzluksiz avtofokus.
+        const hasNative =
+          typeof (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector ===
+          "function";
+        const videoConstraints = {
+          facingMode: { ideal: "environment" },
+          width: { ideal: hasNative ? 1920 : 1280 },
+          height: { ideal: hasNative ? 1080 : 720 },
+          advanced: [{ focusMode: "continuous" }],
+        } as unknown as MediaTrackConstraints;
+        const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
+        if (cancelled) {
+          stream.getTracks().forEach((tr) => tr.stop());
+          return;
+        }
+        streamRef.current = stream;
+        const video = videoRef.current!;
+        video.srcObject = stream;
+        await video.play().catch(() => {});
         setCameraReady(true);
 
-        // Kamera imkoniyatlari: torch (flash) + uzluksiz avtofokus
-        const stream = videoRef.current?.srcObject as MediaStream | null;
-        const track = stream?.getVideoTracks?.()[0];
+        // Kamera imkoniyatlari: torch (flash) + uzluksiz avtofokus + zoom
+        const track = stream.getVideoTracks()[0];
         const caps = (track?.getCapabilities?.() ?? {}) as MediaTrackCapabilities & {
           torch?: boolean;
           focusMode?: string[];
+          zoom?: { min: number; max: number; step: number };
         };
         setTorchSupported(Boolean(caps.torch));
-
-        // Kichik barcode'lar uchun uzluksiz avtofokus (best-effort — yo'q bo'lsa jim o'tadi).
         if (track && Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) {
           try {
             await track.applyConstraints({
@@ -162,6 +190,55 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
             /* fokus rejimi qo'llab-quvvatlanmasa jim o'tadi */
           }
         }
+        // Zoom — kichik barcode'ni telefonni juda yaqinlashtirmasdan kattalashtirish
+        if (caps.zoom && typeof caps.zoom.max === "number" && caps.zoom.max > caps.zoom.min) {
+          zoomRangeRef.current = {
+            min: caps.zoom.min,
+            max: caps.zoom.max,
+            step: caps.zoom.step || 0.1,
+          };
+          setZoom(caps.zoom.min);
+          setZoomSupported(true);
+        }
+
+        const detector = createDetector();
+
+        const scan = async () => {
+          if (cancelled) return;
+          if (!busy && !pausedRef.current && video.readyState >= 2) {
+            busy = true;
+            try {
+              const codes = await detector.detect(video);
+              const hit = codes && codes.length > 0 ? codes[0] : null;
+              if (hit && hit.rawValue) {
+                // Tekshiruv-raqamli formatlar (EAN/UPC/Code128/QR) chala o'qilmaydi →
+                // DARHOL qabul (katta barcode'lar tez). ITF/Code39 — tekshiruv-raqamsiz,
+                // hira kadrda chala o'qilishi mumkin → ketma-ket 2 marta bir xil bo'lsagina.
+                const needsConfirm = hit.format === "itf" || hit.format === "code_39";
+                if (!needsConfirm) {
+                  acceptResult(hit.rawValue);
+                } else {
+                  const c = confirmRef.current;
+                  if (c.value === hit.rawValue) {
+                    c.count += 1;
+                  } else {
+                    confirmRef.current = { value: hit.rawValue, count: 1 };
+                  }
+                  if (confirmRef.current.count >= 2) {
+                    const confirmed = confirmRef.current.value;
+                    confirmRef.current = { value: "", count: 0 };
+                    acceptResult(confirmed);
+                  }
+                }
+              }
+            } catch {
+              /* o'tkinchi dekod xatosi — keyingi kadrda qayta urinamiz */
+            }
+            busy = false;
+          }
+          if (!cancelled) raf = requestAnimationFrame(scan);
+        };
+        raf = requestAnimationFrame(scan);
       } catch (err) {
         if (cancelled) return;
         const name =
@@ -182,21 +259,17 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
 
     return () => {
       cancelled = true;
-      try {
-        reader.reset();
-      } catch {
-        /* ignore */
-      }
-      readerRef.current = null;
+      cancelAnimationFrame(raf);
+      streamRef.current?.getTracks().forEach((tr) => tr.stop());
+      streamRef.current = null;
     };
-    // t faqat xato toast'lari uchun ishlatiladi — til o'zgarganda kamerani
-    // qayta ishga tushirmaslik uchun uni deps'ga qo'shmaymiz.
+    // t faqat xato toast'lari uchun — til o'zgarganda kamerani qayta ishga
+    // tushirmaslik uchun deps'ga qo'shilmaydi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acceptResult]);
 
   const toggleTorch = useCallback(async () => {
-    const stream = videoRef.current?.srcObject as MediaStream | null;
-    const track = stream?.getVideoTracks?.()[0];
+    const track = streamRef.current?.getVideoTracks?.()[0];
     if (!track) return;
     const next = !torchOn;
     try {
@@ -209,9 +282,52 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
     }
   }, [torchOn, t]);
 
+  const applyZoom = useCallback(async (z: number) => {
+    const track = streamRef.current?.getVideoTracks?.()[0];
+    if (!track) return;
+    setZoom(z); // slider darhol javob bersin
+    try {
+      await track.applyConstraints({
+        advanced: [{ zoom: z }],
+      } as unknown as MediaTrackConstraints);
+    } catch {
+      /* zoom qo'llab-quvvatlanmasa jim o'tadi */
+    }
+  }, []);
+
+  // Ekranga bosib fokuslash (web AF dangasa bo'lganda yordam beradi).
+  const handleTapFocus = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    setFocusPoint({ x: px, y: py });
+    window.setTimeout(() => setFocusPoint(null), 700);
+
+    const track = streamRef.current?.getVideoTracks?.()[0];
+    if (!track) return;
+    const nx = Math.min(1, Math.max(0, px / rect.width));
+    const ny = Math.min(1, Math.max(0, py / rect.height));
+    (async () => {
+      try {
+        // Tanlangan nuqtaga bir martalik fokus, so'ng uzluksizga qaytamiz.
+        await track.applyConstraints({
+          advanced: [{ pointsOfInterest: [{ x: nx, y: ny }], focusMode: "single-shot" }],
+        } as unknown as MediaTrackConstraints);
+        window.setTimeout(() => {
+          track
+            .applyConstraints({
+              advanced: [{ focusMode: "continuous" }],
+            } as unknown as MediaTrackConstraints)
+            .catch(() => {});
+        }, 1500);
+      } catch {
+        /* tap-to-focus qo'llab-quvvatlanmasa jim o'tadi */
+      }
+    })();
+  }, []);
+
   const armManualScan = useCallback(() => {
     armedRef.current = true;
-    // 4 soniyada aniqlanmasa, qaytadan bosish kerak.
     window.setTimeout(() => {
       armedRef.current = false;
     }, 4000);
@@ -220,7 +336,10 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
+      <div
+        onClick={handleTapFocus}
+        className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl bg-black"
+      >
         <video
           ref={videoRef}
           autoPlay
@@ -239,13 +358,24 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           />
         </div>
 
+        {/* Tap-to-focus halqasi */}
+        {focusPoint && (
+          <span
+            className="pointer-events-none absolute z-10 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/90 shadow"
+            style={{ left: focusPoint.x, top: focusPoint.y }}
+          />
+        )}
+
         {/* Torch tugmasi */}
         {cameraReady && torchSupported && (
           <button
             type="button"
-            onClick={toggleTorch}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTorch();
+            }}
             aria-label={torchOn ? t("barcode.torchOff") : t("barcode.torchOn")}
-            className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
+            className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
           >
             {torchOn ? <Zap className="h-5 w-5" /> : <ZapOff className="h-5 w-5" />}
           </button>
@@ -257,6 +387,23 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           </div>
         )}
       </div>
+
+      {/* Zoom — kichik barcode'ni kattalashtirish (qo'llab-quvvatlansa) */}
+      {cameraReady && zoomSupported && (
+        <div className="flex items-center gap-2 px-1">
+          <ZoomIn className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <input
+            type="range"
+            min={zoomRangeRef.current.min}
+            max={zoomRangeRef.current.max}
+            step={zoomRangeRef.current.step}
+            value={zoom}
+            onChange={(e) => applyZoom(Number(e.target.value))}
+            aria-label={t("barcode.zoom")}
+            className="h-1.5 flex-1 cursor-pointer accent-primary"
+          />
+        </div>
+      )}
 
       {/* Rejim almashtirgich */}
       <div className="flex gap-2">

@@ -168,7 +168,7 @@
     "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi",
     "category": "Kategoriya",
     "noCategory": "Kategoriyasiz",
-    "moreSection": "Qo'shimcha (rasm, kategoriya, barcode)"
+    "moreSection": "Qo'shimcha (rasm, kategoriya)"
   },
   "sell": {
     "title": "Sotuv",
@@ -239,6 +239,7 @@
     "torchError": "Flashni boshqarib bo'lmadi",
     "torchOn": "Flashni yoqish",
     "torchOff": "Flashni o'chirish",
+    "zoom": "Yaqinlashtirish",
     "insecureContext": "Kamera faqat HTTPS yoki localhost da ishlaydi. Saytni HTTPS orqali oching.",
     "cameraError": "Kamerani ochib bo'lmadi",
     "cameraErrorDesc": "Kamera band (boshqa ilova ishlatyapti) yoki qurilmada kamera topilmadi."
