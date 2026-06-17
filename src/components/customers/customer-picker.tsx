@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import { Search, UserPlus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { Customer, CustomerWithBalance } from "@/types/database";
-import { formatCurrency } from "@/lib/utils";
-import { useCustomers } from "@/hooks/use-customers";
+import type { Customer } from "@/types/database";
+import { useCustomerOptions } from "@/hooks/use-customers";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { CustomerForm } from "@/components/customers/customer-form";
 
-export type PickableCustomer = Customer | CustomerWithBalance;
+export type PickableCustomer = Customer;
 
 interface CustomerPickerProps {
   shopId: string;
@@ -27,7 +26,7 @@ interface CustomerPickerProps {
 /** Checkout'da mijoz tanlash: keshlangan ro'yxatdan qidiruv + tezkor qo'shish. */
 export function CustomerPicker({ shopId, value, onChange }: CustomerPickerProps) {
   const { t } = useTranslation();
-  const { data: customers } = useCustomers(shopId);
+  const { data: customers } = useCustomerOptions(shopId);
   const [term, setTerm] = useState("");
   const [addOpen, setAddOpen] = useState(false);
 
@@ -90,11 +89,6 @@ export function CustomerPicker({ shopId, value, onChange }: CustomerPickerProps)
                   {c.name}
                   {c.phone ? ` · ${c.phone}` : ""}
                 </span>
-                {"balance" in c && c.balance > 0 && (
-                  <span className="shrink-0 text-xs font-medium text-amber-600 tabular-nums dark:text-amber-400">
-                    {formatCurrency(c.balance)}
-                  </span>
-                )}
               </button>
             </li>
           ))}

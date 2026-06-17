@@ -32,7 +32,9 @@
     "customers": "Mijozlar",
     "more": "Ko'proq",
     "purchases": "Kirim",
-    "suppliers": "Ta'minotchilar"
+    "suppliers": "Ta'minotchilar",
+    "staff": "Xodimlar",
+    "switchShop": "Do'konni almashtirish"
   },
   "landing": {
     "badge": "Aqlli POS tizimi — bepul",
@@ -413,5 +415,27 @@
     "step3Title": "Tekshiring va saqlang",
     "secret": "Tan narx faqat sizga ko'rinadi",
     "addMore": "Yana mahsulot qo'shish"
+  },
+  "staff": {
+    "title": "Xodimlar",
+    "subtitle": "Kassirlarni qo'shing va ruxsatlarini belgilang",
+    "addTitle": "Kassir qo'shish",
+    "addHint": "Xodim avval ro'yxatdan o'tgan bo'lishi kerak. Uning emailini kiriting.",
+    "addBtn": "Qo'shish",
+    "added": "Kassir qo'shildi",
+    "addError": "Qo'shib bo'lmadi",
+    "removeConfirm": "{{name}} ni xodimlardan olib tashlaysizmi?",
+    "removed": "Xodim olib tashlandi",
+    "saveError": "Saqlashda xato",
+    "owner": "Ega",
+    "allAccess": "to'liq ruxsat",
+    "cashier": "Kassir",
+    "noCashiers": "Hali kassir qo'shilmagan",
+    "perm_manage_products": "Mahsulot boshqaruvi",
+    "perm_purchase": "Kirim / Ta'minotchi",
+    "perm_returns": "Qaytarish",
+    "perm_manage_debt": "Mijoz qarzi",
+    "perm_view_reports": "Hisobotlar",
+    "perm_view_cost": "Tan narx ko'rish"
   }
 }

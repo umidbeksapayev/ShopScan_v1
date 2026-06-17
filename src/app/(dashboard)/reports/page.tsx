@@ -6,6 +6,7 @@ import { Wallet, TrendingUp, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import { useSalesTrend, useTopProducts } from "@/hooks/use-dashboard";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TopProducts } from "@/components/dashboard/top-products";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ export default function ReportsPage() {
   const { t } = useTranslation();
   const { data: shop } = useShop();
   const [days, setDays] = useState<number>(7);
+  const { checking } = usePermissionGuard("view_reports");
 
   const { data: trend, isLoading: trendLoading } = useSalesTrend(shop?.id, days);
   const { data: top, isLoading: topLoading } = useTopProducts(shop?.id, days, 5);
@@ -42,6 +44,8 @@ export default function ReportsPage() {
     },
     { revenue: 0, profit: 0, count: 0 }
   );
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">

@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { formatCurrency } from "@/lib/utils";
 import { useShop } from "@/hooks/use-shop";
 import { useCustomers } from "@/hooks/use-customers";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { CustomerForm } from "@/components/customers/customer-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ export default function CustomersPage() {
   const { data: customers, isLoading } = useCustomers(shop?.id);
   const [term, setTerm] = useState("");
   const [addOpen, setAddOpen] = useState(false);
+  const { checking } = usePermissionGuard("manage_debt");
 
   const totalDebt = useMemo(
     () => (customers ?? []).reduce((sum, c) => sum + Math.max(0, c.balance), 0),
@@ -38,6 +40,8 @@ export default function CustomersPage() {
       (c) => c.name.toLowerCase().includes(q) || (c.phone ?? "").includes(q)
     );
   }, [customers, term]);
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">

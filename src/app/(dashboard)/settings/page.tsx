@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { authErrorKey } from "@/lib/auth-errors";
 import { useShop } from "@/hooks/use-shop";
+import { useOwnerGuard } from "@/hooks/use-guards";
 import { listProducts } from "@/lib/products";
 import { exportProductsXlsx } from "@/lib/excel";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function SettingsPage() {
   const [savingEmail, setSavingEmail] = useState(false);
   const [savingPw, setSavingPw] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const { checking } = useOwnerGuard();
 
   useEffect(() => {
     if (shop) setShopName(shop.name);
@@ -108,7 +110,7 @@ export default function SettingsPage() {
   async function handleExport() {
     setExporting(true);
     try {
-      const products = await listProducts({});
+      const products = await listProducts({ shopId: shop?.id });
       if (products.length === 0) {
         toast.error(t("settings.exportEmpty"));
         return;
@@ -123,6 +125,8 @@ export default function SettingsPage() {
       setExporting(false);
     }
   }
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">

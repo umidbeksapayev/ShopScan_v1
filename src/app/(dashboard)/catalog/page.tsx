@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import type { Product } from "@/types/database";
 import { useShop } from "@/hooks/use-shop";
 import { useProducts, useArchiveProduct } from "@/hooks/use-products";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { useCatalogStore } from "@/stores/catalog-store";
 import { CatalogToolbar } from "@/components/products/catalog-toolbar";
 import { ProductCard } from "@/components/products/product-card";
@@ -31,6 +32,7 @@ export default function CatalogPage() {
     sortDir,
   });
   const archiveMut = useArchiveProduct();
+  const { checking } = usePermissionGuard("manage_products");
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -53,6 +55,8 @@ export default function CatalogPage() {
       toast.error(t("catalog.archiveError"));
     }
   }
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">

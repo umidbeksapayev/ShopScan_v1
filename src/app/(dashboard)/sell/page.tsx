@@ -67,9 +67,9 @@ export default function SellPage() {
 
   async function handleBarcode(barcode: string) {
     // Dialog ochiq bo'lsa — uzluksiz skan savatni buzmasin (qo'shimcha himoya).
-    if (addOpen) return;
+    if (addOpen || !shop) return;
     try {
-      const found = await findProductsByBarcode(barcode);
+      const found = await findProductsByBarcode(barcode, shop.id);
       if (found.length === 0) {
         toast.error(t("sell.notFound"), {
           description: t("sell.notFoundDesc", { code: barcode }),

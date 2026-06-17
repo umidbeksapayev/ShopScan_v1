@@ -75,13 +75,14 @@ export async function getLowStockProducts(): Promise<Product[]> {
 }
 
 /** Sotuv tarixi — eng yangi sotuvlar (mahsulot nomi/rasmi bilan). */
-export async function getSalesHistory(limit = 50): Promise<Sale[]> {
+export async function getSalesHistory(shopId: string, limit = 50): Promise<Sale[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("sales")
     .select(
       "*, items:sale_items(*, product:products(name, image_url, sale_type)), returns(id, total_refund)"
     )
+    .eq("shop_id", shopId)
     .order("sold_at", { ascending: false })
     .limit(limit);
 

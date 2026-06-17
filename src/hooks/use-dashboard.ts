@@ -48,7 +48,7 @@ export function useLowStockProducts(shopId: string | undefined) {
 export function useSalesHistory(shopId: string | undefined, limit = 50) {
   return useQuery({
     queryKey: ["sales", "history", shopId, limit],
-    queryFn: () => getSalesHistory(limit),
+    queryFn: () => getSalesHistory(shopId!, limit),
     enabled: !!shopId,
     staleTime: 15_000,
   });

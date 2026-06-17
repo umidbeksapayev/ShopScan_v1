@@ -17,28 +17,33 @@ import {
   Users,
   PackagePlus,
   Truck,
+  UserCog,
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
+import { useMembership } from "@/hooks/use-membership";
 import { cn } from "@/lib/utils";
+import type { PermissionKey } from "@/types/database";
 
 interface NavItem {
   href: string;
   labelKey: string;
   icon: LucideIcon;
+  perm?: PermissionKey | "owner";
 }
 
 const baseItems: NavItem[] = [
-  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
-  { href: "/catalog", labelKey: "nav.products", icon: Package },
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, perm: "view_reports" },
+  { href: "/catalog", labelKey: "nav.products", icon: Package, perm: "manage_products" },
   { href: "/sell", labelKey: "nav.sell", icon: ShoppingCart },
   { href: "/history", labelKey: "nav.history", icon: ReceiptText },
-  { href: "/customers", labelKey: "nav.customers", icon: Users },
-  { href: "/purchases", labelKey: "nav.purchases", icon: PackagePlus },
-  { href: "/suppliers", labelKey: "nav.suppliers", icon: Truck },
-  { href: "/reports", labelKey: "nav.reports", icon: BarChart3 },
-  { href: "/settings", labelKey: "nav.settings", icon: Settings },
+  { href: "/customers", labelKey: "nav.customers", icon: Users, perm: "manage_debt" },
+  { href: "/purchases", labelKey: "nav.purchases", icon: PackagePlus, perm: "purchase" },
+  { href: "/suppliers", labelKey: "nav.suppliers", icon: Truck, perm: "purchase" },
+  { href: "/reports", labelKey: "nav.reports", icon: BarChart3, perm: "view_reports" },
+  { href: "/staff", labelKey: "nav.staff", icon: UserCog, perm: "owner" },
+  { href: "/settings", labelKey: "nav.settings", icon: Settings, perm: "owner" },
 ];
 
 export function SidebarNav() {
@@ -46,13 +51,22 @@ export function SidebarNav() {
   const router = useRouter();
   const { t } = useTranslation();
   const { data: profile } = useProfile();
+  const { data: membership } = useMembership();
   const [signingOut, setSigningOut] = useState(false);
 
-  // Super-admin uchun qo'shimcha "Admin" havolasi
-  const navItems =
+  const can = (item: NavItem) => {
+    if (!item.perm) return true;
+    if (!membership) return false;
+    if (membership.role === "owner") return true;
+    if (item.perm === "owner") return false;
+    return membership.permissions[item.perm] === true;
+  };
+
+  const navItems = baseItems.filter(can);
+  const items =
     profile?.role === "super_admin"
-      ? [...baseItems, { href: "/admin", labelKey: "nav.admin", icon: ShieldCheck }]
-      : baseItems;
+      ? [...navItems, { href: "/admin", labelKey: "nav.admin", icon: ShieldCheck }]
+      : navItems;
 
   async function handleLogout() {
     setSigningOut(true);
@@ -76,7 +90,7 @@ export function SidebarNav() {
 
       {/* Navigatsiya */}
       <nav className="flex-1 space-y-1 px-4">
-        {navItems.map((item) => {
+        {items.map((item) => {
           const Icon = item.icon;
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");

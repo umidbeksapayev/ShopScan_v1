@@ -19,6 +19,8 @@ import {
   useLowStockProducts,
 } from "@/hooks/use-dashboard";
 import { useCustomers } from "@/hooks/use-customers";
+import { usePermissionGuard } from "@/hooks/use-guards";
+import { usePermission } from "@/hooks/use-membership";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { LowStockList } from "@/components/dashboard/low-stock-list";
 import { formatCurrency } from "@/lib/utils";
@@ -39,11 +41,15 @@ export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats(shop?.id);
   const { data: trend, isLoading: trendLoading } = useSalesTrend(shop?.id, 7);
   const { data: lowStock, isLoading: lowLoading } = useLowStockProducts(shop?.id);
-  const { data: customers } = useCustomers(shop?.id);
+  const { checking } = usePermissionGuard("view_reports");
+  const canDebt = usePermission("manage_debt");
+  const { data: customers } = useCustomers(canDebt ? shop?.id : undefined);
   const totalDebt = useMemo(
     () => (customers ?? []).reduce((sum, c) => sum + Math.max(0, c.balance), 0),
     [customers]
   );
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">
@@ -84,26 +90,28 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Jami qarz — mijozlar sahifasiga havola */}
-      <Link
-        href="/customers"
-        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card sm:p-5"
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-sm">
-            <Coins className="h-5 w-5" />
+      {/* Jami qarz — mijozlar sahifasiga havola (faqat manage_debt) */}
+      {canDebt && (
+        <Link
+          href="/customers"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card sm:p-5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-white shadow-sm">
+              <Coins className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                {t("dashboard.totalDebt")}
+              </p>
+              <p className="text-2xl font-bold tabular-nums text-foreground">
+                {formatCurrency(totalDebt)}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("dashboard.totalDebt")}
-            </p>
-            <p className="text-2xl font-bold tabular-nums text-foreground">
-              {formatCurrency(totalDebt)}
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
-      </Link>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        </Link>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Tushum trendi */}

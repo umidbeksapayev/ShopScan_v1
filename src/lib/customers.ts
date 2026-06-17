@@ -18,6 +18,21 @@ export async function listCustomersWithBalance(
   return (data ?? []) as CustomerWithBalance[];
 }
 
+/**
+ * Mijozlar ro'yxati (balanssiz) — checkout pickeri uchun. A'zolik darajasidagi
+ * RLS, ya'ni kassir ham nasiya sotuvida mijoz tanlay oladi (manage_debt shart emas).
+ */
+export async function listCustomers(shopId: string): Promise<Customer[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("customers")
+    .select("*")
+    .eq("shop_id", shopId)
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Customer[];
+}
+
 export interface CreateCustomerInput {
   shop_id: string;
   name: string;
