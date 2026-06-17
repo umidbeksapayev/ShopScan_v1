@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Hash, Scale, AlertTriangle, ScanLine, X, Plus, Check } from "lucide-react";
+import {
+  Hash,
+  Scale,
+  AlertTriangle,
+  ScanLine,
+  X,
+  Plus,
+  Check,
+  ChevronDown,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SaleType } from "@/types/database";
@@ -76,9 +85,14 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [categoryId, setCategoryId] = useState<string>(product?.category_id ?? "none");
   const [newCatMode, setNewCatMode] = useState(false);
   const [newCatName, setNewCatName] = useState("");
+  // "Qo'shimcha" bo'limi (rasm/kategoriya/barcode) — tahrirda mavjud qiymat bo'lsa ochiq
+  const [showMore, setShowMore] = useState(
+    Boolean(product?.category_id || product?.barcode || product?.image_url)
+  );
 
   const isWeight = saleType === "weight";
   const unitLabel = isWeight ? t("common.kg") : t("common.pcs");
+  const priceUnit = isWeight ? t("product.perKg") : t("product.perUnit");
   const cost = parseFloat(costPrice) || 0;
   const selling = parseFloat(sellingPrice) || 0;
   const { profit, profitPercent } = calculateProfit(selling, cost);
@@ -161,14 +175,36 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <MultiImageUploader
-        value={images}
-        existingUrl={product?.image_url ?? null}
-        max={1}
-        onChange={setImages}
-      />
+      {/* Sotuv turi — eng yuqorida (miqdor/narx yorliqlarini belgilaydi) */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => switchType("unit")}
+          className={cn(
+            "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
+            !isWeight
+              ? "border-primary bg-accent text-primary"
+              : "border-input bg-background text-muted-foreground"
+          )}
+        >
+          <Hash className="h-4 w-4" /> {t("product.unitBtn")}
+        </button>
+        <button
+          type="button"
+          onClick={() => switchType("weight")}
+          className={cn(
+            "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
+            isWeight
+              ? "border-primary bg-accent text-primary"
+              : "border-input bg-background text-muted-foreground"
+          )}
+        >
+          <Scale className="h-4 w-4" /> {t("product.weightBtn")}
+        </button>
+      </div>
 
-      <div className="space-y-2">
+      {/* Nom */}
+      <div className="space-y-1.5">
         <Label htmlFor="name">{t("product.name")}</Label>
         <Input
           id="name"
@@ -178,110 +214,12 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         />
       </div>
 
-      {/* Kategoriya (ixtiyoriy) — tanlash yoki inline yangi yaratish */}
-      <div className="space-y-2">
-        <Label>{t("product.category")}</Label>
-        {newCatMode ? (
-          <div className="flex gap-2">
-            <Input
-              autoFocus
-              value={newCatName}
-              onChange={(e) => setNewCatName(e.target.value)}
-              placeholder={t("category.namePlaceholder")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleCreateCategory();
-                }
-              }}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={handleCreateCategory}
-              disabled={createCatMut.isPending || !newCatName.trim()}
-              aria-label={t("common.add")}
-            >
-              <Check className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                setNewCatMode(false);
-                setNewCatName("");
-              }}
-              aria-label={t("common.cancel")}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <Select value={categoryId} onValueChange={setCategoryId}>
-              <SelectTrigger className="flex-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{t("product.noCategory")}</SelectItem>
-                {(categories ?? []).map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => setNewCatMode(true)}
-              aria-label={t("category.add")}
-              title={t("category.add")}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Sotuv turi toggle */}
-      <div className="space-y-2">
-        <Label>{t("product.saleType")}</Label>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => switchType("unit")}
-            className={cn(
-              "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
-              !isWeight
-                ? "border-primary bg-accent text-primary"
-                : "border-input bg-background text-muted-foreground"
-            )}
-          >
-            <Hash className="h-4 w-4" /> {t("product.unitBtn")}
-          </button>
-          <button
-            type="button"
-            onClick={() => switchType("weight")}
-            className={cn(
-              "flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors",
-              isWeight
-                ? "border-primary bg-accent text-primary"
-                : "border-input bg-background text-muted-foreground"
-            )}
-          >
-            <Scale className="h-4 w-4" /> {t("product.weightBtn")}
-          </button>
-        </div>
-      </div>
-
       {/* Narxlar */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="cost">{t("product.costPrice")} ({isWeight ? t("product.perKg") : t("product.perUnit")})</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="cost">
+            {t("product.costPrice")} ({priceUnit})
+          </Label>
           <Input
             id="cost"
             type="number"
@@ -293,8 +231,10 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
             placeholder="0"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="selling">{t("product.sellingPrice")} ({isWeight ? t("product.perKg") : t("product.perUnit")})</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="selling">
+            {t("product.sellingPrice")} ({priceUnit})
+          </Label>
           <Input
             id="selling"
             type="number"
@@ -312,22 +252,26 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       {cost > 0 && selling > 0 && (
         <div
           className={cn(
-            "flex items-center justify-between rounded-md px-3 py-2 text-sm",
+            "flex items-center justify-between rounded-xl px-3 py-2 text-sm",
             profit >= 0
               ? "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400"
               : "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400"
           )}
         >
-          <span>{t("product.netProfit")} ({isWeight ? t("product.perKg") : t("product.perUnit")}):</span>
-          <span className="font-semibold">
+          <span>
+            {t("product.netProfit")} ({priceUnit}):
+          </span>
+          <span className="font-semibold tabular-nums">
             {formatCurrency(profit)} ({profitPercent.toFixed(0)}%)
           </span>
         </div>
       )}
 
       {/* Miqdor — ogohlantirish chegarasi avtomatik (20%) */}
-      <div className="space-y-2">
-        <Label htmlFor="qty">{t("product.quantity")} ({unitLabel})</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="qty">
+          {t("product.quantity")} ({unitLabel})
+        </Label>
         <Input
           id="qty"
           type="number"
@@ -352,36 +296,135 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         </p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="barcode">{t("product.barcodeOptional")}</Label>
-        <div className="flex gap-2">
-          <Input
-            id="barcode"
-            value={barcode}
-            onChange={(e) => setBarcode(e.target.value)}
-            placeholder={t("product.barcodePlaceholder")}
-            className="flex-1"
+      {/* Qo'shimcha (yig'iladigan): rasm, kategoriya, barcode — ixtiyoriy */}
+      <div className="overflow-hidden rounded-2xl border border-border">
+        <button
+          type="button"
+          onClick={() => setShowMore((s) => !s)}
+          aria-expanded={showMore}
+          className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          {t("product.moreSection")}
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 text-muted-foreground transition-transform",
+              showMore && "rotate-180"
+            )}
           />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => setScanning((s) => !s)}
-            aria-label={scanning ? t("product.scanClose") : t("product.scanOpen")}
-            title={scanning ? t("product.scanClose") : t("product.scanOpen")}
-          >
-            {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
-          </Button>
-        </div>
-        {scanning && (
-          <div className="rounded-xl border p-2">
-            <BarcodeScanner
-              onDetected={(code) => {
-                setBarcode(code);
-                setScanning(false);
-                toast.success(t("product.barcodeRead"));
-              }}
+        </button>
+
+        {showMore && (
+          <div className="space-y-4 border-t border-border p-4">
+            <MultiImageUploader
+              value={images}
+              existingUrl={product?.image_url ?? null}
+              max={1}
+              onChange={setImages}
             />
+
+            {/* Kategoriya — tanlash yoki inline yangi yaratish */}
+            <div className="space-y-1.5">
+              <Label>{t("product.category")}</Label>
+              {newCatMode ? (
+                <div className="flex gap-2">
+                  <Input
+                    autoFocus
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder={t("category.namePlaceholder")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleCreateCategory();
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleCreateCategory}
+                    disabled={createCatMut.isPending || !newCatName.trim()}
+                    aria-label={t("common.add")}
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      setNewCatMode(false);
+                      setNewCatName("");
+                    }}
+                    aria-label={t("common.cancel")}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Select value={categoryId} onValueChange={setCategoryId}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{t("product.noCategory")}</SelectItem>
+                      {(categories ?? []).map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setNewCatMode(true)}
+                    aria-label={t("category.add")}
+                    title={t("category.add")}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Barcode */}
+            <div className="space-y-1.5">
+              <Label htmlFor="barcode">{t("product.barcodeOptional")}</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="barcode"
+                  value={barcode}
+                  onChange={(e) => setBarcode(e.target.value)}
+                  placeholder={t("product.barcodePlaceholder")}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setScanning((s) => !s)}
+                  aria-label={scanning ? t("product.scanClose") : t("product.scanOpen")}
+                  title={scanning ? t("product.scanClose") : t("product.scanOpen")}
+                >
+                  {scanning ? <X className="h-4 w-4" /> : <ScanLine className="h-4 w-4" />}
+                </Button>
+              </div>
+              {scanning && (
+                <div className="rounded-xl border p-2">
+                  <BarcodeScanner
+                    onDetected={(code) => {
+                      setBarcode(code);
+                      setScanning(false);
+                      toast.success(t("product.barcodeRead"));
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

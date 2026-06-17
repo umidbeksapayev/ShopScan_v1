@@ -125,8 +125,16 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           }
           return;
         }
+        // Yuqori resolution → kichik barcode'lar aniq o'qiladi (default 640×480
+        // loyqa edi). `ideal` — qurilma qo'llab-quvvatlamasa eng yaqinini tanlaydi.
         await reader.decodeFromConstraints(
-          { video: { facingMode: { ideal: "environment" } } },
+          {
+            video: {
+              facingMode: { ideal: "environment" },
+              width: { ideal: 1920 },
+              height: { ideal: 1080 },
+            },
+          },
           videoRef.current!,
           (result) => {
             if (result) acceptResult(result.getText());
@@ -135,13 +143,25 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
         if (cancelled) return;
         setCameraReady(true);
 
-        // Torch (flash) qo'llab-quvvatlanadimi?
+        // Kamera imkoniyatlari: torch (flash) + uzluksiz avtofokus
         const stream = videoRef.current?.srcObject as MediaStream | null;
         const track = stream?.getVideoTracks?.()[0];
         const caps = (track?.getCapabilities?.() ?? {}) as MediaTrackCapabilities & {
           torch?: boolean;
+          focusMode?: string[];
         };
         setTorchSupported(Boolean(caps.torch));
+
+        // Kichik barcode'lar uchun uzluksiz avtofokus (best-effort — yo'q bo'lsa jim o'tadi).
+        if (track && Array.isArray(caps.focusMode) && caps.focusMode.includes("continuous")) {
+          try {
+            await track.applyConstraints({
+              advanced: [{ focusMode: "continuous" }],
+            } as unknown as MediaTrackConstraints);
+          } catch {
+            /* fokus rejimi qo'llab-quvvatlanmasa jim o'tadi */
+          }
+        }
       } catch (err) {
         if (cancelled) return;
         const name =

@@ -28,7 +28,7 @@
     "logout": "Chiqish",
     "loggingOut": "Chiqilmoqda...",
     "home": "Bosh",
-    "catalog": "Katalog",
+    "catalog": "Mahsulotlar",
     "report": "Hisobot",
     "customers": "Mijozlar",
     "more": "Ko'proq",
@@ -167,7 +167,8 @@
     "autoWarnSuffix": "qolganda ({{pct}}%)",
     "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi",
     "category": "Kategoriya",
-    "noCategory": "Kategoriyasiz"
+    "noCategory": "Kategoriyasiz",
+    "moreSection": "Qo'shimcha (rasm, kategoriya, barcode)"
   },
   "sell": {
     "title": "Sotuv",
@@ -191,7 +192,11 @@
     "customerLabel": "Mijoz (nasiya uchun)",
     "onCredit": "Qarzga yozish",
     "paidAmount": "To'langan summa",
-    "willOwe": "Qarz qoladi"
+    "willOwe": "Qarz qoladi",
+    "payCash": "Naqd",
+    "payCard": "Plastik",
+    "payCredit": "Nasiya",
+    "selectCustomerForCredit": "Nasiya uchun mijozni tanlang"
   },
   "cart": {
     "title": "Savat",
