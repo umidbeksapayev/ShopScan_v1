@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ScanLine } from "lucide-react";
+import { Search, ScanLine, WifiOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 import { useCartStore } from "@/stores/cart-store";
 import dynamic from "next/dynamic";
 import { findProductsByBarcode, type CartSaleResult } from "@/lib/sales";
+import { matchBarcode } from "@/lib/offline-lookup";
 import type { ReceiptLineItem } from "@/lib/receipt-print";
 import { useProducts } from "@/hooks/use-products";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
@@ -53,6 +55,7 @@ export default function SellPage() {
   const { data: allProducts } = useProducts({});
   const { items, addItem, clear, totalRevenue } = useCartStore();
   const saleMut = useProcessCartSale();
+  const online = useOnlineStatus();
 
   const [candidates, setCandidates] = useState<Product[]>([]);
   const [method, setMethod] = useState<SearchMethod>("manual");
@@ -68,25 +71,29 @@ export default function SellPage() {
   async function handleBarcode(barcode: string) {
     // Dialog ochiq bo'lsa — uzluksiz skan savatni buzmasin (qo'shimcha himoya).
     if (addOpen || !shop) return;
+    // Offline (yoki tarmoq xatosi) — keshlangan katalogdan qidiramiz.
+    let found: Product[];
     try {
-      const found = await findProductsByBarcode(barcode, shop.id);
-      if (found.length === 0) {
-        toast.error(t("sell.notFound"), {
-          description: t("sell.notFoundDesc", { code: barcode }),
-        });
-        return;
-      }
-      // Bir nechta moslik bo'lsa — ogohlantirish
-      if (found.length > 1) {
-        toast.info(t("sell.multipleFound"));
-      }
-      // DONALI ham, VAZN ham — miqdor dialogini ochamiz (+/− bilan sonni tanlash).
-      setMethod("barcode");
-      setCandidates(found);
-      setAddOpen(true);
+      found = online
+        ? await findProductsByBarcode(barcode, shop.id)
+        : matchBarcode(allProducts ?? [], barcode);
     } catch {
-      toast.error(t("sell.searchError"));
+      found = matchBarcode(allProducts ?? [], barcode);
     }
+    if (found.length === 0) {
+      toast.error(t("sell.notFound"), {
+        description: t("sell.notFoundDesc", { code: barcode }),
+      });
+      return;
+    }
+    // Bir nechta moslik bo'lsa — ogohlantirish
+    if (found.length > 1) {
+      toast.info(t("sell.multipleFound"));
+    }
+    // DONALI ham, VAZN ham — miqdor dialogini ochamiz (+/− bilan sonni tanlash).
+    setMethod("barcode");
+    setCandidates(found);
+    setAddOpen(true);
   }
 
   function handleManualSelect(p: Product) {
@@ -102,7 +109,7 @@ export default function SellPage() {
   }
 
   async function handleConfirmSale() {
-    if (!shop) return;
+    if (!shop || !online) return;
     const total = totalRevenue();
     const paid = customer ? (isCredit ? Number(paidInput) || 0 : total) : total;
     try {
@@ -250,11 +257,17 @@ export default function SellPage() {
               </div>
             )}
           </div>
+          {!online && (
+            <p className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+              <WifiOff className="h-4 w-4 shrink-0" />
+              {t("offline.checkoutBlocked")}
+            </p>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleConfirmSale} disabled={saleMut.isPending}>
+            <Button onClick={handleConfirmSale} disabled={saleMut.isPending || !online}>
               {saleMut.isPending ? t("sell.selling") : t("sell.sellBtn")}
             </Button>
           </DialogFooter>
