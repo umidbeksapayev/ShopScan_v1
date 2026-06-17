@@ -20,7 +20,7 @@ import { useProducts } from "@/hooks/use-products";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 import { LiveProductSearch } from "@/components/sales/live-product-search";
 
-// Og'ir kamera kutubxonasi (@zxing/library) faqat kerak bo'lganda yuklanadi
+// Og'ir kamera/skaner kodi faqat kerak bo'lganda yuklanadi (BarcodeDetector + wasm)
 const cameraLoading = () => (
   <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
     Kamera yuklanmoqda...

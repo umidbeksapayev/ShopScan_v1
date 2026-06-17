@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/select";
 import { useCategories, useCreateCategory } from "@/hooks/use-categories";
 
-// Kamera kutubxonasi (@zxing) faqat skaner ochilganda yuklanadi.
+// Kamera/skaner kodi faqat skaner ochilganda yuklanadi (BarcodeDetector + wasm).
 const BarcodeScanner = dynamic(
   () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
   {
