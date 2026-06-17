@@ -90,6 +90,11 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
 
       <div className="space-y-1.5 p-3">
         <h3 className="line-clamp-1 font-medium text-foreground">{product.name}</h3>
+        {product.category?.name && (
+          <p className="line-clamp-1 text-xs text-muted-foreground">
+            {product.category.name}
+          </p>
+        )}
         <p className="text-lg font-bold text-foreground">
           {formatCurrency(product.selling_price)}
           <span className="text-xs font-normal text-muted-foreground">

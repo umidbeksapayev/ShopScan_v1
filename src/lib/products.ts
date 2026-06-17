@@ -1,10 +1,13 @@
 import { createClient } from "@/lib/supabase/client";
 import { normalizeBarcode } from "@/lib/utils";
 import type { Product, SaleType } from "@/types/database";
+import type { ImportPayloadRow } from "@/lib/import-products";
 
 export interface ProductFilters {
   search?: string;
   saleType?: SaleType | "all";
+  /** Kategoriya filtri: kategoriya id, "all" (barchasi) yoki "none" (kategoriyasiz). */
+  categoryId?: string | "all" | "none";
   sortBy?: "created_at" | "name" | "selling_price" | "quantity";
   sortDir?: "asc" | "desc";
   /** Faol do'kon bo'yicha qat'iy filtr (a'zo bir nechta do'konda bo'lsa kerak). */
@@ -21,6 +24,7 @@ export interface CreateProductInput {
   low_stock_alert: number;
   barcode?: string | null;
   image_url: string | null;
+  category_id?: string | null;
 }
 
 export type UpdateProductInput = Partial<
@@ -32,7 +36,10 @@ export type UpdateProductInput = Partial<
  */
 export async function listProducts(filters: ProductFilters = {}): Promise<Product[]> {
   const supabase = createClient();
-  let query = supabase.from("products").select("*").eq("is_active", true);
+  let query = supabase
+    .from("products")
+    .select("*, category:categories(name)")
+    .eq("is_active", true);
 
   if (filters.shopId) {
     query = query.eq("shop_id", filters.shopId);
@@ -42,6 +49,12 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
   }
   if (filters.saleType && filters.saleType !== "all") {
     query = query.eq("sale_type", filters.saleType);
+  }
+  if (filters.categoryId && filters.categoryId !== "all") {
+    query =
+      filters.categoryId === "none"
+        ? query.is("category_id", null)
+        : query.eq("category_id", filters.categoryId);
   }
 
   const sortBy = filters.sortBy ?? "created_at";
@@ -67,6 +80,7 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       low_stock_alert: input.low_stock_alert,
       barcode: input.barcode ? normalizeBarcode(input.barcode) : null,
       image_url: input.image_url,
+      category_id: input.category_id ?? null,
     })
     .select()
     .single();
@@ -103,4 +117,38 @@ export async function archiveProduct(id: string): Promise<void> {
     .update({ is_active: false })
     .eq("id", id);
   if (error) throw new Error(error.message);
+}
+
+/** Do'kondagi mavjud barcode'lar (import preview'da dublikat belgilash uchun). */
+export async function listExistingBarcodes(shopId: string): Promise<Set<string>> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("barcode")
+    .eq("shop_id", shopId)
+    .not("barcode", "is", null);
+  if (error) throw new Error(error.message);
+  return new Set(
+    (data ?? []).map((r) => (r as { barcode: string | null }).barcode).filter(Boolean) as string[]
+  );
+}
+
+export interface ImportResult {
+  inserted: number;
+  skipped: number;
+  categories_created: number;
+}
+
+/** Ommaviy import (import_products RPC — atomar, server-tomon validatsiya). */
+export async function importProducts(
+  shopId: string,
+  rows: ImportPayloadRow[]
+): Promise<ImportResult> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("import_products", {
+    p_shop_id: shopId,
+    p_rows: rows,
+  });
+  if (error) throw new Error(error.message);
+  return data as ImportResult;
 }
