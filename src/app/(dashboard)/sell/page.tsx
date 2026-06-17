@@ -6,10 +6,12 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { useCartStore } from "@/stores/cart-store";
+import { useOfflineSyncStore } from "@/stores/offline-sync-store";
 import dynamic from "next/dynamic";
 import { findProductsByBarcode, type CartSaleResult } from "@/lib/sales";
 import { matchBarcode } from "@/lib/offline-lookup";
@@ -56,6 +58,8 @@ export default function SellPage() {
   const { items, addItem, clear, totalRevenue } = useCartStore();
   const saleMut = useProcessCartSale();
   const online = useOnlineStatus();
+  const qc = useQueryClient();
+  const enqueueSale = useOfflineSyncStore((s) => s.enqueue);
 
   const [candidates, setCandidates] = useState<Product[]>([]);
   const [method, setMethod] = useState<SearchMethod>("manual");
@@ -63,6 +67,7 @@ export default function SellPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
+  const [receiptQueued, setReceiptQueued] = useState(false);
   // Nasiya: mijoz + to'lov turi (checkout paytida)
   const [customer, setCustomer] = useState<PickableCustomer | null>(null);
   const [isCredit, setIsCredit] = useState(false);
@@ -108,34 +113,83 @@ export default function SellPage() {
     setAddOpen(true);
   }
 
+  function resetCheckout() {
+    setConfirmOpen(false);
+    clear();
+    setCustomer(null);
+    setIsCredit(false);
+    setPaidInput("");
+  }
+
   async function handleConfirmSale() {
-    if (!shop || !online) return;
+    if (!shop) return;
     const total = totalRevenue();
     const paid = customer ? (isCredit ? Number(paidInput) || 0 : total) : total;
+    const saleItems = items.map((i) => ({ product_id: i.product.id, quantity: i.quantity }));
+    const method = items[0]?.method ?? "manual";
+    // Savat tozalanishidan OLDIN chek uchun snapshot (narxsiz/foydasiz).
+    const snapshot = items.map((i) => ({
+      name: i.product.name,
+      quantity: i.quantity,
+      saleType: i.product.sale_type,
+      unitPrice: i.product.selling_price,
+    }));
+    const clientId = crypto.randomUUID();
+
+    // ===== Offline: navbatga qo'yamiz (S6b) =====
+    if (!online) {
+      const sold = items.map((i) => ({ id: i.product.id, qty: i.quantity }));
+      await enqueueSale({
+        clientId,
+        shopId: shop.id,
+        items: saleItems,
+        method,
+        customerId: customer?.id ?? null,
+        paidAmount: customer ? paid : null,
+        receiptItems: snapshot,
+        totalRevenue: total,
+        customerName: customer?.name ?? null,
+        createdAt: new Date().toISOString(),
+        status: "pending",
+      });
+      // Keshdagi qoldiqni optimistik kamaytiramiz (qayta sotuvda to'g'ri ko'rinsin)
+      qc.setQueriesData<Product[]>({ queryKey: ["products"] }, (old) =>
+        Array.isArray(old)
+          ? old.map((p) => {
+              const s = sold.find((x) => x.id === p.id);
+              return s ? { ...p, quantity: p.quantity - s.qty } : p;
+            })
+          : old
+      );
+      setReceiptItems(snapshot);
+      setReceiptQueued(true);
+      setReceipt({
+        sale_id: clientId,
+        item_count: items.length,
+        total_revenue: total,
+        total_profit: 0,
+        paid_amount: customer ? paid : total,
+        debt: remainingDebt(total, customer ? paid : total),
+      });
+      resetCheckout();
+      toast.success(t("sync.queuedToast"));
+      return;
+    }
+
+    // ===== Online: odatdagi atomar sotuv =====
     try {
       const result = await saleMut.mutateAsync({
         shopId: shop.id,
-        items: items.map((i) => ({ product_id: i.product.id, quantity: i.quantity })),
-        // Savatdagi birinchi element usulini umumiy usul sifatida olamiz
-        method: items[0]?.method ?? "manual",
+        items: saleItems,
+        method,
         customerId: customer?.id ?? null,
         paidAmount: customer ? paid : null,
+        clientId,
       });
-      // Savat tozalanishidan OLDIN chek uchun snapshot olamiz (narxsiz/foydasiz).
-      setReceiptItems(
-        items.map((i) => ({
-          name: i.product.name,
-          quantity: i.quantity,
-          saleType: i.product.sale_type,
-          unitPrice: i.product.selling_price,
-        }))
-      );
-      setConfirmOpen(false);
-      clear();
-      setCustomer(null);
-      setIsCredit(false);
-      setPaidInput("");
+      setReceiptItems(snapshot);
+      setReceiptQueued(false);
       setReceipt(result);
+      resetCheckout();
     } catch (err) {
       setConfirmOpen(false);
       toast.error(t("sell.saleFailed"), {
@@ -258,17 +312,21 @@ export default function SellPage() {
             )}
           </div>
           {!online && (
-            <p className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+            <p className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-700 dark:bg-sky-500/10 dark:text-sky-400">
               <WifiOff className="h-4 w-4 shrink-0" />
-              {t("offline.checkoutBlocked")}
+              {t("offline.checkoutQueued")}
             </p>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleConfirmSale} disabled={saleMut.isPending || !online}>
-              {saleMut.isPending ? t("sell.selling") : t("sell.sellBtn")}
+            <Button onClick={handleConfirmSale} disabled={saleMut.isPending}>
+              {saleMut.isPending
+                ? t("sell.selling")
+                : online
+                  ? t("sell.sellBtn")
+                  : t("offline.sellQueueBtn")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -280,6 +338,7 @@ export default function SellPage() {
         result={receipt}
         items={receiptItems}
         shopName={shop?.name ?? t("auth.shopNamePlaceholder")}
+        queued={receiptQueued}
         onNext={() => setReceipt(null)}
       />
     </div>

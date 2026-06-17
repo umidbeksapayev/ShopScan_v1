@@ -14,13 +14,14 @@ interface ProcessSaleArgs {
   method: SearchMethod;
   customerId?: string | null;
   paidAmount?: number | null;
+  clientId?: string | null;
 }
 
 export function useProcessCartSale() {
   const qc = useQueryClient();
   return useMutation<CartSaleResult, Error, ProcessSaleArgs>({
-    mutationFn: ({ shopId, items, method, customerId, paidAmount }) =>
-      processCartSale(shopId, items, method, { customerId, paidAmount }),
+    mutationFn: ({ shopId, items, method, customerId, paidAmount, clientId }) =>
+      processCartSale(shopId, items, method, { customerId, paidAmount, clientId }),
     onSuccess: () => {
       // Inventar, sotuv, dashboard va qarz balanslari o'zgardi
       qc.invalidateQueries({ queryKey: ["products"] });
