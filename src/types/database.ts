@@ -151,6 +151,28 @@ export interface Shop {
   created_at: string;
 }
 
+export type MemberRole = "owner" | "cashier";
+
+/** Kassirga yoqib/o'chiriladigan ruxsatlar (ega = hammasi). */
+export type PermissionKey =
+  | "manage_products"
+  | "purchase"
+  | "returns"
+  | "manage_debt"
+  | "view_reports"
+  | "view_cost";
+
+export type MemberPermissions = Partial<Record<PermissionKey, boolean>>;
+
+/** Xodim ro'yxati qatori (list_shop_members RPC). */
+export interface ShopMemberRow {
+  user_id: string;
+  email: string;
+  role: MemberRole;
+  permissions: MemberPermissions;
+  created_at: string;
+}
+
 export interface DashboardStats {
   today_revenue: number;
   today_profit: number;

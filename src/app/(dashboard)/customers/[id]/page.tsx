@@ -15,6 +15,7 @@ import {
 } from "@/hooks/use-customers";
 import { SalesHistoryList } from "@/components/dashboard/sales-history-list";
 import { PaymentDialog } from "@/components/customers/payment-dialog";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -38,8 +39,11 @@ export default function CustomerDetailPage() {
   const { data: sales } = useCustomerSales(id);
   const { data: payments } = useCustomerPayments(id);
   const [payOpen, setPayOpen] = useState(false);
+  const { checking } = usePermissionGuard("manage_debt");
 
   const balance = computeCustomerBalance(sales ?? [], payments ?? []);
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">

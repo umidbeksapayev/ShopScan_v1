@@ -9,6 +9,7 @@ import { cn, formatCurrency } from "@/lib/utils";
 import { lineTotal } from "@/lib/purchases";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessPurchase, usePurchases } from "@/hooks/use-purchases";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { SupplierPicker } from "@/components/purchases/supplier-picker";
 import { ProductPicker } from "@/components/purchases/product-picker";
 import { PurchaseHistoryList } from "@/components/purchases/purchase-history-list";
@@ -67,6 +68,7 @@ export default function PurchasesPage() {
   const [lines, setLines] = useState<Line[]>([]);
   const [note, setNote] = useState("");
   const [pickOpen, setPickOpen] = useState(false);
+  const { checking } = usePermissionGuard("purchase");
 
   const total = useMemo(
     () =>
@@ -123,6 +125,8 @@ export default function PurchasesPage() {
       });
     }
   }
+
+  if (checking) return null;
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">

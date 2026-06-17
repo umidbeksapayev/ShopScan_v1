@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   listCustomersWithBalance,
+  listCustomers,
   createCustomer,
   getCustomer,
   getCustomerSales,
@@ -12,10 +13,20 @@ import {
   type RecordPaymentInput,
 } from "@/lib/customers";
 
+/** Balansli ro'yxat (Mijozlar sahifasi — manage_debt kerak). */
 export function useCustomers(shopId: string | undefined) {
   return useQuery({
     queryKey: ["customers", shopId],
     queryFn: () => listCustomersWithBalance(shopId!),
+    enabled: !!shopId,
+  });
+}
+
+/** Balanssiz ro'yxat (checkout pickeri — har a'zo uchun). */
+export function useCustomerOptions(shopId: string | undefined) {
+  return useQuery({
+    queryKey: ["customers", "options", shopId],
+    queryFn: () => listCustomers(shopId!),
     enabled: !!shopId,
   });
 }

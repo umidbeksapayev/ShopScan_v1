@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Shop } from "@/types/database";
 
 /**
- * Joriy foydalanuvchining do'konini qaytaradi (server-side).
- * shop_id ni olishning yagona manbai — boshqa server kodlar shuni ishlatadi.
+ * Joriy foydalanuvchining do'konini qaytaradi (server-side, a'zolik orqali).
+ * Ega ham, kassir ham shu orqali o'z do'konini oladi.
  */
 export async function getCurrentShop(): Promise<Shop | null> {
   const supabase = await createClient();
@@ -14,11 +14,12 @@ export async function getCurrentShop(): Promise<Shop | null> {
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from("shops")
-    .select("*")
-    .eq("owner_id", user.id)
-    .single();
+    .from("shop_members")
+    .select("shop:shops(*)")
+    .eq("user_id", user.id)
+    .limit(1)
+    .maybeSingle();
 
-  if (error) return null;
-  return data as Shop;
+  if (error || !data?.shop) return null;
+  return data.shop as unknown as Shop;
 }

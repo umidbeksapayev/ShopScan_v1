@@ -5,6 +5,7 @@ import { Plus, Search, Truck, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useShop } from "@/hooks/use-shop";
 import { useSuppliers } from "@/hooks/use-suppliers";
+import { usePermissionGuard } from "@/hooks/use-guards";
 import { SupplierForm } from "@/components/purchases/supplier-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ export default function SuppliersPage() {
   const { data: suppliers, isLoading } = useSuppliers(shop?.id);
   const [term, setTerm] = useState("");
   const [addOpen, setAddOpen] = useState(false);
+  const { checking } = usePermissionGuard("purchase");
 
   const filtered = useMemo(() => {
     const list = suppliers ?? [];
@@ -31,6 +33,8 @@ export default function SuppliersPage() {
       (s) => s.name.toLowerCase().includes(q) || (s.phone ?? "").includes(q)
     );
   }, [suppliers, term]);
+
+  if (checking) return null;
 
   return (
     <div className="space-y-6">
