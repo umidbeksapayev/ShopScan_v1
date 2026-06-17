@@ -10,11 +10,14 @@ import {
   type CreateProductInput,
   type UpdateProductInput,
 } from "@/lib/products";
+import { useShop } from "@/hooks/use-shop";
 
 export function useProducts(filters: ProductFilters) {
+  const { data: shop } = useShop();
   return useQuery({
-    queryKey: ["products", filters],
-    queryFn: () => listProducts(filters),
+    queryKey: ["products", shop?.id, filters],
+    queryFn: () => listProducts({ ...filters, shopId: shop?.id }),
+    enabled: !!shop?.id,
   });
 }
 

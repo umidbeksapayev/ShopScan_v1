@@ -27,28 +27,33 @@ export function canDo(
   return permissions?.[perm] === true;
 }
 
-/** Joriy foydalanuvchining a'zoligi: do'kon + rol + ruxsatlar (ega yoki kassir). */
-export async function getMyMembership(): Promise<Membership | null> {
+/**
+ * Joriy foydalanuvchining BARCHA a'zoliklari (do'kon + rol + ruxsatlar).
+ * Eng yangi qo'shilgani birinchi (kassir sifatida qo'shilgan do'kon o'z
+ * avtomatik do'konidan oldin keladi) — default faol do'kon shu bo'ladi.
+ */
+export async function getMyMemberships(): Promise<Membership[]> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return null;
+  if (!user) return [];
 
   const { data, error } = await supabase
     .from("shop_members")
     .select("role, permissions, shop:shops(*)")
     .eq("user_id", user.id)
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: false });
 
-  if (error || !data || !data.shop) return null;
+  if (error || !data) return [];
 
-  return {
-    shop: data.shop as unknown as Shop,
-    role: data.role as MemberRole,
-    permissions: (data.permissions ?? {}) as MemberPermissions,
-  };
+  return data
+    .filter((d) => d.shop)
+    .map((d) => ({
+      shop: d.shop as unknown as Shop,
+      role: d.role as MemberRole,
+      permissions: (d.permissions ?? {}) as MemberPermissions,
+    }));
 }
 
 /** Xodimlar ro'yxati (email + rol + ruxsat) — faqat ega. */

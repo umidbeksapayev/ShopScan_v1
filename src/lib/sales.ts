@@ -7,13 +7,17 @@ import type { Product, SearchMethod } from "@/types/database";
  * Bir nechta mos kelsa, eng yangi 3 tagacha qaytaradi (foydalanuvchi tanlaydi).
  * Faqat faol va qoldig'i bor mahsulotlar.
  */
-export async function findProductsByBarcode(barcode: string): Promise<Product[]> {
+export async function findProductsByBarcode(
+  barcode: string,
+  shopId: string
+): Promise<Product[]> {
   const supabase = createClient();
   const normalized = normalizeBarcode(barcode);
   const { data, error } = await supabase
     .from("products")
     .select("*")
     .eq("barcode", normalized)
+    .eq("shop_id", shopId)
     .eq("is_active", true)
     .gt("quantity", 0)
     .order("created_at", { ascending: false })

@@ -17,6 +17,7 @@ export async function getCurrentShop(): Promise<Shop | null> {
     .from("shop_members")
     .select("shop:shops(*)")
     .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 

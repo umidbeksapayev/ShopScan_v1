@@ -110,7 +110,7 @@ export default function SettingsPage() {
   async function handleExport() {
     setExporting(true);
     try {
-      const products = await listProducts({});
+      const products = await listProducts({ shopId: shop?.id });
       if (products.length === 0) {
         toast.error(t("settings.exportEmpty"));
         return;

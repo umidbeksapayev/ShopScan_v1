@@ -7,6 +7,8 @@ export interface ProductFilters {
   saleType?: SaleType | "all";
   sortBy?: "created_at" | "name" | "selling_price" | "quantity";
   sortDir?: "asc" | "desc";
+  /** Faol do'kon bo'yicha qat'iy filtr (a'zo bir nechta do'konda bo'lsa kerak). */
+  shopId?: string;
 }
 
 export interface CreateProductInput {
@@ -32,6 +34,9 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
   const supabase = createClient();
   let query = supabase.from("products").select("*").eq("is_active", true);
 
+  if (filters.shopId) {
+    query = query.eq("shop_id", filters.shopId);
+  }
   if (filters.search && filters.search.trim()) {
     query = query.ilike("name", `%${filters.search.trim()}%`);
   }
