@@ -19,8 +19,8 @@ type ScanMode = "auto" | "manual";
 const COOLDOWN_MS = 2000;
 
 // Do'konda uchraydigan formatlar (BarcodeDetector spec — kichik harf, snake_case).
-// Keng qamrov: ITF (10/14 raqamli), code_93, codabar va data_matrix ham qo'shildi —
-// tez ilovalar kabi "g'alati" va sof-raqamli barcode'lar ham o'qiladi.
+// Yengil ro'yxat = tez dekod (ayniqsa zxing-wasm yo'lида). ITF (10/14 raqamli)
+// qoldirildi; og'ir/kam-uchraydigan data_matrix, code_93, codabar olib tashlandi.
 const FORMATS = [
   "ean_13",
   "ean_8",
@@ -28,11 +28,8 @@ const FORMATS = [
   "upc_e",
   "code_128",
   "code_39",
-  "code_93",
-  "codabar",
   "itf",
   "qr_code",
-  "data_matrix",
 ] as const;
 
 interface DetectorLike {
@@ -97,8 +94,6 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   const onDetectedRef = useRef(onDetected);
   const pausedRef = useRef(paused);
   const zoomRangeRef = useRef({ min: 1, max: 1, step: 0.1 });
-  // 1D barcode'ni qabul qilishdan oldin ketma-ket bir xil o'qishlar (noto'g'ri o'qish himoyasi)
-  const confirmRef = useRef<{ value: string; count: number }>({ value: "", count: 0 });
 
   const [mode, setMode] = useState<ScanMode>("auto");
   const [cameraReady, setCameraReady] = useState(false);
@@ -153,12 +148,13 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           return;
         }
 
-        // Orqa kamera, YUQORI resolution (kichik barcode'da ko'p piksel) +
-        // boshlang'ich so'rovning o'zida uzluksiz avtofokus.
+        // Orqa kamera, 1280x720 (tez dekod — yuqori resolution detect()ni
+        // sekinlashtiradi, ayniqsa wasm yo'lида). Kichik barcode uchun zoom + fokus.
+        // Boshlang'ich so'rovning o'zida uzluksiz avtofokus.
         const videoConstraints = {
           facingMode: { ideal: "environment" },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
           advanced: [{ focusMode: "continuous" }],
         } as unknown as MediaTrackConstraints;
         const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
@@ -208,31 +204,10 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
             busy = true;
             try {
               const codes = await detector.detect(video);
-              const hit = codes && codes.length > 0 ? codes[0] : null;
-              if (hit && hit.rawValue) {
-                const is2D =
-                  hit.format === "qr_code" ||
-                  hit.format === "data_matrix" ||
-                  hit.format === "pdf417" ||
-                  hit.format === "aztec";
-                if (is2D) {
-                  // 2D (QR/DataMatrix) — xato tuzatish bor, darhol qabul
-                  acceptResult(hit.rawValue);
-                } else {
-                  // 1D — loyqa kadrdagi noto'g'ri o'qishni oldini olish uchun
-                  // ketma-ket 2 marta BIR XIL qiymat o'qilsagina qabul qilamiz.
-                  const c = confirmRef.current;
-                  if (c.value === hit.rawValue) {
-                    c.count += 1;
-                  } else {
-                    confirmRef.current = { value: hit.rawValue, count: 1 };
-                  }
-                  if (confirmRef.current.count >= 2) {
-                    const confirmed = confirmRef.current.value;
-                    confirmRef.current = { value: "", count: 0 };
-                    acceptResult(confirmed);
-                  }
-                }
+              if (codes && codes.length > 0 && codes[0].rawValue) {
+                // Birinchi o'qishda darhol qabul (tez). Dublikat/qayta-o'qish
+                // cooldown + sotuvdagi not-found dedupe bilan boshqariladi.
+                acceptResult(codes[0].rawValue);
               }
             } catch {
               /* o'tkinchi dekod xatosi — keyingi kadrda qayta urinamiz */
