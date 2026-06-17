@@ -1,11 +1,16 @@
 "use client";
 
-import { Trash2, ShoppingCart } from "lucide-react";
+import { Trash2, ShoppingCart, Minus, Plus } from "lucide-react";
 import { ProductThumb } from "@/components/products/product-thumb";
 import { useTranslation } from "react-i18next";
 import { useCartStore } from "@/stores/cart-store";
 import { formatCurrency, formatWeight } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
+/** Vazn miqdorini 1 gramm aniqligigacha yaxlitlaydi (suzuvchi nuqta xatosisiz). */
+function round3(n: number): number {
+  return Math.round(n * 1000) / 1000;
+}
 
 interface CartPanelProps {
   onCheckout: () => void;
@@ -14,7 +19,7 @@ interface CartPanelProps {
 
 export function CartPanel({ onCheckout, loading }: CartPanelProps) {
   const { t } = useTranslation();
-  const { items, removeItem, totalRevenue } = useCartStore();
+  const { items, removeItem, updateQuantity, totalRevenue } = useCartStore();
 
   if (items.length === 0) {
     return (
@@ -39,6 +44,8 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
             ? formatWeight(item.quantity)
             : `${item.quantity} ${t("common.pcs")}`;
           const lineTotal = item.product.selling_price * item.quantity;
+          const step = isWeight ? 0.1 : 1;
+          const atMin = item.quantity <= step;
 
           return (
             <div key={item.product.id} className="flex items-center gap-3 p-3">
@@ -52,10 +59,34 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-sm font-medium">{item.product.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {qtyText} × {formatCurrency(item.product.selling_price)}
+                  {formatCurrency(item.product.selling_price)}
+                  {isWeight ? ` / ${t("common.kg")}` : ""}
                 </p>
+                {/* Miqdor stepperi — qayta qidirmasdan +/- */}
+                <div className="mt-2 flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => updateQuantity(item.product.id, round3(item.quantity - step))}
+                    disabled={atMin}
+                    aria-label={t("common.decrease")}
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent disabled:opacity-40"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="min-w-[3.5rem] text-center text-sm font-medium tabular-nums">
+                    {qtyText}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => updateQuantity(item.product.id, round3(item.quantity + step))}
+                    aria-label={t("common.increase")}
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
-              <div className="text-right">
+              <div className="flex flex-col items-end gap-2">
                 <p className="text-sm font-semibold">{formatCurrency(lineTotal)}</p>
                 <button
                   type="button"
@@ -63,7 +94,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
                   className="text-red-500 hover:text-red-700"
                   aria-label={t("cart.remove")}
                 >
-                  <Trash2 className="ml-auto h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             </div>

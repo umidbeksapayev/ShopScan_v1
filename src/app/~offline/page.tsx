@@ -10,7 +10,7 @@ export default function OfflinePage() {
       </div>
       <h1 className="text-xl font-bold text-foreground">Internet aloqasi yo&apos;q</h1>
       <p className="max-w-sm text-sm text-muted-foreground">
-        Bu sahifa hali keshlanmagan. Avval ochilgan sahifalar (Katalog, Sotuv) internetsiz
+        Bu sahifa hali keshlanmagan. Avval ochilgan sahifalar (Mahsulotlar, Sotuv) internetsiz
         ham ishlaydi. Ulanish tiklangach, qayta urinib ko&apos;ring.
       </p>
     </div>

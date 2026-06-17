@@ -28,7 +28,7 @@
     "logout": "Чиқиш",
     "loggingOut": "Чиқилмоқда...",
     "home": "Бош",
-    "catalog": "Каталог",
+    "catalog": "Маҳсулотлар",
     "report": "Ҳисобот",
     "customers": "Мижозлар",
     "more": "Кўпроқ",
@@ -167,7 +167,8 @@
     "autoWarnSuffix": "қолганда ({{pct}}%)",
     "autoWarnHint": "Маҳсулот киритилган миқдорнинг {{pct}}% қолганда автоматик огоҳлантирилади",
     "category": "Категория",
-    "noCategory": "Категориясиз"
+    "noCategory": "Категориясиз",
+    "moreSection": "Қўшимча (расм, категория, баркод)"
   },
   "sell": {
     "title": "Сотув",
@@ -191,7 +192,11 @@
     "customerLabel": "Мижоз (насия учун)",
     "onCredit": "Қарзга ёзиш",
     "paidAmount": "Тўланган сумма",
-    "willOwe": "Қарз қолади"
+    "willOwe": "Қарз қолади",
+    "payCash": "Нақд",
+    "payCard": "Пластик",
+    "payCredit": "Насия",
+    "selectCustomerForCredit": "Насия учун мижозни танланг"
   },
   "cart": {
     "title": "Сават",

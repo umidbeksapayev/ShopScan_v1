@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ScanLine, WifiOff } from "lucide-react";
+import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useShop } from "@/hooks/use-shop";
 import { useProcessCartSale } from "@/hooks/use-sale";
@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   CustomerPicker,
   type PickableCustomer,
@@ -68,9 +67,9 @@ export default function SellPage() {
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
   const [receiptQueued, setReceiptQueued] = useState(false);
-  // Nasiya: mijoz + to'lov turi (checkout paytida)
+  // To'lov turi: naqd / plastik / nasiya (checkout paytida)
+  const [payMethod, setPayMethod] = useState<"cash" | "card" | "credit">("cash");
   const [customer, setCustomer] = useState<PickableCustomer | null>(null);
-  const [isCredit, setIsCredit] = useState(false);
   const [paidInput, setPaidInput] = useState("");
 
   async function handleBarcode(barcode: string) {
@@ -117,14 +116,17 @@ export default function SellPage() {
     setConfirmOpen(false);
     clear();
     setCustomer(null);
-    setIsCredit(false);
+    setPayMethod("cash");
     setPaidInput("");
   }
 
   async function handleConfirmSale() {
     if (!shop) return;
     const total = totalRevenue();
-    const paid = customer ? (isCredit ? Number(paidInput) || 0 : total) : total;
+    // Nasiya = mijoz tanlangan kredit sotuv; naqd/plastik = to'liq to'lov
+    const isCreditSale = payMethod === "credit" && !!customer;
+    const paid = isCreditSale ? Number(paidInput) || 0 : total;
+    const saleCustomerId = isCreditSale ? customer!.id : null;
     const saleItems = items.map((i) => ({ product_id: i.product.id, quantity: i.quantity }));
     const method = items[0]?.method ?? "manual";
     // Savat tozalanishidan OLDIN chek uchun snapshot (narxsiz/foydasiz).
@@ -144,11 +146,11 @@ export default function SellPage() {
         shopId: shop.id,
         items: saleItems,
         method,
-        customerId: customer?.id ?? null,
-        paidAmount: customer ? paid : null,
+        customerId: saleCustomerId,
+        paidAmount: isCreditSale ? paid : null,
         receiptItems: snapshot,
         totalRevenue: total,
-        customerName: customer?.name ?? null,
+        customerName: isCreditSale ? customer!.name : null,
         createdAt: new Date().toISOString(),
         status: "pending",
       });
@@ -168,8 +170,8 @@ export default function SellPage() {
         item_count: items.length,
         total_revenue: total,
         total_profit: 0,
-        paid_amount: customer ? paid : total,
-        debt: remainingDebt(total, customer ? paid : total),
+        paid_amount: isCreditSale ? paid : total,
+        debt: isCreditSale ? remainingDebt(total, paid) : 0,
       });
       resetCheckout();
       toast.success(t("sync.queuedToast"));
@@ -182,8 +184,8 @@ export default function SellPage() {
         shopId: shop.id,
         items: saleItems,
         method,
-        customerId: customer?.id ?? null,
-        paidAmount: customer ? paid : null,
+        customerId: saleCustomerId,
+        paidAmount: isCreditSale ? paid : null,
         clientId,
       });
       setReceiptItems(snapshot);
@@ -199,8 +201,9 @@ export default function SellPage() {
   }
 
   const cartTotal = totalRevenue();
-  const cartPaid = customer ? (isCredit ? Number(paidInput) || 0 : cartTotal) : cartTotal;
-  const cartDebt = remainingDebt(cartTotal, cartPaid);
+  const isCredit = payMethod === "credit";
+  const cartPaid = isCredit && customer ? Number(paidInput) || 0 : cartTotal;
+  const cartDebt = isCredit && customer ? remainingDebt(cartTotal, cartPaid) : 0;
 
   return (
     <div className="space-y-6">
@@ -262,31 +265,56 @@ export default function SellPage() {
               })}
             </p>
 
-            {/* Mijoz (nasiya uchun ixtiyoriy) */}
-            {shop && (
-              <div className="space-y-1.5">
+            {/* To'lov turi: Naqd / Plastik (katta) + Nasiya (kichik) */}
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("cash")}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 rounded-xl border py-4 text-sm font-semibold transition-colors",
+                    payMethod === "cash"
+                      ? "border-primary bg-accent text-primary"
+                      : "border-input bg-background text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  <Banknote className="h-6 w-6" /> {t("sell.payCash")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPayMethod("card")}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 rounded-xl border py-4 text-sm font-semibold transition-colors",
+                    payMethod === "card"
+                      ? "border-primary bg-accent text-primary"
+                      : "border-input bg-background text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  <CreditCard className="h-6 w-6" /> {t("sell.payCard")}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPayMethod("credit")}
+                className={cn(
+                  "flex w-full items-center justify-center gap-1.5 rounded-lg border py-2 text-xs font-medium transition-colors",
+                  payMethod === "credit"
+                    ? "border-primary bg-accent text-primary"
+                    : "border-input bg-background text-muted-foreground hover:bg-muted"
+                )}
+              >
+                <NotebookPen className="h-4 w-4" /> {t("sell.payCredit")}
+              </button>
+            </div>
+
+            {/* Nasiya tafsiloti — faqat nasiya tanlanganda */}
+            {isCredit && shop && (
+              <div className="space-y-3 rounded-xl border border-border p-3">
                 <Label className="text-xs text-muted-foreground">
                   {t("sell.customerLabel")}
                 </Label>
-                <CustomerPicker
-                  shopId={shop.id}
-                  value={customer}
-                  onChange={(c) => {
-                    setCustomer(c);
-                    if (!c) setIsCredit(false);
-                  }}
-                />
-              </div>
-            )}
-
-            {/* To'lov turi — faqat mijoz tanlanganda */}
-            {customer && (
-              <div className="space-y-3 rounded-xl border border-border p-3">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{t("sell.onCredit")}</span>
-                  <Switch checked={isCredit} onCheckedChange={setIsCredit} />
-                </label>
-                {isCredit && (
+                <CustomerPicker shopId={shop.id} value={customer} onChange={setCustomer} />
+                {customer ? (
                   <div className="space-y-2">
                     <Label htmlFor="paid-input" className="text-xs text-muted-foreground">
                       {t("sell.paidAmount")}
@@ -307,6 +335,10 @@ export default function SellPage() {
                       </span>
                     </div>
                   </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {t("sell.selectCustomerForCredit")}
+                  </p>
                 )}
               </div>
             )}
@@ -321,7 +353,10 @@ export default function SellPage() {
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button onClick={handleConfirmSale} disabled={saleMut.isPending}>
+            <Button
+              onClick={handleConfirmSale}
+              disabled={saleMut.isPending || (isCredit && !customer)}
+            >
               {saleMut.isPending
                 ? t("sell.selling")
                 : online
