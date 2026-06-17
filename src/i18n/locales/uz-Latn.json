@@ -239,6 +239,7 @@
     "torchError": "Flashni boshqarib bo'lmadi",
     "torchOn": "Flashni yoqish",
     "torchOff": "Flashni o'chirish",
+    "zoom": "Yaqinlashtirish",
     "insecureContext": "Kamera faqat HTTPS yoki localhost da ishlaydi. Saytni HTTPS orqali oching.",
     "cameraError": "Kamerani ochib bo'lmadi",
     "cameraErrorDesc": "Kamera band (boshqa ilova ishlatyapti) yoki qurilmada kamera topilmadi."
