@@ -36,7 +36,7 @@ const FORMATS = [
 ] as const;
 
 interface DetectorLike {
-  detect: (source: CanvasImageSource) => Promise<{ rawValue: string }[]>;
+  detect: (source: CanvasImageSource) => Promise<{ rawValue: string; format?: string }[]>;
 }
 type DetectorCtor = new (o: { formats: readonly string[] }) => DetectorLike;
 
@@ -97,6 +97,8 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   const onDetectedRef = useRef(onDetected);
   const pausedRef = useRef(paused);
   const zoomRangeRef = useRef({ min: 1, max: 1, step: 0.1 });
+  // 1D barcode'ni qabul qilishdan oldin ketma-ket bir xil o'qishlar (noto'g'ri o'qish himoyasi)
+  const confirmRef = useRef<{ value: string; count: number }>({ value: "", count: 0 });
 
   const [mode, setMode] = useState<ScanMode>("auto");
   const [cameraReady, setCameraReady] = useState(false);
@@ -104,6 +106,7 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   const [torchSupported, setTorchSupported] = useState(false);
   const [zoomSupported, setZoomSupported] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [focusPoint, setFocusPoint] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     onDetectedRef.current = onDetected;
@@ -205,8 +208,31 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
             busy = true;
             try {
               const codes = await detector.detect(video);
-              if (codes && codes.length > 0 && codes[0].rawValue) {
-                acceptResult(codes[0].rawValue);
+              const hit = codes && codes.length > 0 ? codes[0] : null;
+              if (hit && hit.rawValue) {
+                const is2D =
+                  hit.format === "qr_code" ||
+                  hit.format === "data_matrix" ||
+                  hit.format === "pdf417" ||
+                  hit.format === "aztec";
+                if (is2D) {
+                  // 2D (QR/DataMatrix) — xato tuzatish bor, darhol qabul
+                  acceptResult(hit.rawValue);
+                } else {
+                  // 1D — loyqa kadrdagi noto'g'ri o'qishni oldini olish uchun
+                  // ketma-ket 2 marta BIR XIL qiymat o'qilsagina qabul qilamiz.
+                  const c = confirmRef.current;
+                  if (c.value === hit.rawValue) {
+                    c.count += 1;
+                  } else {
+                    confirmRef.current = { value: hit.rawValue, count: 1 };
+                  }
+                  if (confirmRef.current.count >= 2) {
+                    const confirmed = confirmRef.current.value;
+                    confirmRef.current = { value: "", count: 0 };
+                    acceptResult(confirmed);
+                  }
+                }
               }
             } catch {
               /* o'tkinchi dekod xatosi — keyingi kadrda qayta urinamiz */
@@ -272,6 +298,37 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
     }
   }, []);
 
+  // Ekranga bosib fokuslash (web AF dangasa bo'lganda yordam beradi).
+  const handleTapFocus = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    setFocusPoint({ x: px, y: py });
+    window.setTimeout(() => setFocusPoint(null), 700);
+
+    const track = streamRef.current?.getVideoTracks?.()[0];
+    if (!track) return;
+    const nx = Math.min(1, Math.max(0, px / rect.width));
+    const ny = Math.min(1, Math.max(0, py / rect.height));
+    (async () => {
+      try {
+        // Tanlangan nuqtaga bir martalik fokus, so'ng uzluksizga qaytamiz.
+        await track.applyConstraints({
+          advanced: [{ pointsOfInterest: [{ x: nx, y: ny }], focusMode: "single-shot" }],
+        } as unknown as MediaTrackConstraints);
+        window.setTimeout(() => {
+          track
+            .applyConstraints({
+              advanced: [{ focusMode: "continuous" }],
+            } as unknown as MediaTrackConstraints)
+            .catch(() => {});
+        }, 1500);
+      } catch {
+        /* tap-to-focus qo'llab-quvvatlanmasa jim o'tadi */
+      }
+    })();
+  }, []);
+
   const armManualScan = useCallback(() => {
     armedRef.current = true;
     window.setTimeout(() => {
@@ -282,7 +339,10 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
+      <div
+        onClick={handleTapFocus}
+        className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl bg-black"
+      >
         <video
           ref={videoRef}
           autoPlay
@@ -301,13 +361,24 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           />
         </div>
 
+        {/* Tap-to-focus halqasi */}
+        {focusPoint && (
+          <span
+            className="pointer-events-none absolute z-10 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/90 shadow"
+            style={{ left: focusPoint.x, top: focusPoint.y }}
+          />
+        )}
+
         {/* Torch tugmasi */}
         {cameraReady && torchSupported && (
           <button
             type="button"
-            onClick={toggleTorch}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTorch();
+            }}
             aria-label={torchOn ? t("barcode.torchOff") : t("barcode.torchOn")}
-            className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
+            className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur hover:bg-black/70"
           >
             {torchOn ? <Zap className="h-5 w-5" /> : <ZapOff className="h-5 w-5" />}
           </button>

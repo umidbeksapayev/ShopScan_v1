@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -71,6 +71,8 @@ export default function SellPage() {
   const [payMethod, setPayMethod] = useState<"cash" | "card" | "credit">("cash");
   const [customer, setCustomer] = useState<PickableCustomer | null>(null);
   const [paidInput, setPaidInput] = useState("");
+  // Bir xil topilmagan barcode'ni qayta-qayta toast qilmaslik uchun (spam himoyasi)
+  const lastNotFoundRef = useRef<{ code: string; at: number } | null>(null);
 
   async function handleBarcode(barcode: string) {
     // Dialog ochiq bo'lsa — uzluksiz skan savatni buzmasin (qo'shimcha himoya).
@@ -85,9 +87,15 @@ export default function SellPage() {
       found = matchBarcode(allProducts ?? [], barcode);
     }
     if (found.length === 0) {
-      toast.error(t("sell.notFound"), {
-        description: t("sell.notFoundDesc", { code: barcode }),
-      });
+      const now = Date.now();
+      const ln = lastNotFoundRef.current;
+      lastNotFoundRef.current = { code: barcode, at: now };
+      // Bir xil topilmagan kod 8s ichida qayta-qayta toast chiqarmaydi
+      if (!ln || ln.code !== barcode || now - ln.at > 8000) {
+        toast.error(t("sell.notFound"), {
+          description: t("sell.notFoundDesc", { code: barcode }),
+        });
+      }
       return;
     }
     // Bir nechta moslik bo'lsa — ogohlantirish
