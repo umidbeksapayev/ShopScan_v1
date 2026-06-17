@@ -1,6 +1,7 @@
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Topbar } from "@/components/layout/topbar";
+import { OfflineBanner } from "@/components/layout/offline-banner";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,7 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <main className="flex flex-1 flex-col overflow-hidden">
+        <OfflineBanner />
         <Topbar />
         <div className="mx-auto w-full max-w-6xl flex-1 overflow-y-auto p-4 pb-24 sm:p-6 xl:pb-6">
           {children}

@@ -1,13 +1,20 @@
 "use client";
 
-import { QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { getQueryClient } from "@/lib/query-client";
+import { createIDBPersister } from "@/lib/query-persister";
 import { I18nProvider } from "@/components/i18n-provider";
+
+// Offline uchun faqat katalog va kategoriya so'rovlari IndexedDB'ga saqlanadi
+// (hisobot/dashboard kabi maxfiy/yirik ma'lumotlar diskda saqlanmaydi).
+const PERSISTED_KEYS = new Set(["products", "categories"]);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
+  const [persister] = useState(() => createIDBPersister());
 
   return (
     <ThemeProvider
@@ -17,10 +24,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <I18nProvider>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{
+            persister,
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 kun
+            dehydrateOptions: {
+              shouldDehydrateQuery: (query) =>
+                PERSISTED_KEYS.has(String(query.queryKey?.[0])),
+            },
+          }}
+        >
           {children}
           <Toaster position="top-center" richColors closeButton theme="system" />
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </I18nProvider>
     </ThemeProvider>
   );

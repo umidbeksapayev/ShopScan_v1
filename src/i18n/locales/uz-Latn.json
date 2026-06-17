@@ -493,5 +493,9 @@
       "unit_not_integer": "Dona — butun son bo'lishi kerak",
       "duplicate": "Barcode allaqachon mavjud"
     }
+  },
+  "offline": {
+    "banner": "Internet aloqasi yo'q — oflayn rejim",
+    "checkoutBlocked": "Internetsiz sotuvni yakunlab bo'lmaydi. Ulanishni tekshiring."
   }
 }

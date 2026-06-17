@@ -25,6 +25,11 @@ yarn-error.log*
 # Vercel
 .vercel
 
+# PWA service worker (Serwist build'da generatsiya qiladi — commit qilinmaydi)
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts

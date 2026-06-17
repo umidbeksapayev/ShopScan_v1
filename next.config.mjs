@@ -1,3 +1,13 @@
+import withSerwistInit from "@serwist/next";
+
+// PWA: service worker'ni src/app/sw.ts dan public/sw.js ga kompilyatsiya qiladi.
+// Dev'da o'chiq (kesh chalkashligini oldini olish).
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -27,4 +37,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);
