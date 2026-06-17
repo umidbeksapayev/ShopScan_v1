@@ -13,7 +13,8 @@
     "decrease": "Kamaytirish",
     "increase": "Ko'paytirish",
     "saving": "Saqlanmoqda...",
-    "clear": "Tozalash"
+    "clear": "Tozalash",
+    "delete": "O'chirish"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -28,7 +29,10 @@
     "home": "Bosh",
     "catalog": "Katalog",
     "report": "Hisobot",
-    "customers": "Mijozlar"
+    "customers": "Mijozlar",
+    "more": "Ko'proq",
+    "purchases": "Kirim",
+    "suppliers": "Ta'minotchilar"
   },
   "landing": {
     "badge": "Aqlli POS tizimi — bepul",
@@ -364,5 +368,50 @@
     "success": "Qaytarish bajarildi",
     "error": "Qaytarishda xato",
     "nothingSelected": "Qaytariladigan mahsulot tanlanmadi"
+  },
+  "suppliers": {
+    "title": "Ta'minotchilar",
+    "empty": "Hali ta'minotchi yo'q",
+    "notFound": "Ta'minotchi topilmadi",
+    "searchPlaceholder": "Ta'minotchi nomi yoki telefon...",
+    "addNew": "Ta'minotchi qo'shish",
+    "newSupplier": "Yangi ta'minotchi",
+    "name": "Nomi",
+    "namePlaceholder": "Ta'minotchi nomi",
+    "phone": "Telefon",
+    "note": "Eslatma",
+    "notePlaceholder": "Ixtiyoriy eslatma",
+    "nameRequired": "Nom kiritilishi shart",
+    "added": "Ta'minotchi qo'shildi",
+    "saveError": "Saqlashda xato"
+  },
+  "purchases": {
+    "title": "Kirim",
+    "supplier": "Ta'minotchi (ixtiyoriy)",
+    "addProduct": "Mahsulot qo'shish",
+    "productSearch": "Mahsulot qidirish...",
+    "noProducts": "Mahsulot topilmadi",
+    "qty": "Miqdor",
+    "costPrice": "Tan narx",
+    "note": "Eslatma",
+    "notePlaceholder": "Ixtiyoriy (masalan hujjat raqami)",
+    "total": "Jami",
+    "confirm": "Kirim qilish",
+    "processing": "Bajarilmoqda...",
+    "success": "Kirim qabul qilindi",
+    "error": "Kirimda xato",
+    "noLines": "Kamida bitta mahsulot qo'shing",
+    "history": "Kirim tarixi",
+    "noPurchases": "Hali kirim yo'q",
+    "noSupplier": "Ta'minotchisiz",
+    "subtitle": "Yangi kelgan tovarni do'konga qo'shing",
+    "step1Title": "Ta'minotchi",
+    "step1Hint": "Kim olib keldi? (ixtiyoriy)",
+    "step2Title": "Kelgan mahsulotlar",
+    "step2Empty": "Hali mahsulot qo'shilmagan",
+    "step2EmptyHint": "Kelgan mahsulotni tanlab, nechta va qanchadan kelganini yozing",
+    "step3Title": "Tekshiring va saqlang",
+    "secret": "Tan narx faqat sizga ko'rinadi",
+    "addMore": "Yana mahsulot qo'shish"
   }
 }
