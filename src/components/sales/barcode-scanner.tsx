@@ -94,6 +94,8 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   const onDetectedRef = useRef(onDetected);
   const pausedRef = useRef(paused);
   const zoomRangeRef = useRef({ min: 1, max: 1, step: 0.1 });
+  // Tekshiruv-raqamsiz formatlar (ITF/Code39) uchun ketma-ket bir xil o'qishlar
+  const confirmRef = useRef<{ value: string; count: number }>({ value: "", count: 0 });
 
   const [mode, setMode] = useState<ScanMode>("auto");
   const [cameraReady, setCameraReady] = useState(false);
@@ -148,13 +150,16 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           return;
         }
 
-        // Orqa kamera, 1280x720 (tez dekod — yuqori resolution detect()ni
-        // sekinlashtiradi, ayniqsa wasm yo'lида). Kichik barcode uchun zoom + fokus.
-        // Boshlang'ich so'rovning o'zida uzluksiz avtofokus.
+        // Adaptiv resolution: native BarcodeDetector (Chrome) tez — 1080p (kichik
+        // barcode aniqroq); wasm fallback'da 720p (sekinlashmasin). + boshlang'ich
+        // so'rovning o'zida uzluksiz avtofokus.
+        const hasNative =
+          typeof (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector ===
+          "function";
         const videoConstraints = {
           facingMode: { ideal: "environment" },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: hasNative ? 1920 : 1280 },
+          height: { ideal: hasNative ? 1080 : 720 },
           advanced: [{ focusMode: "continuous" }],
         } as unknown as MediaTrackConstraints;
         const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
@@ -204,10 +209,27 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
             busy = true;
             try {
               const codes = await detector.detect(video);
-              if (codes && codes.length > 0 && codes[0].rawValue) {
-                // Birinchi o'qishda darhol qabul (tez). Dublikat/qayta-o'qish
-                // cooldown + sotuvdagi not-found dedupe bilan boshqariladi.
-                acceptResult(codes[0].rawValue);
+              const hit = codes && codes.length > 0 ? codes[0] : null;
+              if (hit && hit.rawValue) {
+                // Tekshiruv-raqamli formatlar (EAN/UPC/Code128/QR) chala o'qilmaydi →
+                // DARHOL qabul (katta barcode'lar tez). ITF/Code39 — tekshiruv-raqamsiz,
+                // hira kadrda chala o'qilishi mumkin → ketma-ket 2 marta bir xil bo'lsagina.
+                const needsConfirm = hit.format === "itf" || hit.format === "code_39";
+                if (!needsConfirm) {
+                  acceptResult(hit.rawValue);
+                } else {
+                  const c = confirmRef.current;
+                  if (c.value === hit.rawValue) {
+                    c.count += 1;
+                  } else {
+                    confirmRef.current = { value: hit.rawValue, count: 1 };
+                  }
+                  if (confirmRef.current.count >= 2) {
+                    const confirmed = confirmRef.current.value;
+                    confirmRef.current = { value: "", count: 0 };
+                    acceptResult(confirmed);
+                  }
+                }
               }
             } catch {
               /* o'tkinchi dekod xatosi — keyingi kadrda qayta urinamiz */
