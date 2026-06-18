@@ -165,6 +165,8 @@ export interface Shop {
   name: string;
   owner_id: string;
   created_at: string;
+  /** Do'kon logosi (ixtiyoriy) — migration 020 dan keyin keladi. */
+  logo_url?: string | null;
 }
 
 export type MemberRole = "owner" | "cashier";
