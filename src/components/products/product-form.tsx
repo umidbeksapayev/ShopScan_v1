@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import {
   Hash,
   Scale,
@@ -42,18 +41,7 @@ import {
 } from "@/components/ui/select";
 import { useCategories, useCreateCategory } from "@/hooks/use-categories";
 
-// Kamera/skaner kodi faqat skaner ochilganda yuklanadi (BarcodeDetector + wasm).
-const BarcodeScanner = dynamic(
-  () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
-        Kamera yuklanmoqda...
-      </div>
-    ),
-  }
-);
+import { ScannerView } from "@/components/sales/scanner-view";
 
 interface ProductFormProps {
   shopId: string;
@@ -263,7 +251,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         </div>
         {scanning && (
           <div className="rounded-xl border p-2">
-            <BarcodeScanner
+            <ScannerView
               onDetected={(code) => {
                 setBarcode(code);
                 setScanning(false);

@@ -253,6 +253,7 @@
     "scanBtn": "Skanerlash",
     "alignHint": "Barcode'ni ramkaga to'g'rilang — avtomatik o'qiladi. Fokus uchun ekranga bosing; telefonni 15–20 sm uzoqlikda ushlab, zoom bilan kattalashtiring.",
     "webviewHint": "Tez va aniq skan uchun ilovani Chrome'da oching yoki bosh ekranga o'rnating (Add to Home Screen). Boshqa ilova ichidagi oynada kamera sekin ishlaydi.",
+    "nativeHint": "Tugmani bosing — apparat (native) kamera ochiladi va barcode tez/aniq o'qiladi.",
     "alignNow": "Barcode'ni ramkaga to'g'rilang",
     "cameraDenied": "Kameraga ruxsat berilmadi",
     "cameraDeniedDesc": "Brauzer sozlamalaridan kamerani yoqing.",
