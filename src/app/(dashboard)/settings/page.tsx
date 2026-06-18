@@ -301,7 +301,7 @@ export default function SettingsPage() {
                   {t("settings.currencyLabel")}
                 </Label>
                 <div className="flex items-center justify-between rounded-xl border border-input bg-muted/40 px-4 py-2.5 text-sm">
-                  <span className="font-medium text-foreground">so'm (UZS)</span>
+                  <span className="font-medium text-foreground">{"so'm (UZS)"}</span>
                   <span className="text-xs text-muted-foreground">
                     {t("settings.currencyNote")}
                   </span>
