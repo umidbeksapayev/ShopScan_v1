@@ -18,7 +18,10 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-overlay-in data-[state=closed]:animate-overlay-out",
+      // DIQQAT: backdrop-blur ISHLATMAYMIZ — sotuv ekranida modal jonli kamera (video)
+      // ustida ochiladi va backdrop-filter har kadrni qayta blur qilib GPU'ni cho'ktiradi
+      // (skan sekinlashadi/sakraydi). Solid scrim — arzon va tez.
+      "fixed inset-0 z-50 bg-black/60 data-[state=open]:animate-overlay-in data-[state=closed]:animate-overlay-out",
       className
     )}
     {...props}
