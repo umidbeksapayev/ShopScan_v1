@@ -27,6 +27,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -55,6 +63,31 @@ const config: Config = {
         soft: "0 2px 10px rgba(17, 20, 45, 0.05)",
         card: "0 8px 28px -12px rgba(17, 20, 45, 0.14)",
         pop: "0 12px 32px -8px rgba(108, 93, 211, 0.30)",
+        sheet: "0 -8px 40px -12px rgba(17, 20, 45, 0.25)",
+      },
+      keyframes: {
+        "overlay-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "overlay-out": { from: { opacity: "1" }, to: { opacity: "0" } },
+        // Mobil: pastdan ko'tariladigan sheet
+        "sheet-in": {
+          from: { transform: "translateY(100%)", opacity: "0.6" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+        "sheet-out": {
+          from: { transform: "translateY(0)", opacity: "1" },
+          to: { transform: "translateY(100%)", opacity: "0" },
+        },
+        // Desktop: markazda yumshoq paydo bo'lish (transform'ga tegmaydi — markazlash saqlanadi)
+        "dialog-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "dialog-out": { from: { opacity: "1" }, to: { opacity: "0" } },
+      },
+      animation: {
+        "overlay-in": "overlay-in 160ms ease-out",
+        "overlay-out": "overlay-out 140ms ease-in",
+        "sheet-in": "sheet-in 280ms cubic-bezier(0.32, 0.72, 0, 1)",
+        "sheet-out": "sheet-out 200ms ease-in",
+        "dialog-in": "dialog-in 160ms ease-out",
+        "dialog-out": "dialog-out 120ms ease-in",
       },
     },
   },

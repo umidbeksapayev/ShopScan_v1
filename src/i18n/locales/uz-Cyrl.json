@@ -129,7 +129,18 @@
     "gridView": "Катак кўриниши",
     "listView": "Рўйхат кўриниши",
     "allCategories": "Барча категориялар",
-    "noCategory": "Категориясиз"
+    "noCategory": "Категориясиз",
+    "count": "{{count}} та маҳсулот",
+    "colImage": "Расм",
+    "colName": "Номи",
+    "colPrice": "Нарх",
+    "colStock": "Қолдиқ",
+    "colCategory": "Категория",
+    "colStatus": "Ҳолати",
+    "colActions": "Амаллар",
+    "statusOk": "Етарли",
+    "statusLow": "Кам қолди",
+    "statusOut": "Тугаган"
   },
   "product": {
     "name": "Маҳсулот номи",

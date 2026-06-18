@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ProductThumb } from "@/components/products/product-thumb";
 import type { Product, SearchMethod } from "@/types/database";
@@ -145,7 +146,8 @@ export function AddToCartDialog({
               </span>
             </div>
 
-            <Button onClick={handleAdd} disabled={qty <= 0} className="w-full" size="lg">
+            <Button onClick={handleAdd} disabled={qty <= 0} className="w-full" size="xl">
+              <Plus className="mr-2 h-5 w-5" />
               {t("addToCart.addToCart")}
             </Button>
           </div>

@@ -78,6 +78,12 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [barcode, setBarcode] = useState(product?.barcode ?? "");
   const [scanning, setScanning] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    cost?: string;
+    selling?: string;
+    quantity?: string;
+  }>({});
 
   // Kategoriya (ixtiyoriy): "none" = kategoriyasiz
   const { data: categories } = useCategories();
@@ -127,12 +133,19 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!name.trim()) return toast.error(t("product.enterName"));
-    if (cost <= 0 || selling <= 0) return toast.error(t("product.enterPrices"));
+    // Inline validatsiya — har bir maydon ostida xato ko'rsatiladi
     const qty = parseFloat(quantity);
-    if (isNaN(qty) || qty < 0) return toast.error(t("product.enterQty"));
-    if (!isWeight && !Number.isInteger(qty))
-      return toast.error(t("product.unitInteger"));
+    const eMap: typeof errors = {};
+    if (!name.trim()) eMap.name = t("product.enterName");
+    if (cost <= 0) eMap.cost = t("product.enterPrices");
+    if (selling <= 0) eMap.selling = t("product.enterPrices");
+    if (isNaN(qty) || qty < 0) eMap.quantity = t("product.enterQty");
+    else if (!isWeight && !Number.isInteger(qty)) eMap.quantity = t("product.unitInteger");
+    if (Object.keys(eMap).length > 0) {
+      setErrors(eMap);
+      return;
+    }
+    setErrors({});
 
     setSubmitting(true);
     try {
@@ -205,13 +218,25 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
 
       {/* Nom */}
       <div className="space-y-1.5">
-        <Label htmlFor="name">{t("product.name")}</Label>
+        <Label htmlFor="name">
+          {t("product.name")} <span className="text-destructive">*</span>
+        </Label>
         <Input
           id="name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (errors.name) setErrors((p) => ({ ...p, name: undefined }));
+          }}
           placeholder={t("product.namePlaceholder")}
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "name-err" : undefined}
         />
+        {errors.name && (
+          <p id="name-err" className="text-xs text-destructive">
+            {errors.name}
+          </p>
+        )}
       </div>
 
       {/* Barcode + skaner — oldinda (tez-tez skanerlanadigan maydon) */}
@@ -253,7 +278,8 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label htmlFor="cost">
-            {t("product.costPrice")} ({priceUnit})
+            {t("product.costPrice")} <span className="text-destructive">*</span>
+            <span className="font-normal text-muted-foreground"> ({priceUnit})</span>
           </Label>
           <Input
             id="cost"
@@ -262,13 +288,19 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
             min="0"
             step="0.01"
             value={costPrice}
-            onChange={(e) => setCostPrice(e.target.value)}
+            onChange={(e) => {
+              setCostPrice(e.target.value);
+              if (errors.cost) setErrors((p) => ({ ...p, cost: undefined }));
+            }}
             placeholder="0"
+            aria-invalid={!!errors.cost}
           />
+          {errors.cost && <p className="text-xs text-destructive">{errors.cost}</p>}
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="selling">
-            {t("product.sellingPrice")} ({priceUnit})
+            {t("product.sellingPrice")} <span className="text-destructive">*</span>
+            <span className="font-normal text-muted-foreground"> ({priceUnit})</span>
           </Label>
           <Input
             id="selling"
@@ -277,9 +309,16 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
             min="0"
             step="0.01"
             value={sellingPrice}
-            onChange={(e) => setSellingPrice(e.target.value)}
+            onChange={(e) => {
+              setSellingPrice(e.target.value);
+              if (errors.selling) setErrors((p) => ({ ...p, selling: undefined }));
+            }}
             placeholder="0"
+            aria-invalid={!!errors.selling}
           />
+          {errors.selling && (
+            <p className="text-xs text-destructive">{errors.selling}</p>
+          )}
         </div>
       </div>
 
@@ -305,7 +344,8 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
       {/* Miqdor — ogohlantirish chegarasi avtomatik (20%) */}
       <div className="space-y-1.5">
         <Label htmlFor="qty">
-          {t("product.quantity")} ({unitLabel})
+          {t("product.quantity")} <span className="text-destructive">*</span>
+          <span className="font-normal text-muted-foreground"> ({unitLabel})</span>
         </Label>
         <Input
           id="qty"
@@ -314,9 +354,16 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
           min="0"
           step={isWeight ? "0.001" : "1"}
           value={quantity}
-          onChange={(e) => setQuantity(e.target.value)}
+          onChange={(e) => {
+            setQuantity(e.target.value);
+            if (errors.quantity) setErrors((p) => ({ ...p, quantity: undefined }));
+          }}
           placeholder={isWeight ? "0.000" : "0"}
+          aria-invalid={!!errors.quantity}
         />
+        {errors.quantity && (
+          <p className="text-xs text-destructive">{errors.quantity}</p>
+        )}
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" />
           {qtyNum > 0 ? (
@@ -429,7 +476,7 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={submitting}>
+      <Button type="submit" size="xl" className="w-full" disabled={submitting}>
         {submitting ? t("product.saving") : isEdit ? t("product.updateBtn") : t("product.addBtn")}
       </Button>
     </form>

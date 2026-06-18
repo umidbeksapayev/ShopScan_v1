@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen } from "lucide-react";
+import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
@@ -362,9 +362,11 @@ export default function SellPage() {
               {t("common.cancel")}
             </Button>
             <Button
+              variant="success"
               onClick={handleConfirmSale}
               disabled={saleMut.isPending || (isCredit && !customer)}
             >
+              {!saleMut.isPending && <Check className="mr-1.5 h-4 w-4" />}
               {saleMut.isPending
                 ? t("sell.selling")
                 : online

@@ -11,6 +11,7 @@ import { usePermissionGuard } from "@/hooks/use-guards";
 import { useCatalogStore } from "@/stores/catalog-store";
 import { CatalogToolbar } from "@/components/products/catalog-toolbar";
 import { ProductCard } from "@/components/products/product-card";
+import { ProductTable } from "@/components/products/product-table";
 import { ProductForm } from "@/components/products/product-form";
 import { CategoryManager } from "@/components/products/category-manager";
 import { ImportDialog } from "@/components/products/import-dialog";
@@ -26,7 +27,7 @@ import {
 export default function CatalogPage() {
   const { t } = useTranslation();
   const { data: shop } = useShop();
-  const { search, saleType, categoryId, sortBy, sortDir } = useCatalogStore();
+  const { search, saleType, categoryId, sortBy, sortDir, viewMode } = useCatalogStore();
   const { data: products, isLoading } = useProducts({
     search,
     saleType,
@@ -83,13 +84,21 @@ export default function CatalogPage() {
       <CatalogToolbar />
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-[3/4] w-full rounded-xl" />
-          ))}
-        </div>
+        viewMode === "grid" ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-[3/4] w-full rounded-xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-[72px] w-full rounded-xl" />
+            ))}
+          </div>
+        )
       ) : !products || products.length === 0 ? (
-        <div className="rounded-xl border border-dashed py-16 text-center">
+        <div className="rounded-2xl border border-dashed py-16 text-center">
           <p className="text-muted-foreground">
             {search ? t("catalog.notFound") : t("catalog.empty")}
           </p>
@@ -100,15 +109,28 @@ export default function CatalogPage() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {products.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
+        <div className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            {t("catalog.count", { count: products.length })}
+          </p>
+          {viewMode === "grid" ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {products.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  onEdit={openEdit}
+                  onArchive={handleArchive}
+                />
+              ))}
+            </div>
+          ) : (
+            <ProductTable
+              products={products}
               onEdit={openEdit}
               onArchive={handleArchive}
             />
-          ))}
+          )}
         </div>
       )}
 

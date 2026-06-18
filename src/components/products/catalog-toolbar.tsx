@@ -47,7 +47,7 @@ export function CatalogToolbar() {
       <div className="flex flex-wrap items-center gap-2">
         {/* Tur filtri */}
         <Select value={saleType} onValueChange={(v) => setSaleType(v as typeof saleType)}>
-          <SelectTrigger className="w-[130px]">
+          <SelectTrigger className="min-w-[118px] flex-1 sm:w-[130px] sm:flex-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -67,7 +67,7 @@ export function CatalogToolbar() {
 
         {/* Kategoriya filtri */}
         <Select value={categoryId} onValueChange={setCategoryId}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="min-w-[136px] flex-1 sm:w-[150px] sm:flex-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -89,7 +89,7 @@ export function CatalogToolbar() {
             setSort(by, dir);
           }}
         >
-          <SelectTrigger className="w-[170px]">
+          <SelectTrigger className="min-w-[148px] flex-1 sm:w-[170px] sm:flex-none">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -101,29 +101,37 @@ export function CatalogToolbar() {
           </SelectContent>
         </Select>
 
-        {/* Ko'rinish rejimi */}
-        <div className="ml-auto flex rounded-md border">
-          <button
-            type="button"
-            onClick={() => setViewMode("grid")}
-            className={cn(
-              "rounded-l-md p-2",
-              viewMode === "grid" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-            )}
-            aria-label={t("catalog.gridView")}
-          >
-            <LayoutGrid className="h-4 w-4" />
-          </button>
+        {/* Ko'rinish rejimi — segmented control */}
+        <div className="ml-auto flex shrink-0 rounded-lg bg-muted p-0.5">
           <button
             type="button"
             onClick={() => setViewMode("list")}
+            aria-pressed={viewMode === "list"}
             className={cn(
-              "rounded-r-md p-2",
-              viewMode === "list" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              "flex h-9 w-10 items-center justify-center rounded-md transition-all",
+              viewMode === "list"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
             )}
             aria-label={t("catalog.listView")}
+            title={t("catalog.listView")}
           >
             <List className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            aria-pressed={viewMode === "grid"}
+            className={cn(
+              "flex h-9 w-10 items-center justify-center rounded-md transition-all",
+              viewMode === "grid"
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+            aria-label={t("catalog.gridView")}
+            title={t("catalog.gridView")}
+          >
+            <LayoutGrid className="h-4 w-4" />
           </button>
         </div>
       </div>
