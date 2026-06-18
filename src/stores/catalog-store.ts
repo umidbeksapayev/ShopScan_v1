@@ -28,7 +28,7 @@ export const useCatalogStore = create<CatalogState>((set) => ({
   categoryId: "all",
   sortBy: "created_at",
   sortDir: "desc",
-  viewMode: "grid",
+  viewMode: "list",
   setSearch: (search) => set({ search }),
   setSaleType: (saleType) => set({ saleType }),
   setCategoryId: (categoryId) => set({ categoryId }),

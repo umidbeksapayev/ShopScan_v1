@@ -21,6 +21,10 @@
     --accent-foreground: 248 57% 50%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
+    --success: 152 56% 40%;           /* emerald — muvaffaqiyat */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;            /* amber — ogohlantirish */
+    --warning-foreground: 30 64% 14%; /* to'q matn (kontrast uchun) */
     --border: 233 24% 92%;
     --input: 233 24% 90%;
     --ring: 248 57% 60%;
@@ -45,6 +49,10 @@
     --accent-foreground: 248 72% 82%;
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
+    --success: 152 50% 46%;           /* dark — yorug'roq emerald */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 55%;            /* dark — yorug'roq amber */
+    --warning-foreground: 30 64% 12%;
     --border: 234 16% 22%;
     --input: 234 16% 24%;
     --ring: 248 72% 68%;

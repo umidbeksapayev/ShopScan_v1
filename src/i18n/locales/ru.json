@@ -129,7 +129,18 @@
     "gridView": "Сетка",
     "listView": "Список",
     "allCategories": "Все категории",
-    "noCategory": "Без категории"
+    "noCategory": "Без категории",
+    "count": "{{count}} товаров",
+    "colImage": "Фото",
+    "colName": "Название",
+    "colPrice": "Цена",
+    "colStock": "Остаток",
+    "colCategory": "Категория",
+    "colStatus": "Статус",
+    "colActions": "Действия",
+    "statusOk": "В наличии",
+    "statusLow": "Заканчивается",
+    "statusOut": "Нет в наличии"
   },
   "product": {
     "name": "Название товара",

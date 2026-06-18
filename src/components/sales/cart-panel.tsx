@@ -69,9 +69,9 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
                     onClick={() => updateQuantity(item.product.id, round3(item.quantity - step))}
                     disabled={atMin}
                     aria-label={t("common.decrease")}
-                    className="flex h-7 w-7 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent disabled:opacity-40"
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent active:scale-95 disabled:opacity-40"
                   >
-                    <Minus className="h-3.5 w-3.5" />
+                    <Minus className="h-4 w-4" />
                   </button>
                   <span className="min-w-[3.5rem] text-center text-sm font-medium tabular-nums">
                     {qtyText}
@@ -80,9 +80,9 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
                     type="button"
                     onClick={() => updateQuantity(item.product.id, round3(item.quantity + step))}
                     aria-label={t("common.increase")}
-                    className="flex h-7 w-7 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
+                    className="flex h-8 w-8 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent active:scale-95"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -91,7 +91,7 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
                 <button
                   type="button"
                   onClick={() => removeItem(item.product.id)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-destructive/70 transition-colors hover:text-destructive"
                   aria-label={t("cart.remove")}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -107,7 +107,8 @@ export function CartPanel({ onCheckout, loading }: CartPanelProps) {
           <span className="text-muted-foreground">{t("cart.total")}:</span>
           <span className="text-xl font-bold">{formatCurrency(totalRevenue())}</span>
         </div>
-        <Button onClick={onCheckout} disabled={loading} className="w-full" size="lg">
+        <Button onClick={onCheckout} disabled={loading} className="w-full" size="xl">
+          <ShoppingCart className="mr-2 h-5 w-5" />
           {loading ? t("sell.selling") : t("cart.checkout")}
         </Button>
       </div>

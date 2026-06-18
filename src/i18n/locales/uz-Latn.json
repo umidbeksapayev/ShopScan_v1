@@ -129,7 +129,18 @@
     "gridView": "Katak ko'rinishi",
     "listView": "Ro'yxat ko'rinishi",
     "allCategories": "Barcha kategoriyalar",
-    "noCategory": "Kategoriyasiz"
+    "noCategory": "Kategoriyasiz",
+    "count": "{{count}} ta mahsulot",
+    "colImage": "Rasm",
+    "colName": "Nomi",
+    "colPrice": "Narx",
+    "colStock": "Qoldiq",
+    "colCategory": "Kategoriya",
+    "colStatus": "Holati",
+    "colActions": "Amallar",
+    "statusOk": "Yetarli",
+    "statusLow": "Kam qoldi",
+    "statusOut": "Tugagan"
   },
   "product": {
     "name": "Mahsulot nomi",
