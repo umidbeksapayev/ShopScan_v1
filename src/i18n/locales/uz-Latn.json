@@ -58,6 +58,7 @@
     "feature5Desc": "Server xarajati yo'q, AI brauzerda ishlaydi. Ro'yxatdan o'tib darhol boshlang.",
     "feature6Title": "Mobil va tungi rejim",
     "feature6Desc": "Telefon, planshet, kompyuter — qulay responsive interfeys, dark mode bilan.",
+    "featuresTitle": "Imkoniyatlar",
     "howTitle": "Qanday ishlaydi?",
     "step1Title": "Ro'yxatdan o'ting",
     "step1Desc": "30 soniyada do'kon hisobi yarating — email va parol.",
@@ -70,6 +71,14 @@
     "trust3": "Internetsiz ham asosiy ishlar",
     "finalTitle": "Bugun do'koningizni raqamlashtiring",
     "finalDesc": "Ro'yxatdan o'tish bepul va bir necha soniya. Kreditka kerak emas.",
+    "stat1Value": "0 so'm",
+    "stat1Label": "Oylik to'lov",
+    "stat2Value": "3 til",
+    "stat2Label": "Interfeys",
+    "stat3Value": "1 soniya",
+    "stat3Label": "Skanerlash",
+    "previewSold": "Sotildi",
+    "previewTotal": "Jami",
     "footer": "© 2026 ShopScan — Aqlli do'kon boshqaruvi"
   },
   "auth": {
