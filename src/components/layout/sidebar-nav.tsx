@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { useMembership } from "@/hooks/use-membership";
+import { useShop } from "@/hooks/use-shop";
 import { cn } from "@/lib/utils";
 import type { PermissionKey } from "@/types/database";
 
@@ -52,6 +54,7 @@ export function SidebarNav() {
   const { t } = useTranslation();
   const { data: profile } = useProfile();
   const { data: membership } = useMembership();
+  const { data: shop } = useShop();
   const [signingOut, setSigningOut] = useState(false);
 
   const can = (item: NavItem) => {
@@ -79,9 +82,15 @@ export function SidebarNav() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
-          <ScanLine className="h-5 w-5" />
-        </div>
+        {shop?.logo_url ? (
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl">
+            <Image src={shop.logo_url} alt="" fill sizes="40px" className="object-cover" />
+          </div>
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
+            <ScanLine className="h-5 w-5" />
+          </div>
+        )}
         <div>
           <h1 className="text-lg font-bold leading-tight text-foreground">ShopScan</h1>
           <p className="text-xs text-muted-foreground">{t("common.tagline")}</p>

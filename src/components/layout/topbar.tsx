@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ScanLine, Settings, LogOut, Store, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -49,9 +50,15 @@ export function Topbar() {
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md sm:px-6">
       {/* Chap: mobil logo / do'kon nomi */}
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop xl:hidden">
-          <ScanLine className="h-5 w-5" />
-        </span>
+        {shop?.logo_url ? (
+          <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl xl:hidden">
+            <Image src={shop.logo_url} alt="" fill sizes="36px" className="object-cover" />
+          </span>
+        ) : (
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop xl:hidden">
+            <ScanLine className="h-5 w-5" />
+          </span>
+        )}
         <div className="hidden items-center gap-2 text-sm text-muted-foreground sm:flex">
           <Store className="h-4 w-4" />
           <span className="font-medium text-foreground">
@@ -70,9 +77,15 @@ export function Topbar() {
               className="flex items-center gap-2 rounded-full p-0.5 pr-2 transition-colors hover:bg-accent"
               aria-label={t("nav.settings")}
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-primary-foreground">
-                {initial}
-              </span>
+              {shop?.logo_url ? (
+                <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full">
+                  <Image src={shop.logo_url} alt="" fill sizes="36px" className="object-cover" />
+                </span>
+              ) : (
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-sm font-semibold text-primary-foreground">
+                  {initial}
+                </span>
+              )}
               <span className="hidden max-w-[120px] truncate text-sm font-medium text-foreground sm:inline">
                 {shop?.name ?? t("auth.shopNamePlaceholder")}
               </span>
