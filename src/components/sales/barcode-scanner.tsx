@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BarcodeDetector as BarcodeDetectorPonyfill } from "barcode-detector/ponyfill";
-import { ScanLine, Zap, ZapOff, ZoomIn } from "lucide-react";
+import { ScanLine, Zap, ZapOff, ZoomIn, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -104,6 +104,9 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
   const [zoomSupported, setZoomSupported] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [focusPoint, setFocusPoint] = useState<{ x: number; y: number } | null>(null);
+  // Apparat BarcodeDetector yo'q (in-app brauzer / iOS) → wasm fallback. Foydalanuvchini
+  // Chrome'ga / PWA o'rnatishga yo'naltirish uchun maslahat ko'rsatamiz.
+  const [nativeSupported, setNativeSupported] = useState(true);
 
   useEffect(() => {
     onDetectedRef.current = onDetected;
@@ -156,6 +159,7 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
         const hasNative =
           typeof (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector ===
           "function";
+        setNativeSupported(hasNative);
         const videoConstraints = {
           facingMode: { ideal: "environment" },
           width: { ideal: hasNative ? 1920 : 1280 },
@@ -189,6 +193,17 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           } catch {
             /* fokus rejimi qo'llab-quvvatlanmasa jim o'tadi */
           }
+          // Ba'zi qurilmalarda birinchi fokus so'rovi kamera tayyor bo'lishidan oldin
+          // ketadi — kamera qizigach uzluksiz fokusni qayta qo'llaymiz (yaqin barcode
+          // aniqroq fokuslanadi). cancelled bo'lsa yoki track to'xtagan bo'lsa — jim.
+          window.setTimeout(() => {
+            if (cancelled) return;
+            track
+              .applyConstraints({
+                advanced: [{ focusMode: "continuous" }],
+              } as unknown as MediaTrackConstraints)
+              .catch(() => {});
+          }, 1200);
         }
         // Zoom — kichik barcode'ni telefonni juda yaqinlashtirmasdan kattalashtirish
         if (caps.zoom && typeof caps.zoom.max === "number" && caps.zoom.max > caps.zoom.min) {
@@ -387,6 +402,14 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
           </div>
         )}
       </div>
+
+      {/* In-app brauzer / iOS — apparat dekoder yo'q: Chrome yoki PWA tavsiyasi */}
+      {!nativeSupported && (
+        <p className="flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          {t("barcode.webviewHint")}
+        </p>
+      )}
 
       {/* Zoom — kichik barcode'ni kattalashtirish (qo'llab-quvvatlansa) */}
       {cameraReady && zoomSupported && (
