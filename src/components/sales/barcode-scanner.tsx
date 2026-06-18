@@ -218,12 +218,32 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
 
         const detector = createDetector();
 
+        // Markaziy sohani kesish uchun offscreen canvas (yashil ramkaga mos).
+        const scanCanvas = document.createElement("canvas");
+        const scanCtx = scanCanvas.getContext("2d");
+
         const scan = async () => {
           if (cancelled) return;
-          if (!busy && !pausedRef.current && video.readyState >= 2) {
+          if (!busy && !pausedRef.current && video.readyState >= 2 && video.videoWidth > 0) {
             busy = true;
             try {
-              const codes = await detector.detect(video);
+              // FAQAT markaziy soha (yashil ramka)ni dekod qilamiz: chetdagi boshqa
+              // barcode'larni tasodifan o'qimaslik (mahsulot "almashishi"ni oldini oladi)
+              // + kichikroq tasvir = ancha tezroq dekod (ayniqsa wasm fallback'da).
+              let source: CanvasImageSource = video;
+              if (scanCtx) {
+                const vw = video.videoWidth;
+                const vh = video.videoHeight;
+                const cw = Math.round(vw * 0.8);
+                const ch = Math.round(vh * 0.42);
+                const cx = Math.round((vw - cw) / 2);
+                const cy = Math.round((vh - ch) / 2);
+                scanCanvas.width = cw;
+                scanCanvas.height = ch;
+                scanCtx.drawImage(video, cx, cy, cw, ch, 0, 0, cw, ch);
+                source = scanCanvas;
+              }
+              const codes = await detector.detect(source);
               const hit = codes && codes.length > 0 ? codes[0] : null;
               if (hit && hit.rawValue) {
                 // Tekshiruv-raqamli formatlar (EAN/UPC/Code128/QR) chala o'qilmaydi →
@@ -367,7 +387,7 @@ export function BarcodeScanner({ onDetected, paused = false }: BarcodeScannerPro
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div
             className={cn(
-              "h-1/3 w-3/4 rounded-lg border-2",
+              "h-2/5 w-4/5 rounded-lg border-2",
               mode === "auto" ? "border-green-400/80" : "border-white/70"
             )}
           />
