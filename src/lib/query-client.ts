@@ -7,7 +7,10 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000, // 1 daqiqa
+        staleTime: 60 * 1000, // 1 daqiqa — bu vaqt ichida keshdan darhol beriladi
+        // Keshni xotirada uzoqroq saqlaymiz: sahifaga qaytib kirilganda
+        // ma'lumot darhol ko'rinadi (fonda yangilanadi) → silliq navigatsiya.
+        gcTime: 30 * 60 * 1000, // 30 daqiqa
         retry: 1,
         refetchOnWindowFocus: false,
       },
