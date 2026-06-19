@@ -18,10 +18,11 @@ export function Logo({ className }: { className?: string }) {
 
   const SCAN = "#2F80ED"; // urg'u (yorqin ko'k)
   const LIGHT = "#7DB4F5"; // och ko'k
+  const HOT = "#DCEBFF"; // skan nurining yorug' markazi
 
   return (
     <svg
-      viewBox="0 0 200 64"
+      viewBox="0 0 186 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
@@ -31,13 +32,13 @@ export function Logo({ className }: { className?: string }) {
       <defs>
         <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor={LIGHT} stopOpacity="0" />
-          <stop offset="0.18" stopColor={LIGHT} />
-          <stop offset="0.5" stopColor={SCAN} />
-          <stop offset="0.82" stopColor={LIGHT} />
+          <stop offset="0.16" stopColor={LIGHT} />
+          <stop offset="0.5" stopColor={HOT} />
+          <stop offset="0.84" stopColor={LIGHT} />
           <stop offset="1" stopColor={LIGHT} stopOpacity="0" />
         </linearGradient>
-        <filter id={glowId} x="-10%" y="-300%" width="120%" height="700%">
-          <feGaussianBlur stdDeviation="2.2" />
+        <filter id={glowId} x="-10%" y="-400%" width="120%" height="900%">
+          <feGaussianBlur stdDeviation="2.8" />
         </filter>
       </defs>
 
@@ -60,15 +61,15 @@ export function Logo({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M70 13 H60 A6 6 0 0 0 54 19 V28" />
-        <path d="M180 13 H190 A6 6 0 0 1 196 19 V28" />
-        <path d="M54 45 V53 A6 6 0 0 0 60 59 H70" />
-        <path d="M196 45 V53 A6 6 0 0 1 190 59 H180" />
+        <path d="M54 12 H46 A6 6 0 0 0 40 18 V27" />
+        <path d="M168 12 H176 A6 6 0 0 1 182 18 V27" />
+        <path d="M40 43 V52 A6 6 0 0 0 46 58 H54" />
+        <path d="M182 43 V52 A6 6 0 0 1 176 58 H168" />
       </g>
 
       {/* scan — yorqin ko'k, ramka markazida */}
       <text
-        x="125"
+        x="111"
         y="48"
         fontSize="44"
         fontWeight="800"
@@ -79,25 +80,25 @@ export function Logo({ className }: { className?: string }) {
         scan
       </text>
 
-      {/* Skan chizig'i — yozuv ustidan o'tadi (yorug' halo + ingichka chiziq) */}
+      {/* Skan nuri — "scan" o'rtasidan o'tadi (yorug' halo + yorqin chiziq) */}
       <line
-        x1="58"
-        y1="36"
-        x2="192"
-        y2="36"
+        x1="42"
+        y1="37"
+        x2="180"
+        y2="37"
         stroke={`url(#${gradId})`}
-        strokeWidth="6"
+        strokeWidth="13"
         strokeLinecap="round"
-        opacity="0.45"
+        opacity="0.7"
         filter={`url(#${glowId})`}
       />
       <line
-        x1="58"
-        y1="36"
-        x2="192"
-        y2="36"
+        x1="42"
+        y1="37"
+        x2="180"
+        y2="37"
         stroke={`url(#${gradId})`}
-        strokeWidth="2.5"
+        strokeWidth="4.5"
         strokeLinecap="round"
       />
     </svg>
