@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ScanLine, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { scanFeedback } from "@/lib/scan-feedback";
 
 /**
  * Native-aware barcode skaner.
@@ -35,6 +36,26 @@ function NativeScanButton({ onDetected }: { onDetected: (c: string) => void }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
 
+  // ML Kit barcode modulini OLDINDAN yuklaymiz (mount'da) — birinchi skan ham
+  // 1-bosishda ishlasin (aks holda modul yuklanguncha dastlabki bosishlar bo'sh qaytadi).
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const { BarcodeScanner } = await import("@capacitor-mlkit/barcode-scanning");
+        const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
+        if (!available && active) {
+          await BarcodeScanner.installGoogleBarcodeScannerModule();
+        }
+      } catch {
+        /* iOS yoki qo'llab-quvvatlamasa — jim o'tamiz */
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   async function start() {
     if (busy) return;
     setBusy(true);
@@ -49,19 +70,12 @@ function NativeScanButton({ onDetected }: { onDetected: (c: string) => void }) {
         return;
       }
 
-      // Android: Google ML Kit barcode moduli kerak bo'lsa o'rnatiladi
-      try {
-        const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
-        if (!available) {
-          await BarcodeScanner.installGoogleBarcodeScannerModule();
-        }
-      } catch {
-        /* iOS yoki qo'llab-quvvatlamasa — jim o'tamiz */
-      }
-
       const { barcodes } = await BarcodeScanner.scan();
       const code = barcodes?.[0]?.rawValue;
-      if (code) onDetected(code);
+      if (code) {
+        scanFeedback(); // beep + tebranish (native skaner o'zi ovoz bermaydi)
+        onDetected(code);
+      }
     } catch (err) {
       toast.error(t("barcode.cameraError"), {
         description: err instanceof Error ? err.message : undefined,
