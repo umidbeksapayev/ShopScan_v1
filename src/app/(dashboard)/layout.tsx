@@ -21,15 +21,13 @@ export default function DashboardLayout({
         <OfflineBanner />
         <SyncStatus />
         <Topbar />
-        <div className="mx-auto w-full max-w-6xl flex-1 overflow-y-auto p-4 pb-24 sm:p-6 xl:pb-6">
+        <div className="mx-auto w-full max-w-6xl flex-1 overflow-y-auto p-4 pb-28 sm:p-6 xl:pb-6">
           {children}
         </div>
       </main>
 
-      {/* Mobile bottom nav — < 1280px */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card/95 shadow-[0_-4px_20px_-8px_rgba(17,20,45,0.12)] backdrop-blur-md xl:hidden">
-        <BottomNav />
-      </nav>
+      {/* Mobile bottom nav — < 1280px (suzuvchi pill, o'zi fixed joylashadi) */}
+      <BottomNav />
     </div>
   );
 }

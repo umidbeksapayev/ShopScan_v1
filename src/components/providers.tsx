@@ -8,9 +8,17 @@ import { getQueryClient } from "@/lib/query-client";
 import { createIDBPersister } from "@/lib/query-persister";
 import { I18nProvider } from "@/components/i18n-provider";
 
-// Offline uchun faqat katalog va kategoriya so'rovlari IndexedDB'ga saqlanadi
-// (hisobot/dashboard kabi maxfiy/yirik ma'lumotlar diskda saqlanmaydi).
-const PERSISTED_KEYS = new Set(["products", "categories"]);
+// IndexedDB'ga saqlanadigan so'rovlar:
+//  - products/categories — offline katalog
+//  - profile/memberships — ilova qobig'i (topbar + nav). Sovuq ishga tushishda
+//    shell darhol keshdan chiziladi (tarmoqni kutmaydi → "tez ochildi" hissi).
+// Hisobot/dashboard kabi maxfiy/yirik ma'lumotlar diskda saqlanmaydi.
+const PERSISTED_KEYS = new Set([
+  "products",
+  "categories",
+  "profile",
+  "memberships",
+]);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
