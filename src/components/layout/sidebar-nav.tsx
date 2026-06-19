@@ -14,13 +14,13 @@ import {
   Settings,
   ShieldCheck,
   LogOut,
-  ScanLine,
   Users,
   PackagePlus,
   Truck,
   UserCog,
   type LucideIcon,
 } from "lucide-react";
+import { Logo } from "@/components/brand/logo";
 import { createClient } from "@/lib/supabase/client";
 import { useProfile } from "@/hooks/use-profile";
 import { useMembership } from "@/hooks/use-membership";
@@ -82,18 +82,14 @@ export function SidebarNav() {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-6">
-        {shop?.logo_url ? (
+        {shop?.logo_url && (
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl">
             <Image src={shop.logo_url} alt="" fill sizes="40px" className="object-cover" />
           </div>
-        ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
-            <ScanLine className="h-5 w-5" />
-          </div>
         )}
         <div>
-          <h1 className="text-lg font-bold leading-tight text-foreground">ShopScan</h1>
-          <p className="text-xs text-muted-foreground">{t("common.tagline")}</p>
+          <Logo className="h-7 w-auto text-foreground" />
+          <p className="mt-1 text-xs text-muted-foreground">{t("common.tagline")}</p>
         </div>
       </div>
 

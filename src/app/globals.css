@@ -4,21 +4,21 @@
 
 @layer base {
   :root {
-    /* peterdraw "Jobie" dizayn tizimi — binafsha (violet) primary */
+    /* uscan dizayn tizimi — to'q ko'k (navy) primary + yorqin ko'k urg'u */
     --background: 228 27% 97%;        /* #F5F6FA sovuq och fon */
     --foreground: 234 45% 12%;        /* #11142D navy matn */
     --card: 0 0% 100%;
     --card-foreground: 234 45% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 234 45% 12%;
-    --primary: 248 57% 60%;           /* #6C5DD3 violet */
+    --primary: 211 76% 25%;           /* #0F3D6E to'q ko'k (asosiy) */
     --primary-foreground: 0 0% 100%;
     --secondary: 240 24% 96%;
     --secondary-foreground: 234 30% 25%;
     --muted: 240 24% 96%;
     --muted-foreground: 235 9% 54%;   /* #808191 muted */
-    --accent: 248 60% 96%;            /* och violet hover toni */
-    --accent-foreground: 248 57% 50%;
+    --accent: 213 90% 96%;            /* och ko'k hover toni */
+    --accent-foreground: 214 84% 45%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 56% 40%;           /* emerald — muvaffaqiyat */
@@ -27,26 +27,26 @@
     --warning-foreground: 30 64% 14%; /* to'q matn (kontrast uchun) */
     --border: 233 24% 92%;
     --input: 233 24% 90%;
-    --ring: 248 57% 60%;
+    --ring: 214 84% 56%;              /* #2F80ED yorqin ko'k (fokus) */
     --radius: 0.85rem;
   }
 
   .dark {
-    /* Jobie dark — navy fon + yorug'roq violet */
+    /* uscan dark — navy fon + yorug'roq ko'k */
     --background: 234 24% 10%;
     --foreground: 0 0% 98%;
     --card: 234 22% 13%;
     --card-foreground: 0 0% 98%;
     --popover: 234 22% 13%;
     --popover-foreground: 0 0% 98%;
-    --primary: 248 72% 68%;
+    --primary: 214 84% 58%;
     --primary-foreground: 0 0% 100%;
     --secondary: 234 16% 20%;
     --secondary-foreground: 0 0% 98%;
     --muted: 234 16% 20%;
     --muted-foreground: 235 14% 66%;
-    --accent: 248 38% 24%;
-    --accent-foreground: 248 72% 82%;
+    --accent: 214 45% 22%;
+    --accent-foreground: 213 86% 80%;
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
     --success: 152 50% 46%;           /* dark — yorug'roq emerald */
@@ -55,7 +55,7 @@
     --warning-foreground: 30 64% 12%;
     --border: 234 16% 22%;
     --input: 234 16% 24%;
-    --ring: 248 72% 68%;
+    --ring: 214 84% 62%;
   }
 }
 
@@ -98,12 +98,12 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
-  /* Premium brend gradient (jonli binafsha → siyohrang) */
+  /* Premium brend gradient (yorqin ko'k → to'q ko'k) */
   .bg-brand-gradient {
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(266 84% 64%));
+    background-image: linear-gradient(135deg, hsl(214 84% 56%), hsl(211 76% 25%));
   }
   .text-brand-gradient {
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(266 84% 64%));
+    background-image: linear-gradient(135deg, hsl(214 84% 56%), hsl(211 76% 25%));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

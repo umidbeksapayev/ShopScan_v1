@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 /**
- * Capacitor — ShopScan'ni native Android qobig'iga o'rash.
+ * Capacitor — uscan'ni native Android qobig'iga o'rash.
  *
  * Next.js SSR ilova bo'lgani uchun statik export emas, balki PRODUCTION URL
  * native WebView'da yuklanadi (server.url). Shunda ilovaning o'zi o'zgarmaydi
@@ -12,7 +12,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
  */
 const config: CapacitorConfig = {
   appId: "uz.shopscan.app",
-  appName: "ShopScan",
+  appName: "uscan",
   // server.url ishlatilganda bundle shart emas, lekin Capacitor webDir talab qiladi.
   webDir: "public",
   server: {

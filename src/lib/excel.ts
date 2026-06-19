@@ -23,7 +23,7 @@ export async function exportProductsXlsx(
 ): Promise<void> {
   const ExcelJS = await import("exceljs");
   const wb = new ExcelJS.Workbook();
-  wb.creator = "ShopScan";
+  wb.creator = "uscan";
   wb.created = new Date();
 
   const ws = wb.addWorksheet("Mahsulotlar");
@@ -63,11 +63,11 @@ export async function exportProductsXlsx(
   const url = URL.createObjectURL(blob);
   const date = new Date().toISOString().slice(0, 10);
   const safeName =
-    (shopName || "shopscan")
+    (shopName || "uscan")
       .replace(/[\\/:*?"<>|]+/g, "")
       .trim()
       .replace(/\s+/g, "_")
-      .slice(0, 40) || "shopscan";
+      .slice(0, 40) || "uscan";
 
   const a = document.createElement("a");
   a.href = url;
@@ -85,7 +85,7 @@ export async function exportProductsXlsx(
 export async function downloadImportTemplateXlsx(): Promise<void> {
   const ExcelJS = await import("exceljs");
   const wb = new ExcelJS.Workbook();
-  wb.creator = "ShopScan";
+  wb.creator = "uscan";
   wb.created = new Date();
 
   const ws = wb.addWorksheet("Mahsulotlar");
@@ -106,7 +106,7 @@ export async function downloadImportTemplateXlsx(): Promise<void> {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "shopscan_import_namuna.xlsx";
+  a.download = "uscan_import_namuna.xlsx";
   document.body.appendChild(a);
   a.click();
   a.remove();

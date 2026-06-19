@@ -16,6 +16,7 @@ import {
   Package,
   type LucideIcon,
 } from "lucide-react";
+import { Logo } from "@/components/brand/logo";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -106,12 +107,7 @@ export function LandingContent() {
       {/* Navbar */}
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground shadow-pop">
-              <ScanLine className="h-5 w-5" />
-            </span>
-            <span className="text-lg font-bold">ShopScan</span>
-          </div>
+          <Logo className="h-7 w-auto text-foreground" />
           <div className="flex items-center gap-1 sm:gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
@@ -263,12 +259,7 @@ export function LandingContent() {
       {/* Footer */}
       <footer className="mt-auto border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:px-6">
-          <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-gradient text-primary-foreground">
-              <ScanLine className="h-4 w-4" />
-            </span>
-            <span className="font-semibold text-foreground">ShopScan</span>
-          </div>
+          <Logo className="h-6 w-auto text-foreground" />
           <p>{t("landing.footer")}</p>
         </div>
       </footer>

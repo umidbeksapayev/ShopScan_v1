@@ -1,4 +1,4 @@
-# ShopScan — Dizayn Tizimi
+# uscan — Dizayn Tizimi
 
 > Yagona rang palitrasi va komponent qoidalari. Premium, ammo sodda.
 > Manba (source of truth): `src/app/globals.css` (tokenlar) + `tailwind.config.ts` (ulanish).
@@ -10,16 +10,16 @@ Komponentlarda **xom hex YOZILMAYDI** — faqat semantik nom ishlatiladi (`bg-pr
 
 | Token | Vazifa | Light | Dark |
 |-------|--------|-------|------|
-| `primary` | Asosiy brend / asosiy CTA | violet `#6C5DD3` | yorug'roq violet |
-| `secondary` | Ikkilamchi yuza/tugma | och kulrang-violet | to'q navy |
-| `accent` | Hover / faol holat foni | och violet | to'q violet |
+| `primary` | Asosiy brend / asosiy CTA | to'q ko'k `#0F3D6E` | yorug'roq ko'k |
+| `secondary` | Ikkilamchi yuza/tugma | och kulrang | to'q navy |
+| `accent` | Hover / faol holat foni | och ko'k | to'q ko'k |
 | `muted` / `muted-foreground` | Ikkilamchi matn, fon | — | — |
 | `destructive` | Xavfli amal (o'chirish) | qizil | qizil |
 | `success` | Muvaffaqiyat / tasdiq | emerald | yorug'roq emerald |
 | `warning` | Ogohlantirish | amber | yorug'roq amber |
 | `border` / `input` / `ring` | Chegara, input, fokus halqasi | — | — |
 
-**Brend gradient:** `bg-brand-gradient` (violet → siyohrang) — faqat asosiy CTA va logo uchun.
+**Brend gradient:** `bg-brand-gradient` (yorqin ko'k → to'q ko'k) — faqat asosiy CTA va logo uchun.
 
 ## 2. Tugma ierarxiyasi (`<Button variant size>`)
 

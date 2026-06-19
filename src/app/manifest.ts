@@ -4,15 +4,15 @@ import type { MetadataRoute } from "next";
 // bo'ladi (Add to Home Screen) va to'liq ekranda ishlaydi.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "ShopScan — Do'kon boshqaruvi",
-    short_name: "ShopScan",
+    name: "uscan — Do'kon boshqaruvi",
+    short_name: "uscan",
     description: "Kichik do'konlar uchun POS: barcode, sotuv, hisobot",
     start_url: "/dashboard",
     scope: "/",
     display: "standalone",
     orientation: "portrait",
     background_color: "#ffffff",
-    theme_color: "#6C5DD3",
+    theme_color: "#0F3D6E",
     lang: "uz",
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },

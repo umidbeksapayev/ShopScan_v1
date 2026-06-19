@@ -1,17 +1,17 @@
-# ShopScan — Design System (MASTER)
+# uscan — Design System (MASTER)
 
-> Yagona dizayn manbai (Source of Truth). ShopScan 2.0 — F-3 premium dizayn.
+> Yagona dizayn manbai (Source of Truth). uscan 2.0 — F-3 premium dizayn.
 > Stack: Next.js 14 + Tailwind + shadcn/ui. Tokenlar: `src/app/globals.css`, `tailwind.config.ts`.
 
 ## Brend
-"Jobie" uslubidagi **binafsha (violet)** primary, sovuq och fon, navy matn. Toza, zamonaviy, POS uchun.
+**to'q ko'k (blue)** primary + yorqin ko'k urg'u, sovuq och fon, navy matn. Toza, zamonaviy, POS uchun.
 
 ## Ranglar (HSL tokenlar — semantik)
 Komponentlarda HEX emas, **semantik token** ishlating (`bg-primary`, `text-foreground`, `bg-card`, `text-muted-foreground`, `bg-accent`, `border-border`, `bg-destructive`).
 
 | Token | Light | Dark |
 |-------|-------|------|
-| `--primary` | `248 57% 60%` (#6C5DD3) | `248 72% 68%` |
+| `--primary` | `211 76% 25%` (#0F3D6E) | `214 84% 58%` |
 | `--background` | `228 27% 97%` | `234 24% 10%` |
 | `--foreground` | `234 45% 12%` | `0 0% 98%` |
 | `--card` | `0 0% 100%` | `234 22% 13%` |

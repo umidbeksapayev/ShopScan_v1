@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "ShopScan",
+    "appName": "uscan",
     "tagline": "Управление магазином",
     "save": "Сохранить",
     "cancel": "Отмена",
@@ -79,7 +79,7 @@
     "stat3Label": "Сканирование",
     "previewSold": "Продано",
     "previewTotal": "Итого",
-    "footer": "© 2026 ShopScan — Умное управление магазином"
+    "footer": "© 2026 uscan — Умное управление магазином"
   },
   "auth": {
     "loginSubtitle": "Войдите в свой магазин",

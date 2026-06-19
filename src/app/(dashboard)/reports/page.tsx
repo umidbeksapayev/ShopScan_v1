@@ -78,7 +78,7 @@ export default function ReportsPage() {
           label={`${t("reports.revenue")} (${days})`}
           value={formatCurrency(totals.revenue)}
           icon={Wallet}
-          variant="violet"
+          variant="brand"
           loading={trendLoading}
         />
         <StatCard

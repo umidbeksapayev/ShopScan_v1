@@ -1,8 +1,8 @@
-# ShopScan — Claude uchun Loyiha Hujjati
+# uscan — Claude uchun Loyiha Hujjati
 
 ## Loyiha haqida
 
-**ShopScan** — kichik do'kon egalari uchun responsive web POS tizimi.
+**uscan** — kichik do'kon egalari uchun responsive web POS tizimi.
 - Barcode skanerlash + AI vizual qidiruv (CLIP) orqali sotuv
 - DONALI (dona) va VAZN (kg) — ikki sotuv turi tizimi
 - Supabase (Auth + PostgreSQL + Storage) bilan ishlaydi
@@ -115,7 +115,7 @@ npm run dev
 
 > Quyidagi bo'lim `claude-code-agents-orchestra` dan qo'shildi.
 > `tech-lead-orchestrator` murakkab vazifalarda boshqa subagentlarni muvofiqlashtiradi.
-> Bu qoidalar yuqoridagi ShopScan loyiha qoidalarini BEKOR QILMAYDI — ular birga ishlaydi.
+> Bu qoidalar yuqoridagi uscan loyiha qoidalarini BEKOR QILMAYDI — ular birga ishlaydi.
 
 
 **Your role: Triage Officer & Approval Gateway**

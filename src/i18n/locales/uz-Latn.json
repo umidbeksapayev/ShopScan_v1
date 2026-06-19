@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "ShopScan",
+    "appName": "uscan",
     "tagline": "Do'kon boshqaruvi",
     "save": "Saqlash",
     "cancel": "Bekor",
@@ -79,7 +79,7 @@
     "stat3Label": "Skanerlash",
     "previewSold": "Sotildi",
     "previewTotal": "Jami",
-    "footer": "© 2026 ShopScan — Aqlli do'kon boshqaruvi"
+    "footer": "© 2026 uscan — Aqlli do'kon boshqaruvi"
   },
   "auth": {
     "loginSubtitle": "Do'koningizga kiring",

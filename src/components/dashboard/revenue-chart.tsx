@@ -73,8 +73,8 @@ export function RevenueChart({ data }: RevenueChartProps) {
       <AreaChart data={chartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
         <defs>
           <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#6C5DD3" stopOpacity={0.28} />
-            <stop offset="95%" stopColor="#6C5DD3" stopOpacity={0} />
+            <stop offset="5%" stopColor="#2F80ED" stopOpacity={0.28} />
+            <stop offset="95%" stopColor="#2F80ED" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="profitGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
@@ -104,7 +104,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
           type="monotone"
           dataKey="revenue"
           name={t("reports.revenue")}
-          stroke="#6C5DD3"
+          stroke="#2F80ED"
           strokeWidth={2.5}
           fill="url(#revGrad)"
         />

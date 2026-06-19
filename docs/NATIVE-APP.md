@@ -1,7 +1,7 @@
-# ShopScan — Native ilova (Android, Capacitor + ML Kit)
+# uscan — Native ilova (Android, Capacitor + ML Kit)
 
 Web ilova brauzer cheklovlari (zaif kamera fokusi, in-app oynada apparat barcode dvigateli yo'q)
-sababli native skaner tezligiga yeta olmaydi. Bu qo'llanma ShopScan'ni **native Android ilova**
+sababli native skaner tezligiga yeta olmaydi. Bu qo'llanma uscan'ni **native Android ilova**
 qilib o'rashni ko'rsatadi — barcode **Google ML Kit** (apparat camera2 + avtofokus) bilan o'qiladi.
 
 ## Qanday ishlaydi
