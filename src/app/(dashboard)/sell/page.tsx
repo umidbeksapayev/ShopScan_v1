@@ -12,7 +12,7 @@ import { useProcessCartSale } from "@/hooks/use-sale";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { useCartStore } from "@/stores/cart-store";
 import { useOfflineSyncStore } from "@/stores/offline-sync-store";
-import dynamic from "next/dynamic";
+import { ScannerView } from "@/components/sales/scanner-view";
 import { findProductsByBarcode, type CartSaleResult } from "@/lib/sales";
 import { matchBarcode } from "@/lib/offline-lookup";
 import type { ReceiptLineItem } from "@/lib/receipt-print";
@@ -20,17 +20,6 @@ import { useProducts } from "@/hooks/use-products";
 import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 import { LiveProductSearch } from "@/components/sales/live-product-search";
 
-// Og'ir kamera/skaner kodi faqat kerak bo'lganda yuklanadi (BarcodeDetector + wasm)
-const cameraLoading = () => (
-  <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground">
-    Kamera yuklanmoqda...
-  </div>
-);
-
-const BarcodeScanner = dynamic(
-  () => import("@/components/sales/barcode-scanner").then((m) => m.BarcodeScanner),
-  { ssr: false, loading: cameraLoading }
-);
 import { CartPanel } from "@/components/sales/cart-panel";
 import { Receipt } from "@/components/sales/receipt";
 import { Button } from "@/components/ui/button";
@@ -231,7 +220,7 @@ export default function SellPage() {
             </TabsList>
 
             <TabsContent value="barcode">
-              <BarcodeScanner onDetected={handleBarcode} paused={addOpen} />
+              <ScannerView onDetected={handleBarcode} paused={addOpen} />
             </TabsContent>
 
             <TabsContent value="manual">
