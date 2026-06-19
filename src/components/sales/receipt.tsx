@@ -12,6 +12,7 @@ import {
 } from "@/lib/receipt-print";
 import { isWebBluetoothSupported, printViaBluetooth } from "@/lib/printer";
 import { formatCurrency } from "@/lib/utils";
+import { NativePrintButton } from "@/components/sales/native-print-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -39,10 +40,23 @@ export function Receipt({ open, result, items, shopName, onNext, queued }: Recei
   const { t } = useTranslation();
   const [bleSupported, setBleSupported] = useState(false);
   const [blePrinting, setBlePrinting] = useState(false);
+  const [isNative, setIsNative] = useState(false);
 
   // SSR/hidratsiya mosligi uchun qo'llab-quvvatlashni mount'dan keyin aniqlaymiz.
   useEffect(() => {
     setBleSupported(isWebBluetoothSupported());
+  }, []);
+
+  // Native (Capacitor) bo'lsa — native termal printer, aks holda web (HTML/Web BLE).
+  useEffect(() => {
+    (async () => {
+      try {
+        const { Capacitor } = await import("@capacitor/core");
+        setIsNative(Capacitor.isNativePlatform());
+      } catch {
+        /* web */
+      }
+    })();
   }, []);
 
   function buildData(): ReceiptData | null {
@@ -110,34 +124,42 @@ export function Receipt({ open, result, items, shopName, onNext, queued }: Recei
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <Button
-            onClick={handleHtmlPrint}
-            variant="outline"
-            className="w-full"
-            size="lg"
-            disabled={!canPrint}
-          >
-            <Printer className="mr-2 h-5 w-5" /> {t("receipt.print")}
-          </Button>
+          {isNative ? (
+            /* Native: Bluetooth termal printer (Classic SPP) */
+            <NativePrintButton data={buildData()} disabled={!canPrint} />
+          ) : (
+            /* Web: HTML print + (mavjud bo'lsa) Web Bluetooth */
+            <>
+              <Button
+                onClick={handleHtmlPrint}
+                variant="outline"
+                className="w-full"
+                size="lg"
+                disabled={!canPrint}
+              >
+                <Printer className="mr-2 h-5 w-5" /> {t("receipt.print")}
+              </Button>
 
-          {bleSupported && (
-            <Button
-              onClick={handleBluetoothPrint}
-              variant="outline"
-              className="w-full"
-              size="lg"
-              disabled={!canPrint || blePrinting}
-            >
-              {blePrinting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" /> {t("receipt.sending")}
-                </>
-              ) : (
-                <>
-                  <Bluetooth className="mr-2 h-5 w-5" /> {t("receipt.bluetooth")}
-                </>
+              {bleSupported && (
+                <Button
+                  onClick={handleBluetoothPrint}
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                  disabled={!canPrint || blePrinting}
+                >
+                  {blePrinting ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" /> {t("receipt.sending")}
+                    </>
+                  ) : (
+                    <>
+                      <Bluetooth className="mr-2 h-5 w-5" /> {t("receipt.bluetooth")}
+                    </>
+                  )}
+                </Button>
               )}
-            </Button>
+            </>
           )}
 
           <Button onClick={onNext} className="w-full" size="lg">
