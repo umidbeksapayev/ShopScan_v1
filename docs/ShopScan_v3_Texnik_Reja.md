@@ -1,9 +1,9 @@
-# ShopScan 3.0 — Texnik Reja va Sprint Bo'linmasi
+# uscan 3.0 — Texnik Reja va Sprint Bo'linmasi
 
 **Hujjat turi:** PRD + Sprint Plan (v3)
 **Versiya:** 3.0 (tayyorgarlik)
 **Sana:** 2026-06-16
-**Asos:** ShopScan 2.0 — barcha 6 sprint yakunlandi (PR #15–#22, main'da). Bu hujjat v3 ni **yangi chatda** davom ettirish uchun yagona manba.
+**Asos:** uscan 2.0 — barcha 6 sprint yakunlandi (PR #15–#22, main'da). Bu hujjat v3 ni **yangi chatda** davom ettirish uchun yagona manba.
 
 ---
 
@@ -38,7 +38,7 @@
 
 ## 1. v3 Maqsad va doira
 
-**Maqsad:** ShopScan'ni mahalliy (O'zbek) do'kon real ehtiyojlariga yaqinlashtirish (nasiya, qaytarish, kirim, ko'p kassir), monetizatsiya (obuna) qo'shish va sifatni (testlar, lint, offline) mustahkamlash.
+**Maqsad:** uscan'ni mahalliy (O'zbek) do'kon real ehtiyojlariga yaqinlashtirish (nasiya, qaytarish, kirim, ko'p kassir), monetizatsiya (obuna) qo'shish va sifatni (testlar, lint, offline) mustahkamlash.
 
 **Doirada:** F3-1 … F3-10 (quyida) + Sprint 0 sifat poydevori.
 

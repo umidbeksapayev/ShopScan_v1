@@ -6,13 +6,13 @@ interface StatCardProps {
   value: string;
   icon: LucideIcon;
   /** rang varianti — semantik (tushum/foyda/soni/ogohlantirish) */
-  variant?: "violet" | "blue" | "green" | "amber";
+  variant?: "brand" | "blue" | "green" | "amber";
   loading?: boolean;
 }
 
 // Jonli gradient ikona tiles (premium)
 const variants = {
-  violet: "from-violet-500 to-indigo-500",
+  brand: "from-[#2F80ED] to-[#0F3D6E]",
   blue: "from-sky-500 to-blue-500",
   green: "from-emerald-500 to-teal-500",
   amber: "from-amber-500 to-orange-500",
@@ -22,7 +22,7 @@ export function StatCard({
   label,
   value,
   icon: Icon,
-  variant = "violet",
+  variant = "brand",
   loading,
 }: StatCardProps) {
   return (

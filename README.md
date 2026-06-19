@@ -1,4 +1,4 @@
-# ShopScan — Aqlli Do'kon Boshqaruvi
+# uscan — Aqlli Do'kon Boshqaruvi
 
 Kichik do'kon egalari uchun responsive web POS tizimi. Barcode skanerlash, AI vizual
 qidiruv (CLIP) va DONALI/VAZN sotuv turlarini qo'llab-quvvatlaydi.

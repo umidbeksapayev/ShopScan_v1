@@ -6,11 +6,11 @@ import { Providers } from "@/components/providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ShopScan — Aqlli Do'kon Boshqaruvi",
+  title: "uscan — Aqlli Do'kon Boshqaruvi",
   description: "Kichik do'konlar uchun barcode va AI vizual qidiruv tizimi",
-  applicationName: "ShopScan",
+  applicationName: "uscan",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "ShopScan" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "uscan" },
   icons: {
     icon: "/icon.svg",
     apple: "/apple-icon-180.png",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#6C5DD3",
+  themeColor: "#0F3D6E",
   viewportFit: "cover",
 };
 

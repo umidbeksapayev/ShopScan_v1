@@ -9,7 +9,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pub = join(root, "public");
 mkdirSync(pub, { recursive: true });
 
-const BRAND = "#6C5DD3";
+const BRAND = "#0F3D6E";
 const svg = readFileSync(join(root, "src/app/icon.svg"));
 
 // "any" ikonalar — asl SVG (yumaloq burchak)

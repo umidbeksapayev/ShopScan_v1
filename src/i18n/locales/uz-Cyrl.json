@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "ShopScan",
+    "appName": "uscan",
     "tagline": "Дўкон бошқаруви",
     "save": "Сақлаш",
     "cancel": "Бекор",
@@ -79,7 +79,7 @@
     "stat3Label": "Сканерлаш",
     "previewSold": "Сотилди",
     "previewTotal": "Жами",
-    "footer": "© 2026 ShopScan — Ақлли дўкон бошқаруви"
+    "footer": "© 2026 uscan — Ақлли дўкон бошқаруви"
   },
   "auth": {
     "loginSubtitle": "Дўконингизга киринг",

@@ -1,4 +1,4 @@
-# ShopScan — Mahsulot Talablari Hujjati (PRD)
+# uscan — Mahsulot Talablari Hujjati (PRD)
 
 **Aqlli Do'kon Boshqaruv Tizimi**
 
@@ -109,13 +109,13 @@
 
 ### 1.1 Hujjatning maqsadi
 
-Ushbu Mahsulot Talablari Hujjati (PRD) ShopScan mahsulotining MVP (Minimum Viable Product) versiyasi uchun nima qurilishi, kim uchun va qanday muvaffaqiyat o'lchanishini bir manbaga jamlaydi. Hujjat mahsulot, dizayn, muhandislik va sifat nazorati jamoalari uchun yagona haqiqat manbai (single source of truth) bo'lib xizmat qiladi va talablar, ustuvorliklar hamda qabul mezonlari bo'yicha umumiy tushunchani ta'minlaydi.
+Ushbu Mahsulot Talablari Hujjati (PRD) uscan mahsulotining MVP (Minimum Viable Product) versiyasi uchun nima qurilishi, kim uchun va qanday muvaffaqiyat o'lchanishini bir manbaga jamlaydi. Hujjat mahsulot, dizayn, muhandislik va sifat nazorati jamoalari uchun yagona haqiqat manbai (single source of truth) bo'lib xizmat qiladi va talablar, ustuvorliklar hamda qabul mezonlari bo'yicha umumiy tushunchani ta'minlaydi.
 
-Hujjat manba sifatida ShopScan TZ v2.0 texnik topshirig'iga tayanadi va uni sanoat standartlariga mos PRD formatiga keltiradi: aniq maqsadlar, o'lchanadigan metrikalar, identifikatorlangan funksional talablar, qabul mezonlari, xavflar reestri va bosqichli reja.
+Hujjat manba sifatida uscan TZ v2.0 texnik topshirig'iga tayanadi va uni sanoat standartlariga mos PRD formatiga keltiradi: aniq maqsadlar, o'lchanadigan metrikalar, identifikatorlangan funksional talablar, qabul mezonlari, xavflar reestri va bosqichli reja.
 
 ### 1.2 Mahsulot tavsifi
 
-ShopScan — kichik do'kon egalari uchun mo'ljallangan responsive web ilova bo'lib, u uch vazifani bitta oddiy ish oqimida birlashtiradi: (1) mahsulotlarni rasmli katalog orqali boshqarish, (2) kamera yordamida — barcode skanerlash yoki AI vizual qidiruv (CLIP) orqali — tez sotish, va (3) tan narxi va sotish narxiga asoslangan moliyaviy hisobotni avtomatik ko'rsatish.
+uscan — kichik do'kon egalari uchun mo'ljallangan responsive web ilova bo'lib, u uch vazifani bitta oddiy ish oqimida birlashtiradi: (1) mahsulotlarni rasmli katalog orqali boshqarish, (2) kamera yordamida — barcode skanerlash yoki AI vizual qidiruv (CLIP) orqali — tez sotish, va (3) tan narxi va sotish narxiga asoslangan moliyaviy hisobotni avtomatik ko'rsatish.
 
 Mahsulotning markaziy farqlovchi xususiyati — sotuv turi tizimi: har bir mahsulot DONALI (dona) yoki VAZN (kg/gramm) sifatida belgilanadi va butun tizim (miqdor kiritish, inventardan ayirish, narx hisoblash, ogohlantirishlar) shu turga mos ravishda ishlaydi.
 
@@ -330,7 +330,7 @@ Funksional talablar modullarga (epik) guruhlangan va har biri identifikator (FR-
 
 ## 6. Sotuv turi tizimi — chuqur tahlil (DONALI va VAZN)
 
-Bu ShopScan ning markaziy farqlovchi xususiyati. Har bir mahsulot qo'shilganda sotuv turi belgilanadi va butun tizim — miqdor kiritish, narx hisoblash, inventardan ayirish va ogohlantirishlar — shu turga mos ishlaydi. Quyida ikkala tur uchun batafsil mantiq keltirilgan.
+Bu uscan ning markaziy farqlovchi xususiyati. Har bir mahsulot qo'shilganda sotuv turi belgilanadi va butun tizim — miqdor kiritish, narx hisoblash, inventardan ayirish va ogohlantirishlar — shu turga mos ishlaydi. Quyida ikkala tur uchun batafsil mantiq keltirilgan.
 
 ### 6.1 DONALI mahsulot
 
@@ -826,4 +826,4 @@ MVP quyidagi shartlarning barchasi qondirilganda “tayyor” deb hisoblanadi. H
 | LCP                          | Largest Contentful Paint — sahifa yuklanish tezligi metrikasi.     |
 | MoSCoW                       | Ustuvorlik tasnifi: Must / Should / Could / Won't.                 |
 
-*Hujjat oxiri • ShopScan PRD v1.0 • MVP*
+*Hujjat oxiri • uscan PRD v1.0 • MVP*

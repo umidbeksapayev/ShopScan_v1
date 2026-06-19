@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-// ShopScan service worker (Serwist). next.config.mjs orqali build'da public/sw.js ga
+// uscan service worker (Serwist). next.config.mjs orqali build'da public/sw.js ga
 // kompilyatsiya qilinadi. App shell + statik assetlar + rasm keshi; navigatsiya
 // NetworkFirst (oflaynда oxirgi keshdan), hujjat fallback /~offline.
 

@@ -64,7 +64,7 @@ export default function DashboardPage() {
           label={t("dashboard.todayRevenue")}
           value={formatCurrency(stats?.today_revenue ?? 0)}
           icon={Wallet}
-          variant="violet"
+          variant="brand"
           loading={statsLoading}
         />
         <StatCard

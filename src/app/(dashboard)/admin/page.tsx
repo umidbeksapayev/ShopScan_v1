@@ -28,7 +28,7 @@ export default function AdminPage() {
           label={t("admin.users")}
           value={`${overview?.users_count ?? 0}`}
           icon={Users}
-          variant="violet"
+          variant="brand"
           loading={ovLoading}
         />
         <StatCard
