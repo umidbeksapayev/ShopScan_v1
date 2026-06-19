@@ -128,8 +128,10 @@ export function BottomNav() {
             >
               <span
                 className={cn(
-                  "flex h-11 w-11 items-center justify-center rounded-full bg-brand-gradient text-primary-foreground shadow-pop transition-transform duration-300 ease-out",
-                  (moreActive || moreOpen) && "scale-105 ring-2 ring-primary/35 ring-offset-2 ring-offset-card"
+                  "flex h-11 w-11 items-center justify-center rounded-full transition-all duration-300 ease-out",
+                  moreActive || moreOpen
+                    ? "scale-105 bg-brand-gradient text-primary-foreground shadow-pop"
+                    : "bg-muted text-muted-foreground"
                 )}
               >
                 <LayoutGrid className="h-[1.15rem] w-[1.15rem]" strokeWidth={2.2} />
