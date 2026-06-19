@@ -243,6 +243,12 @@
     "sending": "Yuborilmoqda...",
     "bluetooth": "Bluetooth printer",
     "printSent": "Chek printerga yuborildi",
+    "changePrinter": "Boshqa printer",
+    "selectPrinter": "Printerni tanlang",
+    "rescan": "Qayta qidirish",
+    "searching": "Qidirilmoqda...",
+    "noPrinters": "Printer topilmadi. Printer yoqilgan va telefonga ulangan (paired) ekanini tekshiring.",
+    "unknownPrinter": "Noma'lum printer",
     "btError": "Bluetooth print xatosi",
     "next": "Keyingisi",
     "queuedNote": "Bu sotuv internetsiz amalga oshirildi — ulanish tiklangach serverga yuboriladi."
