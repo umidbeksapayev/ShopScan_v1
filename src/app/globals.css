@@ -73,6 +73,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* Native-his (Capacitor WebView): web "izlari"ni yashiramiz */
+    -webkit-tap-highlight-color: transparent; /* bosishdagi ko'k chaqnash yo'q */
+    -webkit-touch-callout: none; /* uzoq bosishda kontekst menyu yo'q */
+    overscroll-behavior: none; /* cho'zilish / pull-to-refresh yo'q */
+    -webkit-user-select: none; /* UI matni tanlanmasin (native his) */
+    user-select: none;
+  }
+  /* Inputlarda matn tanlash/yozish saqlanadi */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: text;
+    user-select: text;
   }
   /* Brend rangli matn tanlash */
   ::selection {
