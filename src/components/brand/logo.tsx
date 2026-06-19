@@ -69,12 +69,12 @@ export function Logo({ className }: { className?: string }) {
       {/* scan — yorqin ko'k, ramka markazida */}
       <text
         x="125"
-        y="45"
-        fontSize="34"
+        y="48"
+        fontSize="44"
         fontWeight="800"
         fill={SCAN}
         textAnchor="middle"
-        style={{ fontFamily: "inherit" }}
+        style={{ fontFamily: "inherit", letterSpacing: "-0.01em" }}
       >
         scan
       </text>
@@ -82,9 +82,9 @@ export function Logo({ className }: { className?: string }) {
       {/* Skan chizig'i — yozuv ustidan o'tadi (yorug' halo + ingichka chiziq) */}
       <line
         x1="58"
-        y1="33"
+        y1="36"
         x2="192"
-        y2="33"
+        y2="36"
         stroke={`url(#${gradId})`}
         strokeWidth="6"
         strokeLinecap="round"
@@ -93,9 +93,9 @@ export function Logo({ className }: { className?: string }) {
       />
       <line
         x1="58"
-        y1="33"
+        y1="36"
         x2="192"
-        y2="33"
+        y2="36"
         stroke={`url(#${gradId})`}
         strokeWidth="2.5"
         strokeLinecap="round"
