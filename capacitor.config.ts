@@ -19,6 +19,19 @@ const config: CapacitorConfig = {
     url: "https://www.uscan.uz",
     cleartext: false,
   },
+  plugins: {
+    // Ochilishda oq miltillashni yo'qotadi: web tayyor bo'lguncha brend splash
+    // ko'rinadi (SplashHider komponenti uni yashiradi). launchAutoHide:false —
+    // web yuklanmaguncha splash turadi (sekin tarmoqda ham toza ko'rinish).
+    SplashScreen: {
+      launchAutoHide: false,
+      backgroundColor: "#0F3D6E",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false,
+      splashFullScreen: true,
+      splashImmersive: true,
+    },
+  },
 };
 
 export default config;
