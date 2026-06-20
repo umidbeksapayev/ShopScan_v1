@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { DownloadButton } from "@/components/layout/download-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -69,6 +70,7 @@ export function Topbar() {
 
       {/* O'ng: til + tema + avatar menyu */}
       <div className="flex items-center gap-1">
+        <DownloadButton />
         <LanguageSwitcher />
         <ThemeToggle />
         <DropdownMenu>

@@ -1,4 +1,11 @@
 {
+  "app": {
+    "download": "Скачать Android-приложение",
+    "downloadAndroid": "Скачать для Android",
+    "updateAvailable": "Доступна новая версия приложения",
+    "updateBtn": "Обновить",
+    "dismiss": "Закрыть"
+  },
   "common": {
     "appName": "uscan",
     "tagline": "Управление магазином",

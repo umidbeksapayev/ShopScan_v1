@@ -14,12 +14,14 @@ import {
   Check,
   ShieldCheck,
   Package,
+  Download,
   type LucideIcon,
 } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { useAppVersion } from "@/hooks/use-app-update";
 
 const features: { icon: LucideIcon; titleKey: string; descKey: string; cls: string }[] = [
   { icon: ScanLine, titleKey: "landing.feature1Title", descKey: "landing.feature1Desc", cls: "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300" },
@@ -95,6 +97,7 @@ function AppPreview() {
 
 export function LandingContent() {
   const { t } = useTranslation();
+  const { data: appVersion } = useAppVersion();
 
   const stats = [
     { value: t("landing.stat1Value"), label: t("landing.stat1Label") },
@@ -161,6 +164,16 @@ export function LandingContent() {
               >
                 {t("landing.ctaLogin")}
               </Link>
+              {appVersion?.apkUrl && (
+                <a
+                  href={appVersion.apkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-colors hover:bg-accent active:scale-[0.98] sm:w-auto"
+                >
+                  <Download className="h-4 w-4" /> {t("app.downloadAndroid")}
+                </a>
+              )}
             </div>
             <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground lg:justify-start">
               <ShieldCheck className="h-3.5 w-3.5" /> {t("landing.noCard")}
