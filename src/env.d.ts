@@ -9,5 +9,7 @@ declare namespace NodeJS {
     TELEGRAM_BOT_TOKEN?: string;
     /** Telegram webhook'ni himoyalovchi sirli token (setWebhook'da beriladi). */
     TELEGRAM_WEBHOOK_SECRET?: string;
+    /** Vercel Cron (avtomatik eslatma) so'rovini himoyalovchi sirli token. */
+    CRON_SECRET?: string;
   }
 }
