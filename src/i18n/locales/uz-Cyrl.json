@@ -188,7 +188,12 @@
     "autoWarnHint": "Маҳсулот киритилган миқдорнинг {{pct}}% қолганда автоматик огоҳлантирилади",
     "category": "Категория",
     "noCategory": "Категориясиз",
-    "moreSection": "Қўшимча (расм, категория)"
+    "moreSection": "Қўшимча (расм, категория)",
+    "fiscalSection": "Фискал (чек учун)",
+    "mxik": "МХИК / ИКПУ коди",
+    "mxikPlaceholder": "Масалан: 06309001001000000",
+    "packageCode": "Қадоқ коди",
+    "vatPercent": "ҚҚС (%)"
   },
   "sell": {
     "title": "Сотув",
@@ -424,7 +429,22 @@
     "paymentRecorded": "Тўлов қабул қилинди",
     "paymentsHistory": "Тўловлар тарихи",
     "noPayments": "Ҳали тўлов йўқ",
-    "salesHistory": "Сотувлар тарихи"
+    "salesHistory": "Сотувлар тарихи",
+    "reminderTitle": "Қарз эслатма",
+    "telegramLinked": "Telegram уланган",
+    "telegramNotLinked": "Уланмаган",
+    "telegramHint": "Мижоз uscan ботида телефон рақамини улаши керак — шундан кейин эслатма боради.",
+    "dueDate": "Тўлов муддати",
+    "remindersOn": "Автоматик эслатма",
+    "sendReminder": "Эслатма юбориш",
+    "sending": "Юборилмоқда...",
+    "reminderSent": "Эслатма юборилди",
+    "reminderNotLinked": "Мижоз Telegram'га уланмаган",
+    "reminderNoDebt": "Мижозда қарз йўқ",
+    "reminderFailed": "Эслатма юборилмади",
+    "dueSaved": "Муддат сақланди",
+    "overdue": "муддати ўтган",
+    "dueToday": "бугун"
   },
   "returns": {
     "title": "Сотувни қайтариш",

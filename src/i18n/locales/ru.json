@@ -188,7 +188,12 @@
     "autoWarnHint": "Напомним автоматически, когда останется {{pct}}% от введённого количества",
     "category": "Категория",
     "noCategory": "Без категории",
-    "moreSection": "Дополнительно (фото, категория)"
+    "moreSection": "Дополнительно (фото, категория)",
+    "fiscalSection": "Фискальные (для чека)",
+    "mxik": "Код ИКПУ / MXIK",
+    "mxikPlaceholder": "Например: 06309001001000000",
+    "packageCode": "Код упаковки",
+    "vatPercent": "НДС (%)"
   },
   "sell": {
     "title": "Продажа",
@@ -424,7 +429,22 @@
     "paymentRecorded": "Оплата принята",
     "paymentsHistory": "История оплат",
     "noPayments": "Пока нет оплат",
-    "salesHistory": "История продаж"
+    "salesHistory": "История продаж",
+    "reminderTitle": "Напоминание о долге",
+    "telegramLinked": "Telegram подключён",
+    "telegramNotLinked": "Не подключён",
+    "telegramHint": "Клиент должен поделиться номером телефона в боте uscan — после этого придёт напоминание.",
+    "dueDate": "Срок оплаты",
+    "remindersOn": "Автонапоминание",
+    "sendReminder": "Отправить напоминание",
+    "sending": "Отправка...",
+    "reminderSent": "Напоминание отправлено",
+    "reminderNotLinked": "Клиент не подключён к Telegram",
+    "reminderNoDebt": "У клиента нет долга",
+    "reminderFailed": "Не удалось отправить",
+    "dueSaved": "Срок сохранён",
+    "overdue": "просрочено",
+    "dueToday": "сегодня"
   },
   "returns": {
     "title": "Возврат продажи",

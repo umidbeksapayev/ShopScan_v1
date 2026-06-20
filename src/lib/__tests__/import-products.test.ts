@@ -215,4 +215,24 @@ describe("toImportPayload", () => {
     ]);
     expect(toImportPayload(res.rows)).toHaveLength(1);
   });
+
+  it("fiskal ustunlar (MXIK/QQS) — ixtiyoriy, payload'ga o'tadi", () => {
+    const res = buildPreview([
+      header.concat(["MXIK", "QQS"]),
+      ["Cola", "dona", "7000", "9000", "100", "06309001", "12"],
+    ]);
+    const payload = toImportPayload(res.rows);
+    expect(payload).toHaveLength(1);
+    expect(payload[0]).toMatchObject({
+      name: "Cola",
+      mxik_code: "06309001",
+      vat_percent: 12,
+    });
+  });
+
+  it("fiskal ustunlar yo'q bo'lsa — mxik=null, vat=0 (orqaga mos)", () => {
+    const res = buildPreview([header, ["Non", "dona", "1000", "1500", "10"]]);
+    const payload = toImportPayload(res.rows);
+    expect(payload[0]).toMatchObject({ mxik_code: null, vat_percent: 0 });
+  });
 });

@@ -15,6 +15,7 @@ import {
 } from "@/hooks/use-customers";
 import { SalesHistoryList } from "@/components/dashboard/sales-history-list";
 import { PaymentDialog } from "@/components/customers/payment-dialog";
+import { ReminderCard } from "@/components/customers/reminder-card";
 import { usePermissionGuard } from "@/hooks/use-guards";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -91,6 +92,9 @@ export default function CustomerDetailPage() {
           </div>
         </div>
       ) : null}
+
+      {/* Qarz eslatma (Telegram) */}
+      {customer && <ReminderCard customer={customer} balance={balance} />}
 
       {/* To'lovlar tarixi */}
       <section className="space-y-2">

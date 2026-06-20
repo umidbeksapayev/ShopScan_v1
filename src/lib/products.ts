@@ -25,6 +25,10 @@ export interface CreateProductInput {
   barcode?: string | null;
   image_url: string | null;
   category_id?: string | null;
+  /** Fiskal (ixtiyoriy) — migration 024. */
+  mxik_code?: string | null;
+  package_code?: string | null;
+  vat_percent?: number;
 }
 
 export type UpdateProductInput = Partial<
@@ -81,6 +85,9 @@ export async function createProduct(input: CreateProductInput): Promise<Product>
       barcode: input.barcode ? normalizeBarcode(input.barcode) : null,
       image_url: input.image_url,
       category_id: input.category_id ?? null,
+      mxik_code: input.mxik_code ?? null,
+      package_code: input.package_code ?? null,
+      vat_percent: input.vat_percent ?? 0,
     })
     .select()
     .single();
