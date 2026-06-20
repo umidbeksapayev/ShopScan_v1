@@ -284,7 +284,16 @@
     "out": "Тугади",
     "low": "Кам",
     "remaining": "Қолдиқ",
-    "totalDebt": "Жами қарз"
+    "totalDebt": "Жами қарз",
+    "productStats": "Маҳсулот статистикаси",
+    "topSelling": "Энг кўп сотилган",
+    "slowMoving": "Кам сотиляпти",
+    "today": "Бугун",
+    "week": "Ҳафта",
+    "month": "Ой",
+    "sold": "Сотилди",
+    "notSold": "Сотилмаган",
+    "noProducts": "Маҳсулот йўқ"
   },
   "reports": {
     "title": "Ҳисоботлар",

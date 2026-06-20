@@ -284,7 +284,16 @@
     "out": "Tugadi",
     "low": "Kam",
     "remaining": "Qoldiq",
-    "totalDebt": "Jami qarz"
+    "totalDebt": "Jami qarz",
+    "productStats": "Mahsulot statistikasi",
+    "topSelling": "Eng ko'p sotilgan",
+    "slowMoving": "Kam sotilyapti",
+    "today": "Bugun",
+    "week": "Hafta",
+    "month": "Oy",
+    "sold": "Sotildi",
+    "notSold": "Sotilmagan",
+    "noProducts": "Mahsulot yo'q"
   },
   "reports": {
     "title": "Hisobotlar",

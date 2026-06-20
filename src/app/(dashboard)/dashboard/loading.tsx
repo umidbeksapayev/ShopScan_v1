@@ -26,6 +26,17 @@ export default function DashboardPageLoading() {
           <Skeleton key={i} className="h-14 rounded-xl" />
         ))}
       </div>
+
+      {/* Mahsulot statistikasi (eng ko'p / eng kam sotilgan) */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-6 w-44" />
+        <Skeleton className="h-8 w-28 rounded-full" />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <Skeleton key={i} className="h-56 rounded-2xl" />
+        ))}
+      </div>
     </div>
   );
 }

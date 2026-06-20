@@ -284,7 +284,16 @@
     "out": "Закончился",
     "low": "Мало",
     "remaining": "Остаток",
-    "totalDebt": "Общий долг"
+    "totalDebt": "Общий долг",
+    "productStats": "Статистика товаров",
+    "topSelling": "Самые продаваемые",
+    "slowMoving": "Мало продаются",
+    "today": "Сегодня",
+    "week": "Неделя",
+    "month": "Месяц",
+    "sold": "Продано",
+    "notSold": "Не продавался",
+    "noProducts": "Нет товаров"
   },
   "reports": {
     "title": "Отчёты",
