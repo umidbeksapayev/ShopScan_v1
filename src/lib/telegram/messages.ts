@@ -85,6 +85,36 @@ export function formatChatDebts(debts: ChatDebt[], today: Date = new Date()): st
   return header + lines.join("\n") + footer;
 }
 
+/** Egasining kunlik xulosasi (qarzga yo'naltirilgan). */
+export interface OwnerSummary {
+  shop_name: string;
+  total_debt: number;
+  debtor_count: number;
+  overdue_count: number;
+  reminders_today: number;
+}
+
+export function formatOwnerSummary(s: OwnerSummary): string {
+  return (
+    `📊 ${s.shop_name} — kunlik xulosa\n\n` +
+    `💰 Jami qarz: ${formatCurrency(s.total_debt)}\n` +
+    `👥 Qarzdorlar: ${s.debtor_count} ta\n` +
+    `⏰ Muddati o'tgan: ${s.overdue_count} ta\n` +
+    `🔔 Bugun yuborilgan eslatma: ${s.reminders_today} ta`
+  );
+}
+
+/** Ega deep-link orqali ulanganda tasdiq. */
+export function ownerLinkedText(shopName: string): string {
+  return (
+    `✅ "${shopName}" do'koniga ega sifatida ulandingiz.\n\n` +
+    "Har kuni qarz xulosasi shu yerga keladi. Vaqtni ilova sozlamalaridan o'zgartirishingiz mumkin."
+  );
+}
+
+export const OWNER_LINK_INVALID =
+  "Ulanish havolasi yaroqsiz yoki eskirgan. Ilova sozlamalaridan qaytadan urinib ko'ring.";
+
 /** Eslatma matni (qo'lda yoki avtomatik) — bitta do'kon uchun. */
 export function formatReminder(
   shopName: string,

@@ -5,6 +5,8 @@ import {
   formatChatDebts,
   formatReminder,
   formatLinkedMessage,
+  formatOwnerSummary,
+  ownerLinkedText,
   type ChatDebt,
 } from "@/lib/telegram/messages";
 
@@ -76,6 +78,30 @@ describe("formatReminder", () => {
   it("muddatsiz → muddat satri yo'q", () => {
     const text = formatReminder("Do'kon", 10000, null, TODAY);
     expect(text).not.toContain("Muddat:");
+  });
+});
+
+describe("formatOwnerSummary", () => {
+  it("xulosa raqamlari + do'kon nomi", () => {
+    const text = formatOwnerSummary({
+      shop_name: "Akmal Market",
+      total_debt: 250000,
+      debtor_count: 4,
+      overdue_count: 2,
+      reminders_today: 3,
+    });
+    expect(text).toContain("Akmal Market");
+    expect(text).toContain("so'm");
+    expect(text).toContain("4 ta");
+    expect(text).toContain("2 ta");
+    expect(text).toContain("3 ta");
+  });
+});
+
+describe("ownerLinkedText", () => {
+  it("do'kon nomi bilan tasdiq", () => {
+    expect(ownerLinkedText("Do'kon X")).toContain("Do'kon X");
+    expect(ownerLinkedText("Do'kon X")).toContain("ega");
   });
 });
 
