@@ -74,7 +74,9 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // /api/* — server route'lar o'z auth'ini boshqaradi (Telegram webhook auth'siz
-    //   kelishi shart). PWA fayllari (sw.js, manifest, ikonalar) ham redirect'siz.
-    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    //   kelishi shart). Statik fayllar (sw.js, manifest, app-version.json, ikonalar)
+    //   redirect'siz — landing'dagi yuklab olish tugmasi app-version.json'ni
+    //   login qilmagan holatda o'qiy olishi uchun.
+    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|app-version.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
