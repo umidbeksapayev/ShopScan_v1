@@ -16,7 +16,7 @@ const config: CapacitorConfig = {
   // server.url ishlatilganda bundle shart emas, lekin Capacitor webDir talab qiladi.
   webDir: "public",
   server: {
-    url: "https://shop-scan-v1.vercel.app",
+    url: "https://www.uscan.uz",
     cleartext: false,
   },
 };

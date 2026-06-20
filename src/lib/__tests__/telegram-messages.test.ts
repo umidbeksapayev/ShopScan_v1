@@ -7,6 +7,7 @@ import {
   formatLinkedMessage,
   formatOwnerSummary,
   ownerLinkedText,
+  formatFeedback,
   type ChatDebt,
 } from "@/lib/telegram/messages";
 
@@ -95,6 +96,25 @@ describe("formatOwnerSummary", () => {
     expect(text).toContain("4 ta");
     expect(text).toContain("2 ta");
     expect(text).toContain("3 ta");
+  });
+});
+
+describe("formatFeedback", () => {
+  it("kategoriya + xabar + do'kon/email", () => {
+    const text = formatFeedback("bug", "Skaner ishlamayapti", {
+      shopName: "Akmal Market",
+      email: "a@b.uz",
+    });
+    expect(text).toContain("Xato");
+    expect(text).toContain("Skaner ishlamayapti");
+    expect(text).toContain("Akmal Market");
+    expect(text).toContain("a@b.uz");
+  });
+
+  it("ixtiyoriy maydonlarsiz — faqat kategoriya + xabar", () => {
+    const text = formatFeedback("suggestion", "Yaxshi bo'lardi");
+    expect(text).toContain("Taklif");
+    expect(text).toContain("Yaxshi bo'lardi");
   });
 });
 

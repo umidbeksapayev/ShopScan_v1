@@ -11,5 +11,7 @@ declare namespace NodeJS {
     TELEGRAM_WEBHOOK_SECRET?: string;
     /** Vercel Cron (avtomatik eslatma) so'rovini himoyalovchi sirli token. */
     CRON_SECRET?: string;
+    /** Foydalanuvchi fikri yuboriladigan admin Telegram chat_id (botga /myid). */
+    TELEGRAM_ADMIN_CHAT_ID?: string;
   }
 }
