@@ -85,6 +85,32 @@ export function formatChatDebts(debts: ChatDebt[], today: Date = new Date()): st
   return header + lines.join("\n") + footer;
 }
 
+/** Foydalanuvchi fikri turi. */
+export type FeedbackCategory = "suggestion" | "complaint" | "bug";
+
+/** Admin Telegram'iga yuboriladigan fikr matni. */
+export function formatFeedback(
+  category: FeedbackCategory,
+  message: string,
+  opts: { shopName?: string | null; email?: string | null } = {}
+): string {
+  const labels: Record<FeedbackCategory, string> = {
+    suggestion: "💡 Taklif",
+    complaint: "⚠️ Shikoyat",
+    bug: "🐞 Xato",
+  };
+  return [
+    labels[category],
+    "",
+    message,
+    "",
+    opts.shopName ? `🏪 ${opts.shopName}` : null,
+    opts.email ? `✉️ ${opts.email}` : null,
+  ]
+    .filter((l) => l !== null)
+    .join("\n");
+}
+
 /** Egasining kunlik xulosasi (qarzga yo'naltirilgan). */
 export interface OwnerSummary {
   shop_name: string;

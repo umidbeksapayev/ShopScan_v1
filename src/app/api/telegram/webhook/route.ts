@@ -122,6 +122,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    // Yordamchi: chat_id olish (admin Telegram'ini sozlash uchun)
+    if (text === "/myid" || text === "myid") {
+      await sendTelegramMessage(chatId, `Sizning chat ID: ${chatId}`);
+      return NextResponse.json({ ok: true });
+    }
+
     if (text === "/qarz" || text === "qarz" || text.includes("qarz")) {
       const debts = await fetchChatDebts(admin, chatId);
       await sendTelegramMessage(chatId, formatChatDebts(debts));
