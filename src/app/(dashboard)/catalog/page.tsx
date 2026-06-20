@@ -15,6 +15,7 @@ import { ProductTable } from "@/components/products/product-table";
 import { ProductForm } from "@/components/products/product-form";
 import { CategoryManager } from "@/components/products/category-manager";
 import { ImportDialog } from "@/components/products/import-dialog";
+import { LabelPrintDialog } from "@/components/products/label-print-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -42,6 +43,7 @@ export default function CatalogPage() {
   const [editing, setEditing] = useState<Product | null>(null);
   const [catManagerOpen, setCatManagerOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [labelProduct, setLabelProduct] = useState<Product | null>(null);
 
   function openAdd() {
     setEditing(null);
@@ -121,6 +123,7 @@ export default function CatalogPage() {
                   product={p}
                   onEdit={openEdit}
                   onArchive={handleArchive}
+                  onPrintLabel={setLabelProduct}
                 />
               ))}
             </div>
@@ -129,6 +132,7 @@ export default function CatalogPage() {
               products={products}
               onEdit={openEdit}
               onArchive={handleArchive}
+              onPrintLabel={setLabelProduct}
             />
           )}
         </div>
@@ -153,6 +157,12 @@ export default function CatalogPage() {
 
       <CategoryManager open={catManagerOpen} onOpenChange={setCatManagerOpen} />
       <ImportDialog open={importOpen} onOpenChange={setImportOpen} />
+      <LabelPrintDialog
+        product={labelProduct}
+        shopName={shop?.name ?? ""}
+        open={!!labelProduct}
+        onClose={() => setLabelProduct(null)}
+      />
     </div>
   );
 }

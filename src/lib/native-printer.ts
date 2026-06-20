@@ -1,5 +1,6 @@
 import type { ReceiptData, ReceiptLineItem } from "@/lib/receipt-print";
 import { formatCurrency, formatWeight } from "@/lib/utils";
+import { pickBarcodeFormat, type LabelData } from "@/lib/barcode-format";
 
 /**
  * Native (Capacitor) termal printer — Bluetooth Classic SPP, ESC/POS.
@@ -144,6 +145,55 @@ export async function printReceiptNative(
     .align("center")
     .text("Xaridingiz uchun rahmat!\n\n\n")
     .cutPaper();
+
+  await p.write();
+}
+
+/**
+ * Narx-yorliqlarini native termal printerga chop etadi (har biri alohida label).
+ * Barcode'ni printer o'zi chizadi (.barcode) — skanerlanadigan.
+ * `labels` allaqachon nusxalar bilan kengaytirilgan ro'yxat.
+ */
+export async function printLabelsNative(
+  labels: LabelData[],
+  address: string
+): Promise<void> {
+  if (labels.length === 0) return;
+  const { CapacitorThermalPrinter } = await import("capacitor-thermal-printer");
+
+  const connected = await CapacitorThermalPrinter.isConnected().catch(() => false);
+  if (!connected) {
+    await CapacitorThermalPrinter.connect({ address });
+  }
+
+  let p = CapacitorThermalPrinter.begin();
+
+  for (const label of labels) {
+    p = p.align("center");
+    if (label.shopName) {
+      p = p.text(label.shopName + "\n");
+    }
+    p = p
+      .bold()
+      .text(label.name + "\n")
+      .clearFormatting()
+      .bold()
+      .doubleHeight()
+      .doubleWidth()
+      .text(formatCurrency(label.price) + "\n")
+      .clearFormatting();
+
+    if (label.barcode) {
+      p = p
+        .align("center")
+        .barcodeTextPlacement("below")
+        .barcodeWidth(3)
+        .barcodeHeight(20)
+        .barcode(pickBarcodeFormat(label.barcode), label.barcode);
+    }
+    // Har label alohida ajralishi uchun oxirida kesamiz
+    p = p.text("\n").cutPaper();
+  }
 
   await p.write();
 }
