@@ -29,6 +29,7 @@ import { LANGUAGES, LANG_STORAGE_KEY } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import { LogoUploader } from "@/components/settings/logo-uploader";
 import { OwnerTelegramCard } from "@/components/settings/owner-telegram-card";
+import { AcquiringCard } from "@/components/settings/acquiring-card";
 import { FeedbackCard } from "@/components/settings/feedback-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -230,6 +231,7 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
+          {shop && <AcquiringCard shop={shop} />}
           {shop && <OwnerTelegramCard shop={shop} />}
         </TabsContent>
 
