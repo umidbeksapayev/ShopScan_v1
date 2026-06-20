@@ -45,8 +45,8 @@ export default function DashboardPage() {
   const { data: stats, isLoading: statsLoading } = useDashboardStats(shop?.id);
   const { data: trend, isLoading: trendLoading } = useSalesTrend(shop?.id, 7);
   const { data: lowStock, isLoading: lowLoading } = useLowStockProducts(shop?.id);
-  // Mahsulot statistikasi davri: 7 (hafta) / 30 (oy)
-  const [statDays, setStatDays] = useState<7 | 30>(30);
+  // Mahsulot statistikasi davri: 1 (bugun) / 7 (hafta) / 30 (oy)
+  const [statDays, setStatDays] = useState<1 | 7 | 30>(30);
   const { data: top, isLoading: topLoading } = useTopProducts(shop?.id, statDays, 5);
   const { data: slow, isLoading: slowLoading } = useSlowProducts(shop?.id, statDays, 5);
   const { checking } = usePermissionGuard("view_reports");
@@ -149,28 +149,34 @@ export default function DashboardPage() {
 
       {/* Mahsulot statistikasi — eng ko'p / eng kam sotilgan (hafta/oy) */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-bold text-foreground">
             {t("dashboard.productStats")}
           </h2>
           <div
             role="group"
-            className="inline-flex shrink-0 items-center rounded-full bg-muted p-0.5 text-sm"
+            className="inline-flex items-center self-start rounded-full bg-muted p-0.5 text-sm sm:self-auto"
           >
-            {([7, 30] as const).map((d) => (
+            {([1, 7, 30] as const).map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setStatDays(d)}
                 aria-pressed={statDays === d}
                 className={cn(
-                  "rounded-full px-3.5 py-1 font-medium transition-colors",
+                  "rounded-full px-4 py-1 font-medium transition-colors",
                   statDays === d
                     ? "bg-card text-foreground shadow-sm"
                     : "text-muted-foreground"
                 )}
               >
-                {t(d === 7 ? "dashboard.week" : "dashboard.month")}
+                {t(
+                  d === 1
+                    ? "dashboard.today"
+                    : d === 7
+                      ? "dashboard.week"
+                      : "dashboard.month"
+                )}
               </button>
             ))}
           </div>
