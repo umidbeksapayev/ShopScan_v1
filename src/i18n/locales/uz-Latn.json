@@ -1,4 +1,11 @@
 {
+  "app": {
+    "download": "Android ilovasini yuklab olish",
+    "downloadAndroid": "Android uchun yuklab olish",
+    "updateAvailable": "Ilovaning yangi versiyasi mavjud",
+    "updateBtn": "Yangilash",
+    "dismiss": "Yopish"
+  },
   "common": {
     "appName": "uscan",
     "tagline": "Do'kon boshqaruvi",

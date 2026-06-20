@@ -1,4 +1,11 @@
 {
+  "app": {
+    "download": "Android иловасини юклаб олиш",
+    "downloadAndroid": "Android учун юклаб олиш",
+    "updateAvailable": "Илованинг янги версияси мавжуд",
+    "updateBtn": "Янгилаш",
+    "dismiss": "Ёпиш"
+  },
   "common": {
     "appName": "uscan",
     "tagline": "Дўкон бошқаруви",
