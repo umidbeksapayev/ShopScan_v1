@@ -25,7 +25,14 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // Routing UX uchun getSession() — getUser()'dan farqli o'laroq, valid token'da
+  // SERVERGA tarmoq so'rovi YUBORMAYDI (cookie'dan o'qiydi; muddati o'tsa
+  // avtomatik yangilaydi). Bu har sahifa o'tishidagi kechikishni yo'qotadi.
+  // XAVFSIZLIK CHEGARASI — RLS: har ma'lumot so'rovi server tomonda token bilan
+  // tekshiriladi; middleware faqat yo'naltirish (soxta cookie sahifaga yetsa ham
+  // RLS ma'lumot bermaydi). Maxfiy sahifalar o'z server-tekshiruviga ega.
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   const path = request.nextUrl.pathname;
   const isAuthPage = path.startsWith("/login") || path.startsWith("/register");
