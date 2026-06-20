@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Printer, FileText, Minus, Plus, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Product } from "@/types/database";
 import { formatCurrency } from "@/lib/utils";
 import { barcodeToDataUrl, printLabelsSheet } from "@/lib/labels";
+import { assignBarcode } from "@/lib/products";
 import type { LabelData } from "@/lib/barcode-format";
 import { useThermalLabelPrint } from "@/hooks/use-thermal-label-print";
 import { ThermalPickerList } from "@/components/products/thermal-picker-list";
@@ -36,8 +39,10 @@ export function LabelPrintDialog({
   onClose,
 }: LabelPrintDialogProps) {
   const { t } = useTranslation();
+  const qc = useQueryClient();
   const [copies, setCopies] = useState(1);
   const [showShop, setShowShop] = useState(true);
+  const [preparing, setPreparing] = useState(false);
   const thermal = useThermalLabelPrint();
 
   useEffect(() => {
@@ -55,14 +60,35 @@ export function LabelPrintDialog({
 
   if (!product) return null;
 
-  function makeLabels(): LabelData[] {
+  /** Barcode'siz mahsulotga avtomatik barcode beradi, keyin yorliqlarni quradi. */
+  async function prepareLabels(): Promise<LabelData[]> {
+    let barcode = product!.barcode;
+    if (!barcode) {
+      barcode = await assignBarcode(product!.id);
+      qc.invalidateQueries({ queryKey: ["products"] });
+    }
     const base: LabelData = {
       name: product!.name,
       price: product!.selling_price,
-      barcode: product!.barcode,
+      barcode,
       shopName: showShop ? shopName : undefined,
     };
     return Array.from({ length: copies }, () => base);
+  }
+
+  async function handlePrint(target: "a4" | "thermal") {
+    setPreparing(true);
+    try {
+      const labels = await prepareLabels();
+      if (target === "a4") printLabelsSheet(labels, { showShopName: showShop });
+      else thermal.startThermal(labels);
+    } catch (err) {
+      toast.error(t("labels.barcodeError"), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setPreparing(false);
+    }
   }
 
   return (
@@ -139,21 +165,27 @@ export function LabelPrintDialog({
         ) : (
           <div className="flex flex-col gap-2">
             <Button
-              onClick={() => printLabelsSheet(makeLabels(), { showShopName: showShop })}
+              onClick={() => handlePrint("a4")}
               variant="outline"
               size="lg"
               className="w-full"
+              disabled={preparing}
             >
-              <FileText className="mr-2 h-5 w-5" /> {t("labels.printA4")}
+              {preparing ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <FileText className="mr-2 h-5 w-5" />
+              )}
+              {t("labels.printA4")}
             </Button>
             {thermal.isNative && (
               <Button
-                onClick={() => thermal.startThermal(makeLabels())}
+                onClick={() => handlePrint("thermal")}
                 size="lg"
                 className="w-full"
-                disabled={thermal.busy}
+                disabled={preparing || thermal.busy}
               >
-                {thermal.busy ? (
+                {preparing || thermal.busy ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
                   <Printer className="mr-2 h-5 w-5" />

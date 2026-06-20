@@ -3,9 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Printer, FileText, Minus, Plus, Loader2, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Product } from "@/types/database";
 import { cn, formatCurrency } from "@/lib/utils";
 import { printLabelsSheet } from "@/lib/labels";
+import { assignBarcode } from "@/lib/products";
 import type { LabelData } from "@/lib/barcode-format";
 import { useThermalLabelPrint } from "@/hooks/use-thermal-label-print";
 import { ThermalPickerList } from "@/components/products/thermal-picker-list";
@@ -39,10 +42,12 @@ export function BulkLabelDialog({
   onClose,
 }: BulkLabelDialogProps) {
   const { t } = useTranslation();
+  const qc = useQueryClient();
   const [mode, setMode] = useState<Mode>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [copies, setCopies] = useState(1);
   const [showShop, setShowShop] = useState(true);
+  const [preparing, setPreparing] = useState(false);
   const thermal = useThermalLabelPrint();
 
   useEffect(() => {
@@ -74,18 +79,43 @@ export function BulkLabelDialog({
     setSelected(allSelected ? new Set() : new Set(products.map((p) => p.id)));
   }
 
-  function makeLabels(): LabelData[] {
+  /** Barcode'siz mahsulotларга avtomatik barcode beradi, keyin yorliqlarni quradi. */
+  async function prepareLabels(): Promise<LabelData[]> {
+    const targets = targetProducts;
+    const missing = targets.filter((p) => !p.barcode);
+    const assigned = new Map<string, string>();
+    if (missing.length > 0) {
+      await Promise.all(
+        missing.map(async (p) => assigned.set(p.id, await assignBarcode(p.id)))
+      );
+      qc.invalidateQueries({ queryKey: ["products"] });
+    }
     const out: LabelData[] = [];
-    for (const p of targetProducts) {
+    for (const p of targets) {
       const base: LabelData = {
         name: p.name,
         price: p.selling_price,
-        barcode: p.barcode,
+        barcode: p.barcode ?? assigned.get(p.id) ?? null,
         shopName: showShop ? shopName : undefined,
       };
       for (let i = 0; i < copies; i++) out.push(base);
     }
     return out;
+  }
+
+  async function handlePrint(target: "a4" | "thermal") {
+    setPreparing(true);
+    try {
+      const labels = await prepareLabels();
+      if (target === "a4") printLabelsSheet(labels, { showShopName: showShop });
+      else thermal.startThermal(labels);
+    } catch (err) {
+      toast.error(t("labels.barcodeError"), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    } finally {
+      setPreparing(false);
+    }
   }
 
   const disabled = labelCount === 0;
@@ -204,22 +234,27 @@ export function BulkLabelDialog({
               {t("labels.totalLabels", { count: labelCount })}
             </p>
             <Button
-              onClick={() => printLabelsSheet(makeLabels(), { showShopName: showShop })}
+              onClick={() => handlePrint("a4")}
               variant="outline"
               size="lg"
               className="w-full"
-              disabled={disabled}
+              disabled={disabled || preparing}
             >
-              <FileText className="mr-2 h-5 w-5" /> {t("labels.printA4")}
+              {preparing ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <FileText className="mr-2 h-5 w-5" />
+              )}
+              {t("labels.printA4")}
             </Button>
             {thermal.isNative && (
               <Button
-                onClick={() => thermal.startThermal(makeLabels())}
+                onClick={() => handlePrint("thermal")}
                 size="lg"
                 className="w-full"
-                disabled={disabled || thermal.busy}
+                disabled={disabled || preparing || thermal.busy}
               >
-                {thermal.busy ? (
+                {preparing || thermal.busy ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
                   <Printer className="mr-2 h-5 w-5" />

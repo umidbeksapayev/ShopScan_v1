@@ -1,7 +1,7 @@
 import JsBarcode from "jsbarcode";
 import { formatCurrency } from "@/lib/utils";
 import {
-  pickBarcodeFormat,
+  LABEL_BARCODE_FORMAT,
   type BarcodeFormat,
   type LabelData,
 } from "@/lib/barcode-format";
@@ -22,23 +22,24 @@ export type { LabelData, BarcodeFormat } from "@/lib/barcode-format";
  */
 export function barcodeToDataUrl(
   value: string,
-  format?: BarcodeFormat
+  format: BarcodeFormat = LABEL_BARCODE_FORMAT
 ): string | null {
   if (typeof document === "undefined") return null;
-  const fmt = format ?? pickBarcodeFormat(value);
   try {
     const canvas = document.createElement("canvas");
     JsBarcode(canvas, value, {
-      format: fmt,
-      width: 2,
-      height: 48,
+      format,
+      // Kengroq modul + yetarli "quiet zone" + balandlik → telefon ishonchli o'qiydi.
+      // Raqamlar zich (CODE128) va chiziqqa yaqin (textMargin past).
+      width: 3,
+      height: 60,
       displayValue: true,
-      fontSize: 14,
-      margin: 4,
+      fontSize: 18,
+      textMargin: 2,
+      margin: 10,
     });
     return canvas.toDataURL("image/png");
   } catch {
-    if (fmt !== "CODE128") return barcodeToDataUrl(value, "CODE128");
     return null;
   }
 }
