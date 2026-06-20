@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen, Check } from "lucide-react";
+import { Search, ScanLine, WifiOff, Banknote, CreditCard, NotebookPen, Check, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product, SearchMethod } from "@/types/database";
@@ -21,6 +21,7 @@ import { AddToCartDialog } from "@/components/sales/add-to-cart-dialog";
 import { LiveProductSearch } from "@/components/sales/live-product-search";
 
 import { CartPanel } from "@/components/sales/cart-panel";
+import { QrPaymentSheet } from "@/components/sales/qr-payment-sheet";
 import { Receipt } from "@/components/sales/receipt";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -56,10 +57,21 @@ export default function SellPage() {
   const [receipt, setReceipt] = useState<CartSaleResult | null>(null);
   const [receiptItems, setReceiptItems] = useState<ReceiptLineItem[]>([]);
   const [receiptQueued, setReceiptQueued] = useState(false);
-  // To'lov turi: naqd / plastik / nasiya (checkout paytida)
-  const [payMethod, setPayMethod] = useState<"cash" | "card" | "credit">("cash");
+  // To'lov turi: naqd / plastik / QR / nasiya (checkout paytida)
+  const [payMethod, setPayMethod] = useState<"cash" | "card" | "qr" | "credit">("cash");
   const [customer, setCustomer] = useState<PickableCustomer | null>(null);
   const [paidInput, setPaidInput] = useState("");
+  // QR to'lov sheet'i (onlayn ekvayring)
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrPayload, setQrPayload] = useState<{
+    saleItems: { product_id: string; quantity: number }[];
+    method: SearchMethod;
+    snapshot: ReceiptLineItem[];
+    total: number;
+    clientId: string;
+  } | null>(null);
+  // QR to'lov yoqilganmi (do'kon sozlamasi + online shart)
+  const qrEnabled = !!shop?.acquiring_enabled && online;
   // Bir xil topilmagan barcode'ni qayta-qayta toast qilmaslik uchun (spam himoyasi)
   const lastNotFoundRef = useRef<{ code: string; at: number } | null>(null);
 
@@ -135,6 +147,14 @@ export default function SellPage() {
     }));
     const clientId = crypto.randomUUID();
 
+    // ===== QR to'lov (faqat online): sotuv QR tasdiqlangach yakunlanadi =====
+    if (payMethod === "qr" && online) {
+      setQrPayload({ saleItems, method, snapshot, total, clientId });
+      setConfirmOpen(false);
+      setQrOpen(true);
+      return;
+    }
+
     // ===== Offline: navbatga qo'yamiz (S6b) =====
     if (!online) {
       const sold = items.map((i) => ({ id: i.product.id, qty: i.quantity }));
@@ -191,6 +211,32 @@ export default function SellPage() {
       resetCheckout();
     } catch (err) {
       setConfirmOpen(false);
+      toast.error(t("sell.saleFailed"), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
+
+  // QR to'lov tasdiqlandi → MAVJUD atomar sotuvni idempotent yakunlaymiz.
+  // (Webhook faqat to'lov holatini belgilaydi; sotuvni kassir klienti yozadi.)
+  async function handleQrPaid() {
+    if (!shop || !qrPayload) return;
+    try {
+      const result = await saleMut.mutateAsync({
+        shopId: shop.id,
+        items: qrPayload.saleItems,
+        method: qrPayload.method,
+        customerId: null,
+        paidAmount: null,
+        clientId: qrPayload.clientId,
+      });
+      setReceiptItems(qrPayload.snapshot);
+      setReceiptQueued(false);
+      setReceipt(result);
+      setQrOpen(false);
+      setQrPayload(null);
+      resetCheckout();
+    } catch (err) {
       toast.error(t("sell.saleFailed"), {
         description: err instanceof Error ? err.message : undefined,
       });
@@ -262,9 +308,9 @@ export default function SellPage() {
               })}
             </p>
 
-            {/* To'lov turi: Naqd / Plastik (katta) + Nasiya (kichik) */}
+            {/* To'lov turi: Naqd / Plastik / QR (katta) + Nasiya (kichik) */}
             <div className="space-y-2">
-              <div className="grid grid-cols-2 gap-2">
+              <div className={cn("grid gap-2", qrEnabled ? "grid-cols-3" : "grid-cols-2")}>
                 <button
                   type="button"
                   onClick={() => setPayMethod("cash")}
@@ -289,6 +335,20 @@ export default function SellPage() {
                 >
                   <CreditCard className="h-6 w-6" /> {t("sell.payCard")}
                 </button>
+                {qrEnabled && (
+                  <button
+                    type="button"
+                    onClick={() => setPayMethod("qr")}
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 rounded-xl border py-4 text-sm font-semibold transition-colors",
+                      payMethod === "qr"
+                        ? "border-primary bg-accent text-primary"
+                        : "border-input bg-background text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <QrCode className="h-6 w-6" /> {t("sell.payQr")}
+                  </button>
+                )}
               </div>
               <button
                 type="button"
@@ -365,6 +425,23 @@ export default function SellPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* QR to'lov sheet'i (onlayn ekvayring) */}
+      {shop && qrPayload && (
+        <QrPaymentSheet
+          open={qrOpen}
+          shopId={shop.id}
+          items={qrPayload.saleItems}
+          amount={qrPayload.total}
+          searchMethod={qrPayload.method}
+          clientId={qrPayload.clientId}
+          onPaid={handleQrPaid}
+          onClose={() => {
+            setQrOpen(false);
+            setQrPayload(null);
+          }}
+        />
+      )}
 
       {/* Chek */}
       <Receipt

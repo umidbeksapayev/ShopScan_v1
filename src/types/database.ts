@@ -4,6 +4,9 @@ export type SearchMethod = "barcode" | "visual" | "manual";
 /** Qo'llab-quvvatlanadigan fiskal (OFD) provayderlar. */
 export type FiscalProviderType = "payme" | "click" | "multikassa";
 
+/** Qo'llab-quvvatlanadigan ekvayring (QR to'lov) provayderlar — migration 029. */
+export type AcquiringProviderType = "payme" | "click" | "uzum";
+
 export interface Product {
   id: string;
   shop_id: string;
@@ -211,6 +214,12 @@ export interface Shop {
   owner_telegram_chat_id?: number | null;
   /** Egaga kunlik xulosa vaqti: 'morning' (07:00) | 'evening' (00:00) | 'off'. */
   summary_time?: "morning" | "evening" | "off";
+  /** QR to'lov (ekvayring) yoqilganmi — migration 029. false → QR usuli ko'rinmaydi. */
+  acquiring_enabled?: boolean;
+  /** Tanlangan ekvayring provayderi (Payme/Click/Uzum). */
+  acquiring_provider?: AcquiringProviderType | null;
+  /** Provayderdagi merchant/kassa identifikatori (maxfiy emas). */
+  acquiring_merchant_id?: string | null;
 }
 
 export type SummaryTime = "morning" | "evening" | "off";
@@ -233,6 +242,32 @@ export interface FiscalReceipt {
   retry_count: number;
   created_at: string;
   sent_at: string | null;
+}
+
+/** QR to'lov urinishi holati — migration 029. */
+export type PaymentIntentStatus =
+  | "pending"
+  | "paid"
+  | "canceled"
+  | "failed"
+  | "expired";
+
+/** Bitta QR to'lov urinishi (ekvayring) — migration 029. */
+export interface PaymentIntent {
+  id: string;
+  shop_id: string;
+  provider: AcquiringProviderType;
+  amount: number;
+  status: PaymentIntentStatus;
+  /** Sotuvni yakunlash uchun savat surati. */
+  cart_snapshot: { product_id: string; quantity: number }[];
+  search_method: SearchMethod;
+  client_id: string;
+  finalized: boolean;
+  finalized_at: string | null;
+  provider_txn_id: string | null;
+  created_at: string;
+  paid_at: string | null;
 }
 
 export type MemberRole = "owner" | "cashier";
