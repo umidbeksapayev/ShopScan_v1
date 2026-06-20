@@ -248,7 +248,15 @@
     "showShop": "С названием магазина",
     "printA4": "Печать A4 / PDF",
     "printThermal": "Термопринтер",
-    "noBarcode": "Нет штрихкода — только название и цена"
+    "noBarcode": "Нет штрихкода — только название и цена",
+    "bulkBtn": "Ценники",
+    "bulkTitle": "Печать ценников",
+    "modeAll": "Все",
+    "modePick": "Выбрать",
+    "allCount": "{{count}} товаров",
+    "selectAll": "Выбрать все",
+    "copiesEach": "Копий (на каждый)",
+    "totalLabels": "Всего: {{count}} ценников"
   },
   "cart": {
     "title": "Корзина",
