@@ -241,6 +241,15 @@
     "createFailed": "QR яратиб бўлмади",
     "notConfigured": "QR тўлов созланмаган (Созламалар)"
   },
+  "labels": {
+    "action": "Нарх ёрлиғи",
+    "title": "Нарх ёрлиғини чоп этиш",
+    "copies": "Нусха сони",
+    "showShop": "Дўкон номи билан",
+    "printA4": "A4 / PDF чоп этиш",
+    "printThermal": "Термал принтер",
+    "noBarcode": "Barcode йўқ — фақат ном ва нарх"
+  },
   "cart": {
     "title": "Сават",
     "empty": "Сават бўш",

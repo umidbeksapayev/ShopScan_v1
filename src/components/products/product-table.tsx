@@ -7,6 +7,7 @@ import {
   ArrowUp,
   ArrowDown,
   ChevronsUpDown,
+  Tag,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
@@ -28,6 +29,7 @@ interface ProductTableProps {
   products: Product[];
   onEdit: (p: Product) => void;
   onArchive: (p: Product) => void;
+  onPrintLabel: (p: Product) => void;
 }
 
 /** Qoldiq holati (cost_price BU YERDA hech qachon ko'rsatilmaydi). */
@@ -87,11 +89,13 @@ function RowMenu({
   product,
   onEdit,
   onArchive,
+  onPrintLabel,
   t,
 }: {
   product: Product;
   onEdit: (p: Product) => void;
   onArchive: (p: Product) => void;
+  onPrintLabel: (p: Product) => void;
   t: TFn;
 }) {
   return (
@@ -109,6 +113,9 @@ function RowMenu({
         <DropdownMenuItem onClick={() => onEdit(product)}>
           <Pencil className="mr-2 h-4 w-4" /> {t("catalog.edit")}
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onPrintLabel(product)}>
+          <Tag className="mr-2 h-4 w-4" /> {t("labels.action")}
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onArchive(product)}
           className="text-destructive focus:text-destructive"
@@ -120,7 +127,12 @@ function RowMenu({
   );
 }
 
-export function ProductTable({ products, onEdit, onArchive }: ProductTableProps) {
+export function ProductTable({
+  products,
+  onEdit,
+  onArchive,
+  onPrintLabel,
+}: ProductTableProps) {
   const { t } = useTranslation();
 
   return (
@@ -157,7 +169,13 @@ export function ProductTable({ products, onEdit, onArchive }: ProductTableProps)
                     / {unitShort(p, t)}
                   </p>
                 </div>
-                <RowMenu product={p} onEdit={onEdit} onArchive={onArchive} t={t} />
+                <RowMenu
+                  product={p}
+                  onEdit={onEdit}
+                  onArchive={onArchive}
+                  onPrintLabel={onPrintLabel}
+                  t={t}
+                />
               </div>
             </li>
           );
@@ -221,6 +239,16 @@ export function ProductTable({ products, onEdit, onArchive }: ProductTableProps)
                         title={t("catalog.edit")}
                       >
                         <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        onClick={() => onPrintLabel(p)}
+                        aria-label={t("labels.action")}
+                        title={t("labels.action")}
+                      >
+                        <Tag className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"

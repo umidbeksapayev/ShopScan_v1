@@ -241,6 +241,15 @@
     "createFailed": "QR yaratib bo'lmadi",
     "notConfigured": "QR to'lov sozlanmagan (Sozlamalar)"
   },
+  "labels": {
+    "action": "Narx yorlig'i",
+    "title": "Narx yorlig'ini chop etish",
+    "copies": "Nusxa soni",
+    "showShop": "Do'kon nomi bilan",
+    "printA4": "A4 / PDF chop etish",
+    "printThermal": "Termal printer",
+    "noBarcode": "Barcode yo'q — faqat nom va narx"
+  },
   "cart": {
     "title": "Savat",
     "empty": "Savat bo'sh",

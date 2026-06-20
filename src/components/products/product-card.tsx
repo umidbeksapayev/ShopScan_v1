@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { MoreVertical, Pencil, Archive, Hash, Scale, Package } from "lucide-react";
+import { MoreVertical, Pencil, Archive, Hash, Scale, Package, Tag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Product } from "@/types/database";
 import { formatCurrency, formatWeight } from "@/lib/utils";
@@ -19,6 +19,7 @@ interface ProductCardProps {
   product: Product;
   onEdit: (p: Product) => void;
   onArchive: (p: Product) => void;
+  onPrintLabel: (p: Product) => void;
 }
 
 /** Qoldiq holatini aniqlaydi (FR-33). cost_price BU YERDA hech qachon ko'rsatilmaydi. */
@@ -36,7 +37,12 @@ function stockState(
   return { label: qtyText, variant: "success" };
 }
 
-export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
+export function ProductCard({
+  product,
+  onEdit,
+  onArchive,
+  onPrintLabel,
+}: ProductCardProps) {
   const { t } = useTranslation();
   const stock = stockState(product, t);
   const isWeight = product.sale_type === "weight";
@@ -77,6 +83,9 @@ export function ProductCard({ product, onEdit, onArchive }: ProductCardProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(product)}>
               <Pencil className="mr-2 h-4 w-4" /> {t("catalog.edit")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onPrintLabel(product)}>
+              <Tag className="mr-2 h-4 w-4" /> {t("labels.action")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onArchive(product)}
