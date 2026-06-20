@@ -66,7 +66,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // PWA fayllari (sw.js, manifest, ikonalar) auth redirect'siz beriladi
-    "/((?!_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    // /api/* — server route'lar o'z auth'ini boshqaradi (Telegram webhook auth'siz
+    //   kelishi shart). PWA fayllari (sw.js, manifest, ikonalar) ham redirect'siz.
+    "/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

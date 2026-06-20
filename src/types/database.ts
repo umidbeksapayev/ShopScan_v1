@@ -1,6 +1,9 @@
 export type SaleType = "unit" | "weight";
 export type SearchMethod = "barcode" | "visual" | "manual";
 
+/** Qo'llab-quvvatlanadigan fiskal (OFD) provayderlar. */
+export type FiscalProviderType = "payme" | "click" | "multikassa";
+
 export interface Product {
   id: string;
   shop_id: string;
@@ -18,6 +21,12 @@ export interface Product {
   created_at: string;
   /** Embed: kategoriya nomi (listProducts select'ida qo'shiladi). */
   category?: { name: string } | null;
+  /** Fiskal: MXIK/IKPU tovar tasnif kodi (migration 024 dan keyin). */
+  mxik_code?: string | null;
+  /** Fiskal: qadoq kodi (MXIK bilan birga). */
+  package_code?: string | null;
+  /** Fiskal: QQS stavkasi (foiz, 0 = QQSsiz). */
+  vat_percent?: number;
 }
 
 /** Kategoriya (mahsulot guruhi). */
@@ -138,6 +147,12 @@ export interface Customer {
   phone: string | null;
   note: string | null;
   created_at: string;
+  /** Qarz to'lash muddati (migration 025) — "YYYY-MM-DD". */
+  due_date?: string | null;
+  /** Bog'langan Telegram chat (migration 025). NULL = bog'lanmagan. */
+  telegram_chat_id?: number | null;
+  /** Avtomatik eslatma yoqilganmi (migration 025). */
+  reminders_enabled?: boolean;
 }
 
 /** Mijoz + joriy qarz balansi (get_customers_with_balance RPC). */
@@ -148,6 +163,22 @@ export interface CustomerWithBalance {
   note: string | null;
   created_at: string;
   balance: number;
+  /** Migration 025 dan keyin keladi. */
+  due_date?: string | null;
+  telegram_linked?: boolean;
+  reminders_enabled?: boolean;
+}
+
+/** Yuborilgan bildirishnoma yozuvi (migration 025). */
+export interface NotificationLog {
+  id: string;
+  shop_id: string;
+  customer_id: string | null;
+  channel: "telegram" | "sms";
+  kind: "reminder" | "manual";
+  status: "sent" | "failed";
+  error: string | null;
+  sent_at: string;
 }
 
 /** Mijozning qarz to'lovi (qaytarib berish). */
@@ -167,6 +198,35 @@ export interface Shop {
   created_at: string;
   /** Do'kon logosi (ixtiyoriy) — migration 020 dan keyin keladi. */
   logo_url?: string | null;
+  /** Fiskal chek yoqilganmi (migration 024). false → fiskal oqim ishlamaydi. */
+  fiscal_enabled?: boolean;
+  /** Tanlangan OFD provayderi. */
+  fiscal_provider?: FiscalProviderType | null;
+  /** Provayderdagi merchant/kassa identifikatori (maxfiy emas). */
+  fiscal_merchant_id?: string | null;
+  fiscal_terminal_id?: string | null;
+  /** Soliq to'lovchi STIR/INN. */
+  tax_inn?: string | null;
+}
+
+export type FiscalStatus = "pending" | "sent" | "failed";
+
+/** Fiskal chek yozuvi (bir sotuv = bir chek) — migration 024. */
+export interface FiscalReceipt {
+  id: string;
+  shop_id: string;
+  sale_id: string;
+  provider: string | null;
+  status: FiscalStatus;
+  fiscal_sign: string | null;
+  receipt_number: string | null;
+  qr_url: string | null;
+  payload: Record<string, unknown> | null;
+  response: Record<string, unknown> | null;
+  error: string | null;
+  retry_count: number;
+  created_at: string;
+  sent_at: string | null;
 }
 
 export type MemberRole = "owner" | "cashier";
@@ -207,4 +267,8 @@ export interface ProductFormData {
   low_stock_alert: number;
   barcode?: string;
   image_file?: File;
+  /** Fiskal (ixtiyoriy) — faqat fiscal_enabled do'konlarda ko'rinadi. */
+  mxik_code?: string | null;
+  package_code?: string | null;
+  vat_percent?: number;
 }

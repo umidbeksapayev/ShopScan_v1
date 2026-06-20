@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCategories, useCreateCategory } from "@/hooks/use-categories";
+import { useShop } from "@/hooks/use-shop";
 
 import { ScannerView } from "@/components/sales/scanner-view";
 
@@ -79,9 +80,19 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
   const [categoryId, setCategoryId] = useState<string>(product?.category_id ?? "none");
   const [newCatMode, setNewCatMode] = useState(false);
   const [newCatName, setNewCatName] = useState("");
-  // "Qo'shimcha" bo'limi (rasm/kategoriya) — tahrirda mavjud qiymat bo'lsa ochiq
+
+  // Fiskal (ixtiyoriy) — faqat fiscal_enabled do'konlarda ko'rinadi (migration 024)
+  const { data: shop } = useShop();
+  const fiscalEnabled = !!shop?.fiscal_enabled;
+  const [mxikCode, setMxikCode] = useState(product?.mxik_code ?? "");
+  const [packageCode, setPackageCode] = useState(product?.package_code ?? "");
+  const [vatPercent, setVatPercent] = useState(
+    product?.vat_percent != null ? String(product.vat_percent) : ""
+  );
+
+  // "Qo'shimcha" bo'limi (rasm/kategoriya/fiskal) — tahrirda mavjud qiymat bo'lsa ochiq
   const [showMore, setShowMore] = useState(
-    Boolean(product?.category_id || product?.image_url)
+    Boolean(product?.category_id || product?.image_url || product?.mxik_code)
   );
 
   const isWeight = saleType === "weight";
@@ -154,6 +165,12 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
         barcode: normalizeBarcode(barcode) || null,
         image_url: imageUrl,
         category_id: categoryId === "none" ? null : categoryId,
+        // Fiskal maydonlar — faqat yoqilgan do'konlarda yuboriladi
+        ...(fiscalEnabled && {
+          mxik_code: mxikCode.trim() || null,
+          package_code: packageCode.trim() || null,
+          vat_percent: parseInt(vatPercent, 10) || 0,
+        }),
       };
 
       if (isEdit && product) {
@@ -460,6 +477,51 @@ export function ProductForm({ shopId, product, onSuccess }: ProductFormProps) {
                 </div>
               )}
             </div>
+
+            {/* Fiskal (MXIK/QQS) — faqat fiscal_enabled do'konlarda */}
+            {fiscalEnabled && (
+              <div className="space-y-3 rounded-xl border border-dashed border-border p-3">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {t("product.fiscalSection")}
+                </p>
+                <div className="space-y-1.5">
+                  <Label htmlFor="mxik">{t("product.mxik")}</Label>
+                  <Input
+                    id="mxik"
+                    inputMode="numeric"
+                    value={mxikCode}
+                    onChange={(e) => setMxikCode(e.target.value)}
+                    placeholder={t("product.mxikPlaceholder")}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="package">{t("product.packageCode")}</Label>
+                    <Input
+                      id="package"
+                      inputMode="numeric"
+                      value={packageCode}
+                      onChange={(e) => setPackageCode(e.target.value)}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="vat">{t("product.vatPercent")}</Label>
+                    <Input
+                      id="vat"
+                      type="number"
+                      inputMode="numeric"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={vatPercent}
+                      onChange={(e) => setVatPercent(e.target.value)}
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -9,8 +9,11 @@ import {
   getCustomerSales,
   getCustomerPayments,
   recordPayment,
+  updateCustomerReminder,
+  sendReminder,
   type CreateCustomerInput,
   type RecordPaymentInput,
+  type UpdateCustomerReminderInput,
 } from "@/lib/customers";
 
 /** Balansli ro'yxat (Mijozlar sahifasi — manage_debt kerak). */
@@ -71,5 +74,20 @@ export function useRecordPayment() {
       qc.invalidateQueries({ queryKey: ["customers"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
+  });
+}
+
+export function useUpdateCustomerReminder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: UpdateCustomerReminderInput) => updateCustomerReminder(input),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["customers"] }),
+  });
+}
+
+/** Qo'lda eslatma yuborish (Telegram). Server natijasini qaytaradi. */
+export function useSendReminder() {
+  return useMutation({
+    mutationFn: (customerId: string) => sendReminder(customerId),
   });
 }

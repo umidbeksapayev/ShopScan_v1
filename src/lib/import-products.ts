@@ -17,7 +17,9 @@ export type ImportField =
   | "selling"
   | "quantity"
   | "barcode"
-  | "category";
+  | "category"
+  | "mxik"
+  | "vat";
 
 const HEADER_ALIASES: Record<ImportField, string[]> = {
   name: ["nomi", "nom", "mahsulot", "tovar", "name", "product", "название", "товар"],
@@ -36,6 +38,9 @@ const HEADER_ALIASES: Record<ImportField, string[]> = {
   ],
   barcode: ["barcode", "barkod", "shtrix", "shtrix kod", "штрих", "штрихкод", "штрих-код"],
   category: ["kategoriya", "guruh", "bo'lim", "bolim", "category", "категория", "группа"],
+  // Fiskal (ixtiyoriy) — MXIK/IKPU tasnif kodi va QQS stavkasi
+  mxik: ["mxik", "ikpu", "mxik kodi", "ikpu kodi", "spic", "мхик", "икпу"],
+  vat: ["qqs", "qqs %", "nds", "vat", "ндс", "ндс %"],
 };
 
 /** Sarlavha katakchasini solishtirish uchun normalizatsiya. */
@@ -184,6 +189,8 @@ export interface ImportPreviewRow {
   quantity: number;
   barcode: string | null;
   category: string | null;
+  mxikCode: string | null;
+  vatPercent: number;
 }
 
 export interface ImportPreviewResult {
@@ -253,6 +260,11 @@ export function buildPreview(
     const barcodeRaw = cell(raw, columns.barcode);
     const barcode = barcodeRaw ? normalizeBarcode(barcodeRaw) || null : null;
     const category = cell(raw, columns.category) || null;
+    // Fiskal (ixtiyoriy) — validatsiyani bloklamaydi
+    const mxikCode = cell(raw, columns.mxik) || null;
+    const vatParsed = parseNumber(cell(raw, columns.vat));
+    const vatPercent =
+      vatParsed === null ? 0 : Math.min(Math.max(Math.round(vatParsed), 0), 100);
 
     let status: ImportRowStatus = errors.length > 0 ? "error" : "valid";
     // Dublikat: barcode DB'da yoki shu faylda oldin uchragan bo'lsa (faqat yaroqsiz bo'lmasa)
@@ -275,6 +287,8 @@ export function buildPreview(
       quantity: qty ?? 0,
       barcode,
       category,
+      mxikCode,
+      vatPercent,
     });
   }
 
@@ -300,6 +314,9 @@ export interface ImportPayloadRow {
   low_stock_alert: number;
   barcode: string | null;
   category: string | null;
+  /** Fiskal (ixtiyoriy) — migration 024 import_products qabul qiladi. */
+  mxik_code: string | null;
+  vat_percent: number;
 }
 
 export function toImportPayload(rows: ImportPreviewRow[]): ImportPayloadRow[] {
@@ -314,5 +331,7 @@ export function toImportPayload(rows: ImportPreviewRow[]): ImportPayloadRow[] {
       low_stock_alert: computeLowStockThreshold(r.quantity, r.saleType),
       barcode: r.barcode,
       category: r.category,
+      mxik_code: r.mxikCode,
+      vat_percent: r.vatPercent,
     }));
 }

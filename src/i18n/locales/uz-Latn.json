@@ -188,7 +188,12 @@
     "autoWarnHint": "Mahsulot kiritilgan miqdorning {{pct}}% qolganda avtomatik ogohlantiriladi",
     "category": "Kategoriya",
     "noCategory": "Kategoriyasiz",
-    "moreSection": "Qo'shimcha (rasm, kategoriya)"
+    "moreSection": "Qo'shimcha (rasm, kategoriya)",
+    "fiscalSection": "Fiskal (chek uchun)",
+    "mxik": "MXIK / IKPU kodi",
+    "mxikPlaceholder": "Masalan: 06309001001000000",
+    "packageCode": "Qadoq kodi",
+    "vatPercent": "QQS (%)"
   },
   "sell": {
     "title": "Sotuv",
@@ -424,7 +429,22 @@
     "paymentRecorded": "To'lov qabul qilindi",
     "paymentsHistory": "To'lovlar tarixi",
     "noPayments": "Hali to'lov yo'q",
-    "salesHistory": "Sotuvlar tarixi"
+    "salesHistory": "Sotuvlar tarixi",
+    "reminderTitle": "Qarz eslatma",
+    "telegramLinked": "Telegram ulangan",
+    "telegramNotLinked": "Ulanmagan",
+    "telegramHint": "Mijoz uscan botida telefon raqamini ulashi kerak — shundan keyin eslatma boradi.",
+    "dueDate": "To'lov muddati",
+    "remindersOn": "Avtomatik eslatma",
+    "sendReminder": "Eslatma yuborish",
+    "sending": "Yuborilmoqda...",
+    "reminderSent": "Eslatma yuborildi",
+    "reminderNotLinked": "Mijoz Telegram'ga ulanmagan",
+    "reminderNoDebt": "Mijozda qarz yo'q",
+    "reminderFailed": "Eslatma yuborilmadi",
+    "dueSaved": "Muddat saqlandi",
+    "overdue": "muddati o'tgan",
+    "dueToday": "bugun"
   },
   "returns": {
     "title": "Sotuvni qaytarish",

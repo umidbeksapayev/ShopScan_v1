@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, Search, Users, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { formatCurrency } from "@/lib/utils";
+import { dueStatus } from "@/lib/telegram/messages";
 import { useShop } from "@/hooks/use-shop";
 import { useCustomers } from "@/hooks/use-customers";
 import { usePermissionGuard } from "@/hooks/use-guards";
@@ -102,15 +103,28 @@ export default function CustomersPage() {
                     <p className="text-xs text-muted-foreground">{c.phone}</p>
                   )}
                 </div>
-                {c.balance > 0 ? (
-                  <span className="text-sm font-semibold tabular-nums text-amber-600 dark:text-amber-400">
-                    {formatCurrency(c.balance)}
-                  </span>
-                ) : (
-                  <span className="text-xs text-emerald-600 dark:text-emerald-400">
-                    {t("customers.noDebt")}
-                  </span>
-                )}
+                <div className="flex shrink-0 flex-col items-end gap-0.5">
+                  {c.balance > 0 ? (
+                    <span className="text-sm font-semibold tabular-nums text-amber-600 dark:text-amber-400">
+                      {formatCurrency(c.balance)}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400">
+                      {t("customers.noDebt")}
+                    </span>
+                  )}
+                  {c.balance > 0 &&
+                    c.due_date &&
+                    (dueStatus(c.due_date) === "overdue" ? (
+                      <span className="text-[10px] font-medium text-red-600 dark:text-red-400">
+                        ⏰ {t("customers.overdue")}
+                      </span>
+                    ) : dueStatus(c.due_date) === "today" ? (
+                      <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                        ⏰ {t("customers.dueToday")}
+                      </span>
+                    ) : null)}
+                </div>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
               </Link>
             </li>

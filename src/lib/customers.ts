@@ -94,6 +94,50 @@ export async function getCustomerPayments(
   return (data ?? []) as CustomerPayment[];
 }
 
+export interface UpdateCustomerReminderInput {
+  id: string;
+  due_date?: string | null;
+  reminders_enabled?: boolean;
+}
+
+/**
+ * Mijozning eslatma sozlamalari (muddat / avtomatik eslatma). customers RLS
+ * a'zo darajasida; UI esa manage_debt bilan himoyalangan (detal sahifa guardi).
+ */
+export async function updateCustomerReminder(
+  input: UpdateCustomerReminderInput
+): Promise<Customer> {
+  const supabase = createClient();
+  const fields: Record<string, unknown> = {};
+  if ("due_date" in input) fields.due_date = input.due_date ?? null;
+  if ("reminders_enabled" in input) fields.reminders_enabled = input.reminders_enabled;
+
+  const { data, error } = await supabase
+    .from("customers")
+    .update(fields)
+    .eq("id", input.id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Customer;
+}
+
+export interface SendReminderResult {
+  ok: boolean;
+  reason?: string;
+  error?: string;
+}
+
+/** Qo'lda Telegram eslatma yuborish (server /api/reminders/send orqali). */
+export async function sendReminder(customerId: string): Promise<SendReminderResult> {
+  const res = await fetch("/api/reminders/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customerId }),
+  });
+  return (await res.json().catch(() => ({ ok: false, reason: "network" }))) as SendReminderResult;
+}
+
 export interface RecordPaymentInput {
   shopId: string;
   customerId: string;
