@@ -28,6 +28,7 @@ import { exportProductsXlsx } from "@/lib/excel";
 import { LANGUAGES, LANG_STORAGE_KEY } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 import { LogoUploader } from "@/components/settings/logo-uploader";
+import { OwnerTelegramCard } from "@/components/settings/owner-telegram-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -227,6 +228,8 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {shop && <OwnerTelegramCard shop={shop} />}
         </TabsContent>
 
         {/* ===== Afzalliklar ===== */}

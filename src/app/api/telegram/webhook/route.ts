@@ -6,6 +6,8 @@ import {
   NOT_FOUND_TEXT,
   formatLinkedMessage,
   formatChatDebts,
+  ownerLinkedText,
+  OWNER_LINK_INVALID,
   type ChatDebt,
 } from "@/lib/telegram/messages";
 
@@ -91,9 +93,29 @@ export async function POST(req: NextRequest) {
     }
 
     // 3) Matnli buyruqlar
-    const text = (msg.text ?? "").trim().toLowerCase();
+    const rawText = (msg.text ?? "").trim();
+    const parts = rawText.split(/\s+/);
+    const cmd = (parts[0] ?? "").toLowerCase();
+    const text = rawText.toLowerCase();
 
-    if (text === "/start" || text === "start") {
+    if (cmd === "/start" || cmd === "start") {
+      const param = parts[1];
+      // Ega deep-link: /start <token> → egani do'konga bog'laymiz
+      if (param) {
+        const { data: ownerLink } = await admin.rpc("link_owner_telegram", {
+          p_token: param,
+          p_chat_id: chatId,
+        });
+        const shopName = (
+          ownerLink?.[0] as { out_shop_name?: string } | undefined
+        )?.out_shop_name;
+        await sendTelegramMessage(
+          chatId,
+          shopName ? ownerLinkedText(shopName) : OWNER_LINK_INVALID
+        );
+        return NextResponse.json({ ok: true });
+      }
+      // Oddiy /start → mijoz oqimi (telefon ulash)
       await sendTelegramMessage(chatId, WELCOME_TEXT, {
         reply_markup: sharePhoneKeyboard,
       });

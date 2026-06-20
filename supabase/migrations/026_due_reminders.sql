@@ -6,7 +6,7 @@
 --   • reminders_enabled = true
 --   • muddati kelgan yoki o'tgan (due_date <= CURRENT_DATE)
 --   • balans > 0
---   • oxirgi p_throttle_days kunda eslatma YUBORILMAGAN (kunlik spam bo'lmasin)
+--   • oxirgi p_throttle_days kunda (default 5) eslatma YUBORILMAGAN (kunlik spam bo'lmasin)
 --
 -- FAQAT service_role chaqiradi (cron route). Anon/auth EMAS.
 --
@@ -14,7 +14,7 @@
 
 BEGIN;
 
-CREATE OR REPLACE FUNCTION get_due_reminders(p_throttle_days INT DEFAULT 3)
+CREATE OR REPLACE FUNCTION get_due_reminders(p_throttle_days INT DEFAULT 5)
 RETURNS TABLE (
   customer_id UUID, shop_id UUID, shop_name TEXT,
   telegram_chat_id BIGINT, balance DECIMAL(12,2), due_date DATE

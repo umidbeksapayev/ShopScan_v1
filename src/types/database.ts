@@ -175,7 +175,7 @@ export interface NotificationLog {
   shop_id: string;
   customer_id: string | null;
   channel: "telegram" | "sms";
-  kind: "reminder" | "manual";
+  kind: "reminder" | "manual" | "summary";
   status: "sent" | "failed";
   error: string | null;
   sent_at: string;
@@ -207,7 +207,13 @@ export interface Shop {
   fiscal_terminal_id?: string | null;
   /** Soliq to'lovchi STIR/INN. */
   tax_inn?: string | null;
+  /** Egasining Telegram chat'i (kunlik xulosa uchun) — migration 027. */
+  owner_telegram_chat_id?: number | null;
+  /** Egaga kunlik xulosa vaqti: 'morning' (07:00) | 'evening' (00:00) | 'off'. */
+  summary_time?: "morning" | "evening" | "off";
 }
+
+export type SummaryTime = "morning" | "evening" | "off";
 
 export type FiscalStatus = "pending" | "sent" | "failed";
 
