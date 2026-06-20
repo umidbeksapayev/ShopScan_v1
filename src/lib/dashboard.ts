@@ -58,6 +58,34 @@ export async function getTopProducts(
   return (data ?? []) as TopProduct[];
 }
 
+/**
+ * Oxirgi N kun eng KAM sotilgan mahsulotlar (sotilmaganlar 0 bilan kiradi).
+ * Migration 023 (`get_slow_products`) talab qiladi — agar hali ishga
+ * tushmagan bo'lsa, "funksiya topilmadi" xatosini JIM o'tkazib bo'sh ro'yxat
+ * qaytaradi (dashboard buzilmasligi uchun). Boshqa xatolar otiladi.
+ */
+export async function getSlowProducts(
+  shopId: string,
+  days = 30,
+  limit = 5
+): Promise<TopProduct[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("get_slow_products", {
+    p_shop_id: shopId,
+    p_days: days,
+    p_limit: limit,
+  });
+  if (error) {
+    // PostgREST: funksiya mavjud emas (023 hali ishga tushmagan) → bo'sh ro'yxat
+    const missing =
+      error.code === "PGRST202" ||
+      /could not find the function|does not exist/i.test(error.message);
+    if (missing) return [];
+    throw new Error(error.message);
+  }
+  return (data ?? []) as TopProduct[];
+}
+
 /** Kam qolgan mahsulotlar (quantity <= low_stock_alert). RLS faqat o'z do'koni. */
 export async function getLowStockProducts(): Promise<Product[]> {
   const supabase = createClient();

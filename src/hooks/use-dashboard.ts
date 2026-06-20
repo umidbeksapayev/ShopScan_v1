@@ -5,6 +5,7 @@ import {
   getDashboardStats,
   getSalesTrend,
   getTopProducts,
+  getSlowProducts,
   getLowStockProducts,
   getSalesHistory,
 } from "@/lib/dashboard";
@@ -31,6 +32,15 @@ export function useTopProducts(shopId: string | undefined, days = 30, limit = 5)
   return useQuery({
     queryKey: ["dashboard", "top", shopId, days, limit],
     queryFn: () => getTopProducts(shopId!, days, limit),
+    enabled: !!shopId,
+    staleTime: 60_000,
+  });
+}
+
+export function useSlowProducts(shopId: string | undefined, days = 30, limit = 5) {
+  return useQuery({
+    queryKey: ["dashboard", "slow", shopId, days, limit],
+    queryFn: () => getSlowProducts(shopId!, days, limit),
     enabled: !!shopId,
     staleTime: 60_000,
   });
