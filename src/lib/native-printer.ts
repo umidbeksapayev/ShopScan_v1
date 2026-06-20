@@ -1,6 +1,6 @@
 import type { ReceiptData, ReceiptLineItem } from "@/lib/receipt-print";
 import { formatCurrency, formatWeight } from "@/lib/utils";
-import { pickBarcodeFormat, type LabelData } from "@/lib/barcode-format";
+import { LABEL_BARCODE_FORMAT, type LabelData } from "@/lib/barcode-format";
 
 /**
  * Native (Capacitor) termal printer — Bluetooth Classic SPP, ESC/POS.
@@ -189,7 +189,7 @@ export async function printLabelsNative(
         .barcodeTextPlacement("below")
         .barcodeWidth(3)
         .barcodeHeight(20)
-        .barcode(pickBarcodeFormat(label.barcode), label.barcode);
+        .barcode(LABEL_BARCODE_FORMAT, label.barcode);
     }
     // Har label alohida ajralishi uchun oxirida kesamiz
     p = p.text("\n").cutPaper();

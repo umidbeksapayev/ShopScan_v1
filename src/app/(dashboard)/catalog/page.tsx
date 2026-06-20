@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Upload, FolderTree } from "lucide-react";
+import { Plus, Upload, FolderTree, Tags } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { Product } from "@/types/database";
@@ -16,6 +16,7 @@ import { ProductForm } from "@/components/products/product-form";
 import { CategoryManager } from "@/components/products/category-manager";
 import { ImportDialog } from "@/components/products/import-dialog";
 import { LabelPrintDialog } from "@/components/products/label-print-dialog";
+import { BulkLabelDialog } from "@/components/products/bulk-label-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -44,6 +45,7 @@ export default function CatalogPage() {
   const [catManagerOpen, setCatManagerOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [labelProduct, setLabelProduct] = useState<Product | null>(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   function openAdd() {
     setEditing(null);
@@ -76,6 +78,13 @@ export default function CatalogPage() {
           </Button>
           <Button variant="outline" onClick={() => setImportOpen(true)} disabled={!shop}>
             <Upload className="mr-1 h-4 w-4" /> {t("import.btn")}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setBulkOpen(true)}
+            disabled={!shop || !products || products.length === 0}
+          >
+            <Tags className="mr-1 h-4 w-4" /> {t("labels.bulkBtn")}
           </Button>
           <Button onClick={openAdd} disabled={!shop}>
             <Plus className="mr-1 h-4 w-4" /> {t("common.add")}
@@ -162,6 +171,12 @@ export default function CatalogPage() {
         shopName={shop?.name ?? ""}
         open={!!labelProduct}
         onClose={() => setLabelProduct(null)}
+      />
+      <BulkLabelDialog
+        products={products ?? []}
+        shopName={shop?.name ?? ""}
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
       />
     </div>
   );

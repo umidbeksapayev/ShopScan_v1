@@ -248,7 +248,16 @@
     "showShop": "Do'kon nomi bilan",
     "printA4": "A4 / PDF chop etish",
     "printThermal": "Termal printer",
-    "noBarcode": "Barcode yo'q — faqat nom va narx"
+    "noBarcode": "Barcode yo'q — chop etishda avtomatik qo'shiladi",
+    "barcodeError": "Barcode yaratib bo'lmadi",
+    "bulkBtn": "Yorliqlar",
+    "bulkTitle": "Yorliqlarni chop etish",
+    "modeAll": "Hammasi",
+    "modePick": "Tanlab",
+    "allCount": "{{count}} mahsulot",
+    "selectAll": "Hammasini tanlash",
+    "copiesEach": "Nusxa (har biriga)",
+    "totalLabels": "Jami: {{count}} yorliq"
   },
   "cart": {
     "title": "Savat",

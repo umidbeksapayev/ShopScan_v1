@@ -248,7 +248,16 @@
     "showShop": "Дўкон номи билан",
     "printA4": "A4 / PDF чоп этиш",
     "printThermal": "Термал принтер",
-    "noBarcode": "Barcode йўқ — фақат ном ва нарх"
+    "noBarcode": "Barcode йўқ — чоп этишда автоматик қўшилади",
+    "barcodeError": "Barcode яратиб бўлмади",
+    "bulkBtn": "Ёрлиқлар",
+    "bulkTitle": "Ёрлиқларни чоп этиш",
+    "modeAll": "Ҳаммаси",
+    "modePick": "Танлаб",
+    "allCount": "{{count}} маҳсулот",
+    "selectAll": "Ҳаммасини танлаш",
+    "copiesEach": "Нусха (ҳар бирига)",
+    "totalLabels": "Жами: {{count}} ёрлиқ"
   },
   "cart": {
     "title": "Сават",
