@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 /**
  * HTML chop etish ko'prigi — bitta yo'l, ikki platforma.
  *
@@ -26,7 +28,13 @@ export async function isNativePlatform(): Promise<boolean> {
 
 /** Native HtmlPrinter plagini orqali tizim print dialogini ochadi. */
 async function printHtmlNative(html: string, name: string): Promise<void> {
-  const { registerPlugin } = await import("@capacitor/core");
+  const { Capacitor, registerPlugin } = await import("@capacitor/core");
+  // Plagin shu APK'da ro'yxatdan o'tganmi? Yo'q bo'lsa (eski APK) — aniq xabar.
+  if (!Capacitor.isPluginAvailable("HtmlPrinter")) {
+    throw new Error(
+      "HtmlPrinter plagini bu ilovada yo'q. Android ilovani (APK) yangilang."
+    );
+  }
   const HtmlPrinter = registerPlugin<HtmlPrinterPlugin>("HtmlPrinter");
   await HtmlPrinter.print({ html, name });
 }
@@ -75,7 +83,13 @@ function printHtmlViaIframe(html: string): void {
  */
 export async function printHtmlAuto(html: string, name = "uscan"): Promise<void> {
   if (await isNativePlatform()) {
-    await printHtmlNative(html, name);
+    try {
+      await printHtmlNative(html, name);
+    } catch (err) {
+      // Native print xatosi JIM qolmasin (avval shunday edi → "tugma ishlamaydi").
+      const msg = err instanceof Error ? err.message : String(err);
+      toast.error("Chop etib bo'lmadi", { description: msg });
+    }
     return;
   }
   printHtmlViaIframe(html);
