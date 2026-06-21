@@ -54,7 +54,11 @@ export const useCartStore = create<CartState>((set, get) => ({
   clear: () => set({ items: [] }),
 
   totalRevenue: () =>
-    get().items.reduce((sum, i) => sum + i.product.selling_price * i.quantity, 0),
+    // VAZN sotuvida narx × kasr miqdor suzuvchi-nuqta drift berishi mumkin
+    // (0.1*0.2=0.30000000000000004) → tiyin aniqligida yaxlitlaymiz.
+    Math.round(
+      get().items.reduce((sum, i) => sum + i.product.selling_price * i.quantity, 0) * 100
+    ) / 100,
 
   itemCount: () => get().items.length,
 }));
