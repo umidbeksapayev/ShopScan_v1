@@ -29,10 +29,14 @@ export async function isNativePlatform(): Promise<boolean> {
 /** Native HtmlPrinter plagini orqali tizim print dialogini ochadi. */
 async function printHtmlNative(html: string, name: string): Promise<void> {
   const { Capacitor, registerPlugin } = await import("@capacitor/core");
-  // Plagin shu APK'da ro'yxatdan o'tganmi? Yo'q bo'lsa (eski APK) — aniq xabar.
+  // Plagin shu APK'da ro'yxatdan o'tganmi? Yo'q bo'lsa (eski/noto'g'ri build) —
+  // DIAGNOSTIKA: APK'da ROSAMAN ro'yxatdan o'tgan plaginlar ro'yxatini ko'rsatamiz.
+  // HtmlPrinter ro'yxatda bo'lmasa → APK build/o'rnatish muammosi (JS emas).
   if (!Capacitor.isPluginAvailable("HtmlPrinter")) {
+    const cap = Capacitor as unknown as { PluginHeaders?: { name: string }[] };
+    const names = (cap.PluginHeaders ?? []).map((p) => p.name).join(", ") || "—";
     throw new Error(
-      "HtmlPrinter plagini bu ilovada yo'q. Android ilovani (APK) yangilang."
+      `HtmlPrinter plagini bu APK'da yo'q. APK'dagi plaginlar: [${names}]`
     );
   }
   const HtmlPrinter = registerPlugin<HtmlPrinterPlugin>("HtmlPrinter");
