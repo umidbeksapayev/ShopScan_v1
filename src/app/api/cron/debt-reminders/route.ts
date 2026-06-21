@@ -11,7 +11,9 @@ export const maxDuration = 60;
 
 function authorized(req: NextRequest): boolean {
   const secret = process.env.CRON_SECRET;
-  if (!secret) return true; // CRON_SECRET yo'q → tekshiruvsiz (lokal/dev)
+  // CRON_SECRET yo'q bo'lsa: production'da YOPIQ (himoyasiz qoldirmaymiz),
+  // lokal/dev'da ochiq (qulaylik). Vercel cron CRON_SECRET'ni avtomatik yuboradi.
+  if (!secret) return process.env.NODE_ENV !== "production";
   return req.headers.get("authorization") === `Bearer ${secret}`;
 }
 

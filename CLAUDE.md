@@ -2,11 +2,12 @@
 
 ## Loyiha haqida
 
-**uscan** — kichik do'kon egalari uchun responsive web POS tizimi.
-- Barcode skanerlash + AI vizual qidiruv (CLIP) orqali sotuv
+**uscan** — kichik do'kon egalari uchun responsive web + native Android POS tizimi.
+- Barcode skanerlash (native ML Kit / BarcodeDetector) orqali tez sotuv
 - DONALI (dona) va VAZN (kg) — ikki sotuv turi tizimi
 - Supabase (Auth + PostgreSQL + Storage) bilan ishlaydi
-- O'zbek tilidagi interfeys
+- Offline-aware (PWA) + native Android APK
+- O'zbek tilidagi interfeys (lotin/kiril + rus)
 
 ## Texnik Stack
 
@@ -14,13 +15,16 @@
 |--------|------------|
 | Framework | Next.js 14 App Router |
 | Styling | Tailwind CSS + shadcn/ui |
-| Camera/Barcode | react-webcam + @zxing/library |
-| Visual AI | Replicate SDK (CLIP ViT-B/32) |
+| Camera/Barcode | getUserMedia + BarcodeDetector (web) · ML Kit (native APK) |
+| Native (Android) | Capacitor 6 — remote `server.url`; ML Kit skaner + HTML/termal print |
+| PWA / Offline | Serwist service worker + IndexedDB (idb-keyval) navbat |
 | Backend | Supabase (Auth + PostgreSQL + Storage) |
-| Vector DB | pgvector + HNSW index |
 | State | Zustand + TanStack Query |
 | Charts | Recharts |
-| Deploy | Vercel |
+| Deploy | Vercel (web) · APK GitHub Releases orqali |
+
+> ⚠️ CLIP vizual qidiruv loyihadan OLIB TASHLANGAN (v2, migration 010). pgvector /
+> Replicate / @zxing / react-webcam ENDI ishlatilmaydi.
 
 ## Papka tuzilmasi
 
@@ -91,17 +95,21 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
-## Sprint holati
+## Loyiha holati
 
-| Sprint | Holat | Tavsif |
-|--------|-------|--------|
-| Sprint 0 | ✅ Poydevor tayyor | Next.js, Supabase schema, layout |
-| Sprint 1 | 🔄 Keyingi | Mahsulot katalogi, auth |
-| Sprint 2 | ⏳ | Barcode + donali sotuv |
-| Sprint 3 | ⏳ | VAZN sotuvi |
-| Sprint 4 | ⏳ | CLIP vizual qidiruv |
-| Sprint 5 | ⏳ | Dashboard + hisobotlar |
-| Sprint 6 | ⏳ | Polish + QA |
+v1 (poydevor) → v5 gacha rivojlandi. Asosiy modullar TAYYOR va ishlab turibdi:
+- ✅ Auth, katalog, DONALI/VAZN sotuv, barcode (native ML Kit / BarcodeDetector)
+- ✅ Dashboard + hisobotlar, sotuv tarixi, qaytarish
+- ✅ Nasiya/qarz daftari, kirim/ta'minotchi, ko'p kassir + rollar/ruxsatlar
+- ✅ Kategoriyalar + Excel/CSV import
+- ✅ PWA + offline katalog/sotuv (Serwist + IndexedDB navbat, reconnect sync)
+- ✅ Native Android APK (Capacitor) — ML Kit skaner + HTML/termal print
+- 🔶 QR/ekvayring to'lov (Payme) — qurilgan, sandbox kutilmoqda
+- 🔶 Telegram nasiya eslatma + egasi xulosasi (cron) — qurilgan
+- ⏳ Keyingi (P2): obuna/billing, hisobot kengaytirish, bildirishnoma
+
+> Migratsiyalar (`supabase/migrations/`) Supabase'da QO'LDA, raqam tartibida ishga
+> tushiriladi. Batafsil sprint tarixi git log + PR'larda.
 
 ## MCP Serverlar
 
