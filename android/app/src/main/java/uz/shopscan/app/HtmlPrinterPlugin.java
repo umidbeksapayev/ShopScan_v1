@@ -1,10 +1,13 @@
 package uz.shopscan.app;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,9 +19,9 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 
 /**
  * HtmlPrinter — HTML'ni Android tizim print dialogi orqali chop etadi
- * (PrintManager + offscreen WebView). Capacitor WebView'da window.print()
- * ishlamaydi; bu plagin chek (receipt-print.ts) va A4 yorliq (labels.ts)
- * uchun haqiqiy print/PDF dialogini ochadi (istalgan printer yoki "PDF saqlash").
+ * (PrintManager + WebView). Capacitor WebView'da window.print() ishlamaydi;
+ * bu plagin chek (receipt-print.ts) va A4 yorliq (labels.ts) uchun haqiqiy
+ * print/PDF dialogini ochadi (istalgan printer yoki "PDF saqlash").
  *
  * JS tomondan: registerPlugin("HtmlPrinter").print({ html, name }).
  */
@@ -41,40 +44,65 @@ public class HtmlPrinterPlugin extends Plugin {
             try {
                 final WebView webView = new WebView(getContext());
 
-                // Ba'zi qurilmalarda (Xiaomi/Huawei/Samsung) hardware accel WebView
-                // createPrintDocumentAdapter'da BO'SH sahifa beradi → software layer.
+                // Ayrim qurilmalarda hardware accel WebView createPrintDocumentAdapter'da
+                // BO'SH sahifa beradi → software layer.
                 webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-                // Statik HTML uchun JS shart emas, lekin ayrim qurilma WebView'larida
-                // standartlar farq qiladi — xavfsiz tomonga o'tib yoqib qo'yamiz.
                 WebSettings settings = webView.getSettings();
                 settings.setJavaScriptEnabled(true);
                 settings.setDomStorageEnabled(true);
                 settings.setLoadWithOverviewMode(true);
                 settings.setUseWideViewPort(true);
 
+                // MUHIM: WebView'ni ko'rinish ierarxiyasiga BIRIKTIRAMIZ. Samsung/Xiaomi
+                // va boshqalarda biriktirilmagan WebView render qilmaydi → print adapteri
+                // 0 sahifa beradi (dialog ochilmaydi) yoki onPageFinished umuman
+                // ishlamaydi (JS promise abadiy osilib qoladi). 1×1 px — ko'rinmaydi.
+                final ViewGroup root = getActivity().findViewById(android.R.id.content);
+                root.addView(webView, new ViewGroup.LayoutParams(1, 1));
+
+                // Bir martagina settle bo'lsin (success-path yoki timeout).
+                final boolean[] done = { false };
+                final Runnable cleanup = () -> {
+                    try {
+                        root.removeView(webView);
+                    } catch (Exception ignored) {
+                    }
+                };
+
                 webView.setWebViewClient(new WebViewClient() {
                     @Override
                     public void onPageFinished(WebView view, String url) {
-                        // Barcode data: rasmlari dekodlanib render tugashi uchun kutamiz
-                        // (250ms ayrim qurilmada yetmaydi → bo'sh PDF). 500ms ishonchli.
+                        // Barcode data: rasmlari render bo'lib ulgurishi uchun kutamiz.
                         view.postDelayed(() -> {
+                            if (done[0]) return;
+                            done[0] = true;
                             try {
                                 createPrintJob(view, name);
                                 call.resolve();
                             } catch (Exception e) {
                                 call.reject(e.getMessage(), e);
+                            } finally {
+                                cleanup.run();
                             }
-                        }, 500);
+                        }, 600);
                     }
                 });
 
-                // null EMAS — haqiqiy base URL data: rasmlarni ayrim WebView
-                // versiyalarida to'g'ri yuklaydi.
+                // null EMAS — haqiqiy base URL data: rasmlarni ayrim WebView'larda o'qiydi.
                 webView.loadDataWithBaseURL(
                     "https://www.uscan.uz/", html, "text/html", "UTF-8", null);
-                // Eng so'nggi WebView'ni ushlab turamiz (print adapter unga tayanadi).
                 printWebView = webView;
+
+                // Xavfsizlik timeout: onPageFinished/render ishlamasa ham promise SETTLE
+                // bo'lsin — aks holda JS abadiy kutib, hech qanday toast chiqmaydi.
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (done[0]) return;
+                    done[0] = true;
+                    call.reject("Print timeout — sahifa render bo'lmadi (onPageFinished)");
+                    cleanup.run();
+                }, 6000);
+
             } catch (Exception e) {
                 call.reject(e.getMessage(), e);
             }
