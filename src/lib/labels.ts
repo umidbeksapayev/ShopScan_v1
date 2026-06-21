@@ -1,5 +1,6 @@
 import JsBarcode from "jsbarcode";
 import { formatCurrency } from "@/lib/utils";
+import { printHtmlAuto } from "@/lib/native-print";
 import {
   LABEL_BARCODE_FORMAT,
   type BarcodeFormat,
@@ -137,9 +138,9 @@ export function buildLabelSheetHtml(
 }
 
 /**
- * Etiketkalarni yashirin iframe orqali chop etadi (popup-blocker'siz).
- * Barcode rasmlari shu yerda (brauzerda) chiziladi va qiymat bo'yicha keshlanadi.
- * Faqat brauzerda ishlaydi (client component'dan chaqiriladi).
+ * Etiketkalarni chop etadi: native (Android) bo'lsa tizim print dialogi
+ * (PrintManager), web'da yashirin iframe + window.print(). Barcode rasmlari shu
+ * yerda (brauzerda) chiziladi va qiymat bo'yicha keshlanadi. Klientdan chaqiriladi.
  */
 export function printLabelsSheet(
   labels: LabelData[],
@@ -161,36 +162,5 @@ export function printLabelsSheet(
   });
 
   const html = buildLabelSheetHtml(rendered, opts);
-
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "0";
-  document.body.appendChild(iframe);
-
-  const doc = iframe.contentWindow?.document;
-  const win = iframe.contentWindow;
-  if (!doc || !win) {
-    iframe.remove();
-    return;
-  }
-
-  win.onafterprint = () => window.setTimeout(() => iframe.remove(), 1000);
-
-  doc.open();
-  doc.write(html);
-  doc.close();
-
-  window.setTimeout(() => {
-    try {
-      win.focus();
-      win.print();
-    } catch {
-      iframe.remove();
-    }
-  }, 300);
+  void printHtmlAuto(html, "Narx yorliqlari");
 }
