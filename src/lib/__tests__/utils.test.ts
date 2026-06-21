@@ -5,6 +5,7 @@ import {
   calculateProfit,
   computeLowStockThreshold,
   normalizeBarcode,
+  barcodeVariants,
 } from "@/lib/utils";
 
 /** Faqat raqamlarni qoldiradi — lokal ajratuvchi (bo'shliq/vergul) ga bog'liq bo'lmaslik uchun. */
@@ -83,5 +84,32 @@ describe("normalizeBarcode", () => {
 
   it("EAN-13 boshlovchi nollarini saqlaydi", () => {
     expect(normalizeBarcode("0012300")).toBe("0012300");
+  });
+});
+
+describe("barcodeVariants", () => {
+  it("UPC-A (12) → EAN-13 yetakchi nol shaklini ham beradi", () => {
+    expect(barcodeVariants("036000291452").sort()).toEqual(
+      ["036000291452", "0036000291452"].sort()
+    );
+  });
+
+  it("yetakchi nolli EAN-13 (13) → UPC-A (12) shaklini ham beradi", () => {
+    expect(barcodeVariants("0036000291452").sort()).toEqual(
+      ["036000291452", "0036000291452"].sort()
+    );
+  });
+
+  it("oddiy EAN-13 (yetakchi nolsiz) o'zgarmaydi", () => {
+    expect(barcodeVariants("5449000000996")).toEqual(["5449000000996"]);
+  });
+
+  it("raqamsiz kod (CODE128/QR) o'zgarmaydi", () => {
+    expect(barcodeVariants("ABC-123x")).toEqual(["ABC123x"]);
+  });
+
+  it("bo'sh kirish bo'sh massiv", () => {
+    expect(barcodeVariants("")).toEqual([]);
+    expect(barcodeVariants("  ")).toEqual([]);
   });
 });

@@ -1,5 +1,5 @@
 import type { Product } from "@/types/database";
-import { normalizeBarcode } from "@/lib/utils";
+import { barcodeVariants, normalizeBarcode } from "@/lib/utils";
 
 /**
  * Keshlangan mahsulotlar ro'yxatidan barcode bo'yicha qidiradi (offline fallback).
@@ -11,15 +11,15 @@ export function matchBarcode(
   barcode: string,
   limit = 3
 ): Product[] {
-  const normalized = normalizeBarcode(barcode);
-  if (!normalized) return [];
+  const variants = new Set(barcodeVariants(barcode));
+  if (variants.size === 0) return [];
   return products
     .filter(
       (p) =>
         p.is_active &&
         p.quantity > 0 &&
         p.barcode != null &&
-        normalizeBarcode(p.barcode) === normalized
+        variants.has(normalizeBarcode(p.barcode))
     )
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
     .slice(0, limit);

@@ -57,3 +57,30 @@ export function computeLowStockThreshold(
 export function normalizeBarcode(raw: string): string {
   return raw.replace(/[^0-9A-Za-z]/g, "").trim();
 }
+
+/**
+ * Bitta skanlangan kod uchun ekvivalent barcode variantlarini qaytaradi.
+ *
+ * Sabab: EAN-13 ning chapdagi ALOHIDA turgan birinchi raqami chiziq sifatida
+ * emas, parite naqshida kodlanadi. Skaner (ML Kit/BarcodeDetector) ko'pincha
+ * EAN-13 ni 12 xonali UPC-A deb o'qiydi (yoki aksincha) — yetakchi "0" tushib
+ * qoladi. UPC-A = yetakchi nolli EAN-13. Shu sabab 12↔13 xonali shakllarни
+ * tenglashtiramiz, aks holda lookup mahsulotni topa olmaydi ("birinchi raqam").
+ *
+ * Qaytadi: normallashgan kod + (mavjud bo'lsa) muqobil 12/13 xonali shakl.
+ * Faqat raqamli kodlarga taalluqli; CODE128/QR kabilar o'zgarmaydi.
+ */
+export function barcodeVariants(raw: string): string[] {
+  const norm = normalizeBarcode(raw);
+  const out = new Set<string>();
+  if (norm) out.add(norm);
+
+  if (/^\d+$/.test(norm)) {
+    // UPC-A (12) → EAN-13 (yetakchi nol bilan)
+    if (norm.length === 12) out.add("0" + norm);
+    // EAN-13 (13, yetakchi nol) → UPC-A (12)
+    if (norm.length === 13 && norm.startsWith("0")) out.add(norm.slice(1));
+  }
+
+  return Array.from(out);
+}
