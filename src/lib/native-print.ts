@@ -83,15 +83,10 @@ function printHtmlViaIframe(html: string): void {
 export async function printHtmlAuto(html: string, name = "uscan"): Promise<void> {
   if (await isNativePlatform()) {
     try {
+      // Muvaffaqiyatда Android tizim print dialogi o'zi ochiladi — toast shart emas.
       await printHtmlNative(html, name);
-      // DIAGNOSTIKA (vaqtinchalik): native print() muvaffaqiyatli QAYTDI.
-      // Bu toast chiqsa-yu, lekin print oynasi ochilmasa → native print
-      // dialogi muammosi (WebView/PrintManager), JS to'g'ri ishlayapti.
-      toast.success("Print yuborildi ✓", {
-        description: "Agar print oynasi ochilmasa — shuni menga ayting.",
-      });
     } catch (err) {
-      // Native print xatosi JIM qolmasin (avval shunday edi → "tugma ishlamaydi").
+      // Native print xatosi JIM qolmasin.
       const msg = err instanceof Error ? err.message : String(err);
       toast.error("Chop etib bo'lmadi", { description: msg });
     }
