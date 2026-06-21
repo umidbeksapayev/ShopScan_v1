@@ -1,4 +1,5 @@
 import { formatCurrency, formatWeight } from "@/lib/utils";
+import { printHtmlAuto } from "@/lib/native-print";
 import type { SaleType } from "@/types/database";
 
 /**
@@ -126,46 +127,10 @@ export function buildReceiptHtml(data: ReceiptData): string {
 }
 
 /**
- * Chekni yashirin iframe orqali chop etadi (popup-blocker'siz, sahifadan chiqmasdan).
- * Faqat brauzerda ishlaydi (client component'dan chaqiriladi).
+ * Chekni chop etadi: native (Android) bo'lsa tizim print dialogi (PrintManager),
+ * web'da yashirin iframe + window.print(). Klient component'dan chaqiriladi.
  */
 export function printReceipt(data: ReceiptData): void {
   if (typeof window === "undefined") return;
-
-  const iframe = document.createElement("iframe");
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.style.position = "fixed";
-  iframe.style.right = "0";
-  iframe.style.bottom = "0";
-  iframe.style.width = "0";
-  iframe.style.height = "0";
-  iframe.style.border = "0";
-  document.body.appendChild(iframe);
-
-  const doc = iframe.contentWindow?.document;
-  const win = iframe.contentWindow;
-  if (!doc || !win) {
-    iframe.remove();
-    return;
-  }
-
-  const cleanup = () => {
-    window.setTimeout(() => iframe.remove(), 1000);
-  };
-
-  doc.open();
-  doc.write(buildReceiptHtml(data));
-  doc.close();
-
-  win.onafterprint = cleanup;
-
-  // Layout + shrift yuklanishi uchun bir oz kutamiz, keyin print dialogini ochamiz.
-  window.setTimeout(() => {
-    try {
-      win.focus();
-      win.print();
-    } catch {
-      iframe.remove();
-    }
-  }, 250);
+  void printHtmlAuto(buildReceiptHtml(data), "Chek");
 }

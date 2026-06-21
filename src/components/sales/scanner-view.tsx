@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { ScanLine, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-import { scanFeedback } from "@/lib/scan-feedback";
 
 /**
  * Native-aware barcode skaner.
- * - Native (Capacitor Android/iOS): apparat ML Kit skaneri (camera2 + apparat
- *   avtofokus, tez/aniq) — `@capacitor-mlkit/barcode-scanning`.
+ * - Native (Capacitor Android): EMBEDDED ML Kit skaner (kamera yuqorida "deraza",
+ *   pastda savat ro'yxati — Zoho/POS uslubi). To'liq-ekran modal EMAS.
  * - Web/brauzer: mavjud `BarcodeScanner` (getUserMedia + BarcodeDetector/wasm).
  *
  * Capacitor importlari faqat klient + dinamik — Vercel web build'iga ta'sir qilmaydi.
@@ -27,82 +23,17 @@ const WebBarcodeScanner = dynamic(
   { ssr: false, loading: () => <CameraLoading /> }
 );
 
+const NativeEmbeddedScanner = dynamic(
+  () =>
+    import("@/components/sales/native-embedded-scanner").then(
+      (m) => m.NativeEmbeddedScanner
+    ),
+  { ssr: false, loading: () => <CameraLoading /> }
+);
+
 interface ScannerViewProps {
   onDetected: (barcode: string) => void;
   paused?: boolean;
-}
-
-function NativeScanButton({ onDetected }: { onDetected: (c: string) => void }) {
-  const { t } = useTranslation();
-  const [busy, setBusy] = useState(false);
-
-  // ML Kit barcode modulini OLDINDAN yuklaymiz (mount'da) — birinchi skan ham
-  // 1-bosishda ishlasin (aks holda modul yuklanguncha dastlabki bosishlar bo'sh qaytadi).
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const { BarcodeScanner } = await import("@capacitor-mlkit/barcode-scanning");
-        const { available } = await BarcodeScanner.isGoogleBarcodeScannerModuleAvailable();
-        if (!available && active) {
-          await BarcodeScanner.installGoogleBarcodeScannerModule();
-        }
-      } catch {
-        /* iOS yoki qo'llab-quvvatlamasa — jim o'tamiz */
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  async function start() {
-    if (busy) return;
-    setBusy(true);
-    try {
-      const { BarcodeScanner } = await import("@capacitor-mlkit/barcode-scanning");
-
-      const perm = await BarcodeScanner.requestPermissions();
-      if (perm.camera !== "granted" && perm.camera !== "limited") {
-        toast.error(t("barcode.cameraDenied"), {
-          description: t("barcode.cameraDeniedDesc"),
-        });
-        return;
-      }
-
-      const { barcodes } = await BarcodeScanner.scan();
-      const code = barcodes?.[0]?.rawValue;
-      if (code) {
-        scanFeedback(); // beep + tebranish (native skaner o'zi ovoz bermaydi)
-        onDetected(code);
-      }
-    } catch (err) {
-      toast.error(t("barcode.cameraError"), {
-        description: err instanceof Error ? err.message : undefined,
-      });
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <div className="space-y-3">
-      <button
-        type="button"
-        onClick={start}
-        disabled={busy}
-        className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-accent/40 text-primary transition-colors hover:bg-accent active:scale-[0.99] disabled:opacity-60"
-      >
-        {busy ? (
-          <Loader2 className="h-8 w-8 animate-spin" />
-        ) : (
-          <ScanLine className="h-9 w-9" />
-        )}
-        <span className="text-sm font-semibold">{t("barcode.scanBtn")}</span>
-      </button>
-      <p className="text-center text-xs text-muted-foreground">{t("barcode.nativeHint")}</p>
-    </div>
-  );
 }
 
 export function ScannerView({ onDetected, paused }: ScannerViewProps) {
@@ -125,6 +56,6 @@ export function ScannerView({ onDetected, paused }: ScannerViewProps) {
   }, []);
 
   if (isNative === null) return <CameraLoading />;
-  if (isNative) return <NativeScanButton onDetected={onDetected} />;
+  if (isNative) return <NativeEmbeddedScanner onDetected={onDetected} paused={paused} />;
   return <WebBarcodeScanner onDetected={onDetected} paused={paused} />;
 }

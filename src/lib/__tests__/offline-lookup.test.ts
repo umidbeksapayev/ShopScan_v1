@@ -49,6 +49,17 @@ describe("matchBarcode (offline)", () => {
     expect(matchBarcode(products, "")).toHaveLength(0);
   });
 
+  it("UPC-A skan (12) yetakchi-nolli EAN-13 mahsulotni topadi va aksincha", () => {
+    const list = [
+      product({ id: "u", barcode: "0036000291452" }), // EAN-13 (yetakchi nol)
+      product({ id: "v", barcode: "590123412345" }), // UPC-A saqlangan
+    ];
+    // 12 xonali skan → 13 xonali saqlangan mahsulot
+    expect(matchBarcode(list, "036000291452").map((p) => p.id)).toEqual(["u"]);
+    // 13 xonali (yetakchi nol) skan → 12 xonali saqlangan mahsulot
+    expect(matchBarcode(list, "0590123412345").map((p) => p.id)).toEqual(["v"]);
+  });
+
   it("limit'ni hurmat qiladi", () => {
     const many = [
       product({ id: "1", barcode: "7", created_at: "2026-01-01T00:00:00Z" }),

@@ -151,16 +151,16 @@ export function LandingContent() {
             <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg lg:mx-0">
               {t("landing.heroDesc")}
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start">
               <Link
                 href="/register"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gradient px-6 py-3 text-base font-semibold text-primary-foreground shadow-pop transition-all hover:brightness-110 active:scale-[0.98] sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-brand-gradient px-6 py-3 text-base font-semibold text-primary-foreground shadow-pop transition-all hover:brightness-110 active:scale-[0.98] sm:w-auto"
               >
-                {t("landing.ctaStart")} <ArrowRight className="h-4 w-4" />
+                {t("landing.ctaStart")} <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
               <Link
                 href="/login"
-                className="inline-flex w-full items-center justify-center rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-colors hover:bg-accent active:scale-[0.98] sm:w-auto"
+                className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-colors hover:bg-accent active:scale-[0.98] sm:w-auto"
               >
                 {t("landing.ctaLogin")}
               </Link>
@@ -169,9 +169,9 @@ export function LandingContent() {
                   href={appVersion.apkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-colors hover:bg-accent active:scale-[0.98] sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-colors hover:bg-accent active:scale-[0.98] sm:w-auto"
                 >
-                  <Download className="h-4 w-4" /> {t("app.downloadAndroid")}
+                  <Download className="h-4 w-4 shrink-0" /> {t("app.downloadAndroid")}
                 </a>
               )}
             </div>

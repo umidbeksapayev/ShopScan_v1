@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import { normalizeBarcode } from "@/lib/utils";
+import { barcodeVariants } from "@/lib/utils";
 import type { Product, SearchMethod } from "@/types/database";
 
 /**
@@ -12,11 +12,12 @@ export async function findProductsByBarcode(
   shopId: string
 ): Promise<Product[]> {
   const supabase = createClient();
-  const normalized = normalizeBarcode(barcode);
+  // UPC-A/EAN-13 yetakchi-nol variantlari ham ("birinchi raqam" muammosi).
+  const variants = barcodeVariants(barcode);
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .eq("barcode", normalized)
+    .in("barcode", variants)
     .eq("shop_id", shopId)
     .eq("is_active", true)
     .gt("quantity", 0)

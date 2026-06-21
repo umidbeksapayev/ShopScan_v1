@@ -142,3 +142,21 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Native ML Kit embedded barcode skaner (bug #4).
+ * `startScan()` paytida kamera WebView ORQASIDA chiziladi. Ko'rinishi uchun
+ * butun sahifa yashiriladi va FAQAT skaner overlay'i (kameraga "deraza" + pastda
+ * savat ro'yxati) ko'rsatiladi; html/body shaffof bo'ladi (kamera ko'rinadi).
+ */
+html.barcode-scanner-active,
+body.barcode-scanner-active {
+  background: transparent !important;
+}
+body.barcode-scanner-active {
+  visibility: hidden;
+}
+body.barcode-scanner-active .uscan-scan-overlay,
+body.barcode-scanner-active .uscan-scan-overlay * {
+  visibility: visible;
+}

@@ -97,9 +97,9 @@ export function NativePrintButton({ data, disabled }: NativePrintButtonProps) {
           {busy ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
-            <Printer className="mr-2 h-5 w-5" />
+            <Bluetooth className="mr-2 h-5 w-5" />
           )}
-          {busy ? t("receipt.sending") : t("receipt.print")}
+          {busy ? t("receipt.sending") : t("receipt.bluetooth")}
         </Button>
       )}
 
