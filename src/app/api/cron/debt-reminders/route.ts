@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runCustomerReminders, runOwnerSummaries } from "@/lib/telegram/dispatch";
+import { runPushSummaries } from "@/lib/push/dispatch";
 
 // Ertalabki cron (vercel.json: 02:00 UTC = 07:00 Toshkent):
 //   • muddati kelgan/o'tgan qarzdorlarga avtomatik eslatma
@@ -21,7 +22,15 @@ async function run() {
   const admin = createAdminClient();
   const reminders = await runCustomerReminders(admin);
   const summaries = await runOwnerSummaries(admin, "morning");
-  return NextResponse.json({ ok: true, reminders, summaries });
+  // Push — Telegram bilan YONMA-YON kanal (032). Alohida try: push yiqilsa
+  // Telegram natijasi yo'qolmasin va cron 500 qaytarmasin.
+  let push: unknown;
+  try {
+    push = await runPushSummaries(admin, "morning");
+  } catch (e) {
+    push = { error: e instanceof Error ? e.message : "noma'lum xato" };
+  }
+  return NextResponse.json({ ok: true, reminders, summaries, push });
 }
 
 export async function GET(req: NextRequest) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runOwnerSummaries } from "@/lib/telegram/dispatch";
+import { runPushSummaries } from "@/lib/push/dispatch";
 
 // Kechki cron (vercel.json: 19:00 UTC = 00:00 Toshkent):
 //   • 'evening' tanlagan egalarga kunlik xulosa
@@ -19,7 +20,15 @@ function authorized(req: NextRequest): boolean {
 async function run() {
   const admin = createAdminClient();
   const summaries = await runOwnerSummaries(admin, "evening");
-  return NextResponse.json({ ok: true, summaries });
+  // Push — Telegram bilan YONMA-YON kanal (032). Alohida try: push yiqilsa
+  // Telegram natijasi yo'qolmasin va cron 500 qaytarmasin.
+  let push: unknown;
+  try {
+    push = await runPushSummaries(admin, "evening");
+  } catch (e) {
+    push = { error: e instanceof Error ? e.message : "noma'lum xato" };
+  }
+  return NextResponse.json({ ok: true, summaries, push });
 }
 
 export async function GET(req: NextRequest) {
