@@ -33,3 +33,30 @@ export async function getAdminShops(): Promise<AdminShop[]> {
   if (error) throw new Error(error.message);
   return (data ?? []) as AdminShop[];
 }
+
+export type PlanCode = "free" | "pro" | "ultra";
+export type BillingPeriod = "month" | "year";
+
+/**
+ * Do'kon tarifini qo'lda belgilaydi (041_subscriptions.sql →
+ * `admin_set_plan` RPC, super_admin gated). MVP'da to'lov ilovada YO'Q —
+ * mijoz Telegram/qo'ng'iroq orqali so'raydi, admin shu forma bilan tasdiqlab
+ * yoqadi.
+ */
+export async function setAdminPlan(params: {
+  shopId: string;
+  planCode: PlanCode;
+  period: BillingPeriod;
+  months: number;
+  note?: string;
+}): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("admin_set_plan", {
+    p_shop_id: params.shopId,
+    p_plan_code: params.planCode,
+    p_period: params.period,
+    p_months: params.months,
+    p_note: params.note || null,
+  });
+  if (error) throw new Error(error.message);
+}

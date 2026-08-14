@@ -108,8 +108,10 @@
     "loginFailed": "Не удалось войти",
     "loginFailedDesc": "Неверный email или пароль.",
     "registerFailed": "Не удалось зарегистрироваться",
-    "autoSignInFailed": "Аккаунт создан, но автоматический вход не выполнен",
-    "autoSignInFailedDesc": "Возможно, в Supabase включено \"Confirm email\". Войдите через страницу входа.",
+    "verifyTitle": "Подтвердите email",
+    "verifySubtitle": "Ссылка для подтверждения отправлена на {{email}}",
+    "verifyHint": "Проверьте почту и нажмите на ссылку — аккаунт сразу активируется.",
+    "backToLogin": "Вернуться ко входу",
     "passwordTooShort": "Пароль должен содержать не менее 6 символов",
     "errInvalidCredentials": "Неверный email или пароль.",
     "errEmailNotConfirmed": "Email не подтверждён. Сначала подтвердите почту или обратитесь к администратору.",
@@ -458,7 +460,26 @@
     "colSales": "Продажи",
     "colRevenue": "Выручка",
     "subscriptions": "Подписки",
-    "subscriptionsDesc": "Данные о подписках появятся в следующих версиях."
+    "subscriptionsDesc": "Ручное назначение тарифа — включается здесь после подтверждения оплаты.",
+    "selectShop": "Выберите магазин",
+    "selectShopFirst": "Сначала выберите магазин.",
+    "selectPlan": "Тариф",
+    "period": "Период",
+    "periodMonth": "Помесячно",
+    "periodYear": "Ежегодно",
+    "months": "Кол-во мес./лет",
+    "note": "Заметка (необязательно)",
+    "applyPlan": "Назначить тариф",
+    "applying": "Назначается…",
+    "planUpdated": "Тариф обновлён",
+    "planUpdateError": "Ошибка обновления тарифа"
+  },
+  "billing": {
+    "plan": {
+      "free": "Free",
+      "pro": "Pro",
+      "ultra": "Ultra"
+    }
   },
   "uploader": {
     "max": "Максимум {{max}} фото",

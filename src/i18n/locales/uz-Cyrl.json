@@ -108,8 +108,10 @@
     "loginFailed": "Кириш амалга ошмади",
     "loginFailedDesc": "Email ёки парол нотўғри.",
     "registerFailed": "Рўйхатдан ўтиш амалга ошмади",
-    "autoSignInFailed": "Ҳисоб яратилди, лекин автоматик кириш бўлмади",
-    "autoSignInFailedDesc": "Supabase'да \"Confirm email\" ёқилган бўлиши мумкин. Логин саҳифасидан киринг.",
+    "verifyTitle": "Emailингизни тасдиқланг",
+    "verifySubtitle": "{{email}} манзилига тасдиқлаш ҳаволаси юборилди",
+    "verifyHint": "Почтангизни текширинг ва ҳаволани босинг — ҳисобингиз шу заҳоти фаоллашади.",
+    "backToLogin": "Кириш саҳифасига қайтиш",
     "passwordTooShort": "Парол камида 6 та белгидан иборат бўлиши керак",
     "errInvalidCredentials": "Email ёки парол нотўғри.",
     "errEmailNotConfirmed": "Email тасдиқланмаган. Аввал почтангизни тасдиқланг ёки админ билан боғланинг.",
@@ -458,7 +460,26 @@
     "colSales": "Сотув",
     "colRevenue": "Тушум",
     "subscriptions": "Обуналар",
-    "subscriptionsDesc": "Обуна (subscription) маълумотлари кейинги версияларда кўринади."
+    "subscriptionsDesc": "Дўкон тарифини қўлда белгилаш — тўлов тасдиқлангач шу ердан ёқилади.",
+    "selectShop": "Дўконни танланг",
+    "selectShopFirst": "Аввал дўконни танланг.",
+    "selectPlan": "Тариф",
+    "period": "Давр",
+    "periodMonth": "Ойлик",
+    "periodYear": "Йиллик",
+    "months": "Неча ой/йил",
+    "note": "Изоҳ (ихтиёрий)",
+    "applyPlan": "Тарифни белгилаш",
+    "applying": "Белгиланмоқда…",
+    "planUpdated": "Тариф янгиланди",
+    "planUpdateError": "Тарифни янгилашда хато"
+  },
+  "billing": {
+    "plan": {
+      "free": "Free",
+      "pro": "Pro",
+      "ultra": "Ultra"
+    }
   },
   "uploader": {
     "max": "Максимал {{max}} та расм",

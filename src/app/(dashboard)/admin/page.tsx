@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Users, Store, Package, ShoppingCart, Wallet, CreditCard } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useAdminOverview, useAdminShops } from "@/hooks/use-admin";
+import { toast } from "sonner";
+import { useAdminOverview, useAdminShops, useSetAdminPlan } from "@/hooks/use-admin";
+import type { BillingPeriod, PlanCode } from "@/lib/admin";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { formatCurrency } from "@/lib/utils";
 import {
@@ -12,6 +15,127 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const PLAN_CODES: PlanCode[] = ["free", "pro", "ultra"];
+
+/**
+ * Tarif belgilash — MVP'da to'lov ilovada YO'Q (qaror: qo'lda faollashtirish).
+ * Mijoz Telegram/qo'ng'iroq orqali so'raydi, admin shu forma bilan
+ * `admin_set_plan()` RPC'ni chaqirib tasdiqlaydi (041_subscriptions.sql).
+ */
+function SetPlanForm({ shops }: { shops: { shop_id: string; name: string }[] }) {
+  const { t } = useTranslation();
+  const setPlanMut = useSetAdminPlan();
+
+  const [shopId, setShopId] = useState("");
+  const [planCode, setPlanCode] = useState<PlanCode>("pro");
+  const [period, setPeriod] = useState<BillingPeriod>("month");
+  const [months, setMonths] = useState("1");
+  const [note, setNote] = useState("");
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!shopId) {
+      toast.error(t("admin.selectShopFirst"));
+      return;
+    }
+    try {
+      await setPlanMut.mutateAsync({
+        shopId,
+        planCode,
+        period,
+        months: Math.max(1, Number(months) || 1),
+        note: note.trim() || undefined,
+      });
+      toast.success(t("admin.planUpdated"));
+      setNote("");
+    } catch (err) {
+      toast.error(t("admin.planUpdateError"), {
+        description: err instanceof Error ? err.message : undefined,
+      });
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-2 sm:col-span-2">
+        <Label>{t("admin.colShop")}</Label>
+        <Select value={shopId} onValueChange={setShopId}>
+          <SelectTrigger>
+            <SelectValue placeholder={t("admin.selectShop")} />
+          </SelectTrigger>
+          <SelectContent>
+            {shops.map((s) => (
+              <SelectItem key={s.shop_id} value={s.shop_id}>
+                {s.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label>{t("admin.selectPlan")}</Label>
+        <Select value={planCode} onValueChange={(v) => setPlanCode(v as PlanCode)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {PLAN_CODES.map((code) => (
+              <SelectItem key={code} value={code}>
+                {t(`billing.plan.${code}`, code)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label>{t("admin.period")}</Label>
+        <Select value={period} onValueChange={(v) => setPeriod(v as BillingPeriod)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="month">{t("admin.periodMonth")}</SelectItem>
+            <SelectItem value="year">{t("admin.periodYear")}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="months">{t("admin.months")}</Label>
+        <Input
+          id="months"
+          type="number"
+          min={1}
+          value={months}
+          onChange={(e) => setMonths(e.target.value)}
+          disabled={planCode === "free"}
+        />
+      </div>
+
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="note">{t("admin.note")}</Label>
+        <Input id="note" value={note} onChange={(e) => setNote(e.target.value)} />
+      </div>
+
+      <Button type="submit" disabled={setPlanMut.isPending} className="sm:col-span-2">
+        {setPlanMut.isPending ? t("admin.applying") : t("admin.applyPlan")}
+      </Button>
+    </form>
+  );
+}
 
 export default function AdminPage() {
   const { t } = useTranslation();
@@ -116,7 +240,7 @@ export default function AdminPage() {
         </CardContent>
       </Card>
 
-      {/* Obuna (placeholder) */}
+      {/* Obuna — tarifni qo'lda belgilash (MVP: to'lov ilovada yo'q) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -125,6 +249,9 @@ export default function AdminPage() {
           </CardTitle>
           <CardDescription>{t("admin.subscriptionsDesc")}</CardDescription>
         </CardHeader>
+        <CardContent>
+          <SetPlanForm shops={shops ?? []} />
+        </CardContent>
       </Card>
     </div>
   );

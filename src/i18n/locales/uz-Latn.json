@@ -108,8 +108,10 @@
     "loginFailed": "Kirish amalga oshmadi",
     "loginFailedDesc": "Email yoki parol noto'g'ri.",
     "registerFailed": "Ro'yxatdan o'tish amalga oshmadi",
-    "autoSignInFailed": "Hisob yaratildi, lekin avtomatik kirish bo'lmadi",
-    "autoSignInFailedDesc": "Supabase'da \"Confirm email\" yoqilgan bo'lishi mumkin. Login sahifasidan kiring.",
+    "verifyTitle": "Emailingizni tasdiqlang",
+    "verifySubtitle": "{{email}} manziliga tasdiqlash havolasi yuborildi",
+    "verifyHint": "Pochtangizni tekshiring va havolani bosing — hisobingiz shu zahoti faollashadi.",
+    "backToLogin": "Kirish ekraniga qaytish",
     "passwordTooShort": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
     "errInvalidCredentials": "Email yoki parol noto'g'ri.",
     "errEmailNotConfirmed": "Email tasdiqlanmagan. Avval pochtangizni tasdiqlang yoki admin bilan bog'laning.",
@@ -458,7 +460,26 @@
     "colSales": "Sotuv",
     "colRevenue": "Tushum",
     "subscriptions": "Obunalar",
-    "subscriptionsDesc": "Obuna (subscription) ma'lumotlari keyingi versiyalarda ko'rinadi."
+    "subscriptionsDesc": "Do'kon tarifini qo'lda belgilash — to'lov tasdiqlangach shu yerdan yoqiladi.",
+    "selectShop": "Do'konni tanlang",
+    "selectShopFirst": "Avval do'konni tanlang.",
+    "selectPlan": "Tarif",
+    "period": "Davr",
+    "periodMonth": "Oylik",
+    "periodYear": "Yillik",
+    "months": "Necha oy/yil",
+    "note": "Izoh (ixtiyoriy)",
+    "applyPlan": "Tarifni belgilash",
+    "applying": "Belgilanmoqda…",
+    "planUpdated": "Tarif yangilandi",
+    "planUpdateError": "Tarifni yangilashda xato"
+  },
+  "billing": {
+    "plan": {
+      "free": "Free",
+      "pro": "Pro",
+      "ultra": "Ultra"
+    }
   },
   "uploader": {
     "max": "Maksimal {{max}} ta rasm",
